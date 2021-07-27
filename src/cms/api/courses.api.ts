@@ -3,6 +3,7 @@ import { join } from 'path'
 import withSyntaxHighlighting from '@stefanprobst/rehype-shiki'
 // import withExtractedTableOfContents from '@stefanprobst/rehype-extract-toc'
 // import type { Toc } from '@stefanprobst/rehype-extract-toc'
+import withGraphviz from '@stefanprobst/remark-graphviz'
 import sizeOf from 'image-size'
 import withHeadingIds from 'rehype-slug'
 import withFootnotes from 'remark-footnotes'
@@ -12,7 +13,6 @@ import vfile from 'vfile'
 
 // import type { Licence, LicenceId } from '@/cms/api/licences.api'
 // import { getLicenceById } from '@/cms/api/licences.api'
-
 import { getPersonById } from '@/cms/api/people.api'
 import type { Person, PersonId } from '@/cms/api/people.api'
 import type { PostId, PostPreview } from '@/cms/api/posts.api'
@@ -314,6 +314,7 @@ async function compileMdx(file: VFile): Promise<VFile> {
       withFootnotes,
       withTypographicQuotesAndDashes,
       // withReadingTime,
+      [withGraphviz, { optimize: true }],
     ],
     rehypePlugins: [
       [withSyntaxHighlighting, { highlighter }],

@@ -3,6 +3,7 @@ import { join } from 'path'
 import withExtractedTableOfContents from '@stefanprobst/rehype-extract-toc'
 import type { Toc } from '@stefanprobst/rehype-extract-toc'
 import withSyntaxHighlighting from '@stefanprobst/rehype-shiki'
+import withGraphviz from '@stefanprobst/remark-graphviz'
 import sizeOf from 'image-size'
 import withHeadingIds from 'rehype-slug'
 import withFootnotes from 'remark-footnotes'
@@ -300,6 +301,7 @@ async function compileMdx(file: VFile): Promise<VFile> {
       withFootnotes,
       withTypographicQuotesAndDashes,
       withReadingTime,
+      [withGraphviz, { optimize: true }],
     ],
     rehypePlugins: [
       [withSyntaxHighlighting, { highlighter }],
