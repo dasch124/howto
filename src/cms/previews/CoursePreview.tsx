@@ -1,4 +1,5 @@
 import withSyntaxHighlighting from '@stefanprobst/rehype-shiki'
+import withGraphviz from '@stefanprobst/remark-graphviz'
 import type { PreviewTemplateComponentProps } from 'netlify-cms-core'
 import { useState, useEffect, useMemo } from 'react'
 import withHeadingIds from 'rehype-slug'
@@ -70,6 +71,7 @@ export function CoursePreview(
             withFootnotes,
             withTypographicQuotesAndDashes,
             [withCmsPreviewAssets, getAsset],
+            withGraphviz,
           ],
           rehypePlugins: [
             [withSyntaxHighlighting, { highlighter }],

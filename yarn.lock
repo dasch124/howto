@@ -2408,10 +2408,10 @@
     unified "^9.2.1"
     unist-util-visit "^2.0.3"
 
-"@stefanprobst/remark-graphviz@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@stefanprobst/remark-graphviz/-/remark-graphviz-1.0.0.tgz#e9dd0febdd7bb392774021029bcb3b38e823fe11"
-  integrity sha512-ZsZOcxNM1KGUhKNlb4qZlSSle51l1xH6HCiHsfg6y/F1//eJ35WEUpKU04gt0iA8Ire8MTjpvqHlsC17Nq/J4A==
+"@stefanprobst/remark-graphviz@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@stefanprobst/remark-graphviz/-/remark-graphviz-1.1.1.tgz#894023eabc074529061115af42f8891d13b00103"
+  integrity sha512-QeXqN9A5B0m68pVFZGRH7CEDxT3pEiV4wjp68M3rIl7rtuHrOrdD4S1kDD7uJTitLCiiJlOuMu5mVXWp/m6T+Q==
   dependencies:
     "@hpcc-js/wasm" "^1.8.1"
     rehype-parse "^7.0.1"
