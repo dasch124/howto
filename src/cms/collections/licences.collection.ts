@@ -1,10 +1,7 @@
 import type { CmsCollection } from 'netlify-cms-core'
 
-import * as validation from '@/cms/utils/validation'
+import * as validation from '@/cms/lib/validation'
 
-/**
- * Licences collection.
- */
 export const collection: CmsCollection = {
   name: 'licences',
   label: 'Licences',
@@ -17,7 +14,7 @@ export const collection: CmsCollection = {
   create: true,
   delete: false,
   slug: '{{slug}}',
-  media_folder: '../../{{media_folder}}/licences',
+  media_folder: '../{{media_folder}}/licences',
   public_folder: '{{public_folder}}/licences',
   preview_path: 'licence/{{slug}}',
   sortable_fields: ['commit_date', 'name'],

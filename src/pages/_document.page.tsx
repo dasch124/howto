@@ -1,26 +1,28 @@
-import NextDocument, { Html, Head, Main, NextScript } from 'next/document'
+import { InitialThemeScript } from '@stefanprobst/next-theme'
+import { Head, Html, Main, NextScript } from 'next/document'
 
-/**
- * Shared document wrapper.
- */
-export default class Document extends NextDocument {
-  render(): JSX.Element {
-    return (
-      <Html>
-        <Head>
+export default function Document(): JSX.Element {
+  return (
+    <Html>
+      <Head>
+        <link
+          crossOrigin="anonymous"
+          href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap"
+          rel="stylesheet"
+        />
+        {process.env['NEXT_PUBLIC_ALGOLIA_APP_ID'] != null ? (
           <link
-            rel="preload"
-            href="/assets/fonts/inter-var-latin.woff2?v=3.19"
-            as="font"
-            type="font/woff2"
             crossOrigin="anonymous"
+            href={`https://${process.env['NEXT_PUBLIC_ALGOLIA_APP_ID']}-dsn.algolia.net/`}
+            rel="preconnect"
           />
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    )
-  }
+        ) : null}
+        <InitialThemeScript />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  )
 }

@@ -1,19 +1,23 @@
 {
   "extends": "@stefanprobst/tsconfig",
   "compilerOptions": {
-    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "~/*": ["*"]
+      "contentlayer/generated": ["./.contentlayer/generated"],
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
     }
   },
   "include": [
+    "app.d.ts",
     "next-env.d.ts",
-    "app-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.config.js"
+    "**/*.config.mjs",
+    "**/*.config.cjs",
+    "stories/main.cjs",
+    ".contentlayer/generated"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "cypress", "out", "storybook-static"]
 }

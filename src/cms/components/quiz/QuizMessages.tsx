@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react'
 import { Fragment } from 'react'
 
-import type { QuizCardStatus } from '@/cms/components/quiz/Quiz'
-import { useQuiz } from '@/cms/components/quiz/Quiz'
+import type { QuizCardStatus } from '@/cms/components/quiz/quiz'
+import { useQuiz } from '@/cms/components/quiz/quiz'
 import type { QuizMessageProps } from '@/cms/components/quiz/QuizMessage'
 import { QuizMessage } from '@/cms/components/quiz/QuizMessage'
 import { useI18n } from '@/i18n/useI18n'

@@ -1,27 +1,31 @@
 {
-  "files.exclude": {
-    "**/node_modules": true,
-    ".eslintcache": true,
-    ".tsbuildinfo": true,
-    ".next": true,
-    "out": true,
-    "storybook-build": true
-  },
-  "search.exclude": {
-    "yarn.lock": true
-  },
+  "css.validate": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.rulers": [100],
+  "eslint.enable": true,
   "eslint.validate": ["javascript", "typescript", "typescriptreact"],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "workbench.startupEditor": "readme",
-  "[markdown]": {
-    "editor.wordWrap": "on"
+  "explorer.excludeGitIgnore": true,
+  "jest.autoRun": {
+    "onSave": "test-only",
+    "watch": false
   },
-  "[markdownreact]": {
+  "jest.jestCommandLine": "npm run test",
+  "less.validate": false,
+  "scss.validate": false,
+  "search.exclude": {
+    "package-lock.json": true
+  },
+  "stylelint.enable": true,
+  "tailwindCSS.validate": true,
+  "terminal.integrated.enablePersistentSessions": false,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[markdown]": {
     "editor.wordWrap": "on"
   }
 }

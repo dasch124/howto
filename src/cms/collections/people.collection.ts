@@ -1,10 +1,7 @@
 import type { CmsCollection } from 'netlify-cms-core'
 
-import * as validation from '@/cms/utils/validation'
+import * as validation from '@/cms/lib/validation'
 
-/**
- * People collection.
- */
 export const collection: CmsCollection = {
   name: 'people',
   label: 'People',

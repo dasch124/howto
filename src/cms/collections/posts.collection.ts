@@ -1,8 +1,5 @@
 import type { CmsCollection } from 'netlify-cms-core'
 
-/**
- * Posts collection.
- */
 export const collection: CmsCollection = {
   name: 'posts',
   label: 'Posts',

@@ -1,33 +1,40 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-// import dedent from 'strip-indent'
 
-import { url as baseUrl } from '~/config/site.config'
+import { baseUrl } from '~/config/app.config'
 
-/**
- * OAuth2 callback for GitHub auth code flow.
- */
+const githubId = process.env['GITHUB_ID']
+
+if (githubId == null) {
+  throw new Error('No GitHub ID provided.')
+}
+
+const githubSecret = process.env['GITHUB_SECRET']
+
+if (githubSecret == null) {
+  throw new Error('No GitHub secret provided.')
+}
+
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse,
 ): Promise<void> {
-  const { code, state } = request.query
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const url = new URL(request.url!, baseUrl)
 
-  if (
-    code === undefined ||
-    Array.isArray(code) ||
-    state === undefined ||
-    Array.isArray(state) ||
-    process.env.GITHUB_ID === undefined ||
-    process.env.GITHUB_SECRET === undefined
-  ) {
+  const code = url.searchParams.get('code')
+  const state = url.searchParams.get('state')
+
+  if (code == null || state == null) {
     return renderErrorTemplate(response, 'Bad request.', 400)
   }
 
-  const url = new URL('https://github.com/login/oauth/access_token')
-  url.searchParams.set('client_id', process.env.GITHUB_ID)
-  url.searchParams.set('client_secret', process.env.GITHUB_SECRET)
-  url.searchParams.set('code', code)
-  url.searchParams.set('state', state)
+  const tokenUrl = new URL('https://github.com/login/oauth/access_token')
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  tokenUrl.searchParams.set('client_id', githubId!)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  tokenUrl.searchParams.set('client_secret', githubSecret!)
+  tokenUrl.searchParams.set('code', code)
+  tokenUrl.searchParams.set('state', state)
 
   const tokenResponse = await fetch(String(url), {
     method: 'POST',
@@ -36,26 +43,19 @@ export default async function handler(
 
   const data = await tokenResponse.json()
 
-  if (data.error !== undefined) {
+  if (data.error != null) {
     return renderErrorTemplate(
       response,
-      `<a href="${data.error_uri}" rel="noopener noreferrer" target="_blank">
-         ${data.error_description}
-       </a>`,
+      `<a href="${data.error_uri}" rel="noreferrer" target="_blank">
+       ${data.error_description}
+     </a>`,
     )
   }
 
-  return renderSuccessTemplate(response, data)
+  return renderSuccessTemplate(response, data as { access_token: string })
 }
 
-/**
- * Renders error template.
- */
-function renderErrorTemplate(
-  response: NextApiResponse,
-  message: string,
-  statusCode = 200,
-) {
+function renderErrorTemplate(response: NextApiResponse, message: string, statusCode = 200) {
   response.status(statusCode)
   response.setHeader('Content-Type', 'text/html; charset=UTF-8')
 
@@ -73,15 +73,8 @@ function renderErrorTemplate(
   `)
 }
 
-/**
- * Renders success template.
- */
-function renderSuccessTemplate(
-  response: NextApiResponse,
-  data: { access_token: string },
-) {
+function renderSuccessTemplate(response: NextApiResponse, data: { access_token: string }) {
   const provider = 'github'
-  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
   const allowedOrigin = new URL(baseUrl).host
 
   response.setHeader('Content-Type', 'text/html; charset=UTF-8')

@@ -1,8 +1,12 @@
 {
   "recommendations": [
+    "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
-    "EditorConfig.EditorConfig",
+    "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
-    "JounQin.vscode-mdx"
+    "mikestead.dotenv",
+    "orta.vscode-jest",
+    "shelex.vscode-cy-helper",
+    "stylelint.vscode-stylelint"
   ]
 }

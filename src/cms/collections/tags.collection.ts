@@ -1,8 +1,5 @@
 import type { CmsCollection } from 'netlify-cms-core'
 
-/**
- * Tags collection.
- */
 export const collection: CmsCollection = {
   name: 'tags',
   label: 'Tags',
@@ -14,7 +11,7 @@ export const collection: CmsCollection = {
   create: true,
   delete: false,
   slug: '{{slug}}',
-  media_folder: '../../{{media_folder}}/tags',
+  media_folder: '../{{media_folder}}/tags',
   public_folder: '{{public_folder}}/tags',
   preview_path: 'tag/{{slug}}',
   sortable_fields: ['commit_date', 'name'],

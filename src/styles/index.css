@@ -1,4 +1,8 @@
-@import '@/styles/fonts.css';
+@import '@/styles/animations.css';
+@import '@/styles/colors.css';
+@import '@/styles/typography.css';
+@import '@/styles/z-indices.css';
+
 @import '@/styles/globals.css';
-@import '@/styles/search.css';
-@import '@/styles/nprogress.css';
+
+@import '@/styles/layouts.css';

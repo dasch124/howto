@@ -1,8 +1,5 @@
 import type { CmsCollection } from 'netlify-cms-core'
 
-/**
- * Courses collection.
- */
 export const collection: CmsCollection = {
   name: 'courses',
   label: 'Curricula',
@@ -133,15 +130,7 @@ export const collection: CmsCollection = {
       label: 'Content',
       hint: '',
       widget: 'markdown',
-      editor_components: [
-        'image',
-        'code-block',
-        'Download',
-        'Video',
-        'SideNote',
-        'Figure',
-        'Tabs',
-      ],
+      editor_components: ['image', 'code-block', 'Download', 'Video', 'SideNote', 'Figure', 'Tabs'],
     },
   ],
 }

@@ -1,138 +1,24 @@
+import { PageMetadata } from '@stefanprobst/next-page-metadata'
 import dynamic from 'next/dynamic'
 import { Fragment, memo } from 'react'
 
-import { Metadata } from '@/metadata/Metadata'
+import { useI18n } from '@/app/i18n/use-i18n'
+import { withDictionaries } from '@/app/i18n/with-dictionaries'
+import { usePageTitleTemplate } from '@/app/metadata/use-page-title-template'
 
-/**
- * Lazy-loads CMS on the client, because Netlify CMS cannot be server-rendered.
- */
-const Cms = dynamic(
-  async () => {
-    const { nanoid } = await import('nanoid')
-    /**
-     * We cannot use the ESM build because `netlify-cms-app` imports global css,
-     * which is disallowed by Next.js.
-     */
-    const { default: Cms } = await import('netlify-cms-app')
-    const { config } = await import('@/cms/cms.config')
-    const { collection: posts } = await import(
-      '@/cms/collections/posts.collection'
-    )
-    const { collection: courses } = await import(
-      '@/cms/collections/courses.collection'
-    )
-    const { ResourcePreview } = await import('@/cms/previews/ResourcePreview')
-    const { CoursePreview } = await import('@/cms/previews/CoursePreview')
-    const { downloadWidget } = await import('@/cms/widgets/Download')
-    const { figureEditorWidget } = await import('@/cms/widgets/Figure')
-    const { sideNoteEditorWidget } = await import('@/cms/widgets/SideNote')
-    const { videoEditorWidget } = await import('@/cms/widgets/Video')
-    const { quizEditorWidget } = await import('@/cms/widgets/Quiz')
-    const { tabsEditorWidget } = await import('@/cms/widgets/Tabs')
-    const { default: withResourceLinks } = await import(
-      '@stefanprobst/remark-resource-links'
-    )
+export const getStaticProps = withDictionaries(['common'])
 
-    Cms.init({ config })
-
-    /**
-     * Generate UUIDs for collections.
-     */
-    Cms.registerEventListener({
-      name: 'preSave',
-      handler({ entry }) {
-        const collections = [posts.name, courses.name]
-
-        const data = entry.get('data')
-
-        if (!collections.includes(entry.get('collection'))) {
-          return data
-        }
-
-        if (data.get('uuid') == null) {
-          return data.set('uuid', nanoid())
-        }
-
-        return data
-      },
-    })
-
-    /**
-     * Register preview styles.
-     *
-     * These are created in a `prebuild` script with `postcss-cli`.
-     */
-    Cms.registerPreviewStyle('/assets/css/tailwind.css')
-    Cms.registerPreviewStyle('/assets/css/index.css')
-
-    /**
-     * Register preview templates for collections.
-     */
-    Cms.registerPreviewTemplate(posts.name, memo(ResourcePreview))
-    Cms.registerPreviewTemplate(courses.name, memo(CoursePreview))
-
-    /**
-     * Register richtext editor widgets.
-     */
-    Cms.registerEditorComponent(downloadWidget)
-    Cms.registerEditorComponent(figureEditorWidget)
-    Cms.registerEditorComponent(sideNoteEditorWidget)
-    Cms.registerEditorComponent(videoEditorWidget)
-    Cms.registerEditorComponent(quizEditorWidget)
-    Cms.registerEditorComponent(tabsEditorWidget)
-
-    /**
-     * Register plugins to the richtext editor widget to (i) avoid saving
-     * autolinks, and (ii) enforce serialisation that is closer to `prettier`'s
-     * format.
-     */
-    Cms.registerRemarkPlugin(withResourceLinks)
-    Cms.registerRemarkPlugin({
-      settings: {
-        bullet: '-',
-        emphasis: '_',
-      },
-      plugins: [],
-    })
-
-    return function () {
-      return null
-    }
-  },
-  {
-    ssr: false,
-    loading: function Loading(props) {
-      const { error, pastDelay, retry, timedOut } = props
-
-      const message =
-        error != null ? (
-          <div>
-            Failed to load CMS! <button onClick={retry}>Retry</button>
-          </div>
-        ) : timedOut === true ? (
-          <div>
-            Taking a long time to load CMS&hellip;{' '}
-            <button onClick={retry}>Retry</button>
-          </div>
-        ) : pastDelay === true ? (
-          <div>Loading CMS&hellip;</div>
-        ) : null
-
-      return (
-        <div className="grid min-h-screen place-items-center">{message}</div>
-      )
-    },
-  },
-)
-
-/**
- * CMS page.
- */
 export default function CmsPage(): JSX.Element {
+  const { t } = useI18n<'common'>()
+  const titleTemplate = usePageTitleTemplate()
+
+  const metadata = { title: t(['common', 'cms', 'metadata', 'title']) }
+
   return (
     <Fragment>
-      <Metadata noindex nofollow title="CMS" />
+      <PageMetadata nofollow noindex title={metadata.title} titleTemplate={titleTemplate} />
       <div id="nc-root" />
+      <NetlifyCms />
       <style jsx global>
         {`
           /* Temporary workaround to stop tailwind reset bleeding into richtext editor. */
@@ -154,11 +40,88 @@ export default function CmsPage(): JSX.Element {
           }
         `}
       </style>
-      <Cms />
     </Fragment>
   )
 }
 
-CmsPage.Layout = Fragment
+const NetlifyCms = dynamic(
+  async () => {
+    // const { default: withResourceLinks } = await import('@stefanprobst/remark-resource-links')
+    const { nanoid } = await import('nanoid')
+    const { default: CMS } = await import('netlify-cms-app')
+    const { config, collections } = await import('@/cms/cms.config')
+    const { CoursePreview } = await import('@/cms/previews/course-preview')
+    const { ResourcePreview } = await import('@/cms/previews/resource-preview')
+    const { DownloadWidget } = await import('@/cms/widgets/download')
+    const { FigureEditorWidget } = await import('@/cms/widgets/figure')
+    const { QuizEditorWidget } = await import('@/cms/widgets/quiz')
+    const { SideNoteEditorWidget } = await import('@/cms/widgets/sidenote')
+    const { TabsEditorWidget } = await import('@/cms/widgets/tabs')
+    const { VideoEditorWidget } = await import('@/cms/widgets/video')
+
+    CMS.init({ config })
+
+    CMS.registerEventListener({
+      name: 'preSave',
+      handler({ entry }) {
+        const data = entry.get('data')
+
+        if (![collections.posts.name, collections.courses.name].includes(entry.get('collection'))) {
+          return data
+        }
+
+        if (data.get('uuid') == null) {
+          return data.set('uuid', nanoid())
+        }
+
+        return data
+      },
+    })
+
+    CMS.registerEditorComponent(DownloadWidget)
+    CMS.registerEditorComponent(FigureEditorWidget)
+    CMS.registerEditorComponent(QuizEditorWidget)
+    CMS.registerEditorComponent(SideNoteEditorWidget)
+    CMS.registerEditorComponent(TabsEditorWidget)
+    CMS.registerEditorComponent(VideoEditorWidget)
+
+    CMS.registerRemarkPlugin({
+      settings: {
+        bullet: '-',
+        emphasis: '_',
+      },
+      // plugins: [withResourceLinks], // TODO:
+    })
+
+    CMS.registerPreviewTemplate(collections.posts.name, memo(ResourcePreview))
+    CMS.registerPreviewTemplate(collections.courses.name, memo(CoursePreview))
+
+    CMS.registerPreviewStyle('/assets/css/tailwind.css')
+    CMS.registerPreviewStyle('/assets/css/index.css')
+
+    return Fragment
+  },
+  {
+    loading: function Loading(props) {
+      const { error, pastDelay, retry, timedOut } = props
+
+      const message =
+        error != null ? (
+          <div>
+            Failed to load CMS! <button onClick={retry}>Retry</button>
+          </div>
+        ) : timedOut === true ? (
+          <div>
+            Taking a long time to load CMS... <button onClick={retry}>Retry</button>
+          </div>
+        ) : pastDelay === true ? (
+          <div>Loading CMS...</div>
+        ) : null
+
+      return <div className="grid min-h-screen place-items-center">{message}</div>
+    },
+    ssr: false,
+  },
+)
 
 // @refresh reset

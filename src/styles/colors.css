@@ -1,0 +1,41 @@
+:root {
+  /** ACDH-CH brand colors. */
+  --color-brand-acdh-ch-primary: hsl(182.8deg 57.6% 70.4%); /* #88dbdf */
+  --color-brand-acdh-ch-primary-text: hsl(182.9deg 45.9% 55.1%); /* #58bcc1; */
+  --color-brand-acdh-ch-secondary: hsl(193.7deg 46.1% 42.9%); /* #3b89a0; */
+  --color-brand-acdh-ch-muted: hsl(220deg 1.7% 35.1%); /* #58595b; */
+  --color-brand-acdh-ch-background: hsl(0deg 0% 94.5%); /* #f1f1f1; */
+  --color-brand-oeaw: hsl(217.2deg 100% 36.7%); /* #0047bb; */
+
+  /** Colors. */
+  --color-turquoise: hsl(171deg 100% 40%);
+  --color-light-turquoise: hsl(171deg 100% 50%);
+  --color-light-blue: hsl(197deg 100% 76.7%);
+  --color-blue: hsl(202deg 69.4% 53.9%);
+  --color-black: hsl(226deg 20% 11.8%);
+  --color-dark-gray: hsl(215deg 28% 17%);
+  --color-gray: hsl(0deg 0% 59.6%);
+  --color-light-gray: hsl(0deg 0% 83.1%);
+  --color-white: hsl(0deg 0% 100%);
+
+  /** Named colors. */
+  --color-accent-primary-background: var(--color-blue);
+  --color-accent-primary-text: var(--color-light-blue);
+  --color-accent-secondary-background: var(--color-turquoise);
+  --color-accent-secondary-text: var(--color-light-turquoise);
+  --color-background: var(--color-black);
+  --color-muted-background: var(--color-dark-gray);
+  --color-border: var(--color-brand-acdh-ch-muted);
+  --color-page-load-progress-indicator: var(--color-brand-acdh-ch-primary);
+  --color-heading-text: var(--color-white);
+  --color-muted-text: var(--color-gray);
+  --color-highlighted-text: var(--color-white);
+  --color-text: var(--color-light-gray);
+  --color-text-inverted: var(--color-black);
+
+  color-scheme: light;
+}
+
+:root[data-color-scheme='dark'] {
+  color-scheme: dark;
+}

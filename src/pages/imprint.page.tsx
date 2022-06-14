@@ -1,59 +1,46 @@
+import { PageMetadata } from '@stefanprobst/next-page-metadata'
+import { request } from '@stefanprobst/request'
 import type { GetStaticPropsContext, GetStaticPropsResult } from 'next'
 import { Fragment } from 'react'
 
-import { PageContent } from '@/common/PageContent'
-import { PageTitle } from '@/common/PageTitle'
-import { getLocale } from '@/i18n/getLocale'
-import type { Dictionary } from '@/i18n/loadDictionary'
-import { loadDictionary } from '@/i18n/loadDictionary'
-import { useI18n } from '@/i18n/useI18n'
-import { getImprint } from '@/imprint/getImprint'
-import { Metadata } from '@/metadata/Metadata'
-import type { HtmlString } from '@/utils/ts/aliases'
+import { useI18n } from '@/app/i18n/use-i18n'
+import { withDictionaries } from '@/app/i18n/with-dictionaries'
+import { usePageTitleTemplate } from '@/app/metadata/use-page-title-template'
+import { MainContent } from '@/components/main-content'
+import type { Locale } from '~/config/i18n.config'
+import { createImprintUrl } from '~/config/imprint.config'
 
-export interface ImprintPageProps {
-  dictionary: Dictionary
-  imprintHtml: HtmlString
+interface ImprintPageProps {
+  html: string
 }
 
-/**
- * Provides translations and imprint html.
- */
-export async function getStaticProps(
-  context: GetStaticPropsContext,
-): Promise<GetStaticPropsResult<ImprintPageProps>> {
-  const { locale } = getLocale(context)
+export const getStaticProps = withDictionaries(
+  ['common'],
+  async function getStaticProps(
+    context: GetStaticPropsContext,
+  ): Promise<GetStaticPropsResult<ImprintPageProps>> {
+    const locale = context.locale as Locale
+    const html = (await request(createImprintUrl(locale), { responseType: 'text' })) as string
 
-  const dictionary = await loadDictionary(locale, ['common'])
+    return { props: { html } }
+  },
+)
 
-  const imprintHtml = await getImprint(locale)
-
-  return {
-    props: {
-      dictionary,
-      imprintHtml,
-    },
-  }
-}
-
-/**
- * Imprint page.
- */
 export default function ImprintPage(props: ImprintPageProps): JSX.Element {
-  const { imprintHtml } = props
+  const { html } = props
 
-  const { t } = useI18n()
+  const { t } = useI18n<'common'>()
+  const titleTemplate = usePageTitleTemplate()
+
+  const metadata = { title: t(['common', 'imprint', 'metadata', 'title']) }
 
   return (
     <Fragment>
-      <Metadata noindex nofollow title={t('common.page.imprint')} />
-      <PageContent className="flex flex-col w-full px-10 py-16 mx-auto space-y-10 max-w-80ch">
-        <PageTitle>{t('common.imprint')}</PageTitle>
-        <div
-          className="prose-sm prose max-w-none sm:max-w-none sm:prose"
-          dangerouslySetInnerHTML={{ __html: imprintHtml }}
-        />
-      </PageContent>
+      <PageMetadata nofollow noindex title={metadata.title} titleTemplate={titleTemplate} />
+      <MainContent>
+        <h1>{metadata.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+      </MainContent>
     </Fragment>
   )
 }

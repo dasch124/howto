@@ -1,0 +1,7 @@
+:root {
+  --prose-content-width: 48rem;
+
+  --grid-columns-prose: [full-bleed-start] minmax(0, 1fr) [bleed-start] minmax(0, 1rem)
+    [content-start] minmax(0, var(--prose-content-width)) [content-end] minmax(0, 1rem) [bleed-end]
+    minmax(0, 1fr) [full-bleed-end];
+}

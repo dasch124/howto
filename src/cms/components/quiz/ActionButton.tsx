@@ -3,7 +3,7 @@ import type { AriaButtonProps } from '@react-types/button'
 import cx from 'clsx'
 import { useRef } from 'react'
 
-import { usePreview } from '@/cms/previews/Preview.context'
+import { usePreview } from '@/cms/previews/preview.context'
 
 export interface ActionButtonProps extends AriaButtonProps {
   variant?: 'error' | 'success'
@@ -39,14 +39,14 @@ export function ActionButton(props: ActionButtonProps): JSX.Element {
   return (
     <button
       className={cx(
-        'self-end px-2 py-1 text-sm font-medium transition rounded cursor-default',
+        'cursor-default self-end rounded px-2 py-1 text-sm font-medium transition',
         isDisabled
-          ? 'text-neutral-400 bg-neutral-100 pointer-events-none'
+          ? 'pointer-events-none bg-neutral-100 text-neutral-400'
           : variant === 'error'
-          ? 'text-red-800 bg-red-100 hover:bg-red-200'
+          ? 'bg-red-100 text-red-800 hover:bg-red-200'
           : variant === 'success'
-          ? 'text-green-800 bg-green-100 hover:bg-green-200'
-          : 'text-blue-800 bg-blue-100 hover:bg-blue-200',
+          ? 'bg-green-100 text-green-800 hover:bg-green-200'
+          : 'bg-blue-100 text-blue-800 hover:bg-blue-200',
       )}
       {...buttonProps}
       ref={buttonRef}

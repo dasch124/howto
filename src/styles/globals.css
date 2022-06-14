@@ -1,30 +1,46 @@
-:focus:not(:focus-visible) {
-  outline: none;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
 }
-:focus:not(:focus-visible):-moz-focusring {
-  outline: none;
+
+html,
+body,
+#__next {
+  block-size: 100%;
+}
+
+#__next {
+  isolation: isolate;
 }
 
 :root {
-  -webkit-tap-highlight-color: transparent;
-
-  /** Probably only needed on mobile WebKit to prevent input zoom. */
-  text-size-adjust: none;
-
-  /** Disable double-tap to zoom, so press events are not delayed. */
-  /* touch-action: manipulation; */
+  font-family: var(--font-family);
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
-body {
-  @apply min-h-screen;
-}
-/** Safari only. */
-@supports (-webkit-touch-callout: none) {
-  body {
-    min-height: -webkit-fill-available;
+a {
+  color: currentColor;
+  text-decoration: none;
+  transition: color var(--animation-duration) var(--animation-timing-function);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent-primary-text);
   }
 }
 
-body {
-  @apply antialiased font-sans text-neutral-900 bg-neutral-50;
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+}
+
+p {
+  line-height: 1.75;
 }

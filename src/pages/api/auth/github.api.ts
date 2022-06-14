@@ -1,43 +1,35 @@
 import { randomBytes } from 'crypto'
-
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { url as baseUrl } from '~/config/site.config'
+import { baseUrl } from '~/config/app.config'
 
-/**
- * Initiates GitHub OAuth2 auth code flow.
- */
-export default async function handler(
-  request: NextApiRequest,
-  response: NextApiResponse,
-): Promise<void> {
-  const { provider, scope } = request.query
+const githubId = process.env['GITHUB_ID']
 
-  if (
-    provider === undefined ||
-    Array.isArray(provider) ||
-    provider !== 'github' ||
-    scope === undefined ||
-    Array.isArray(scope)
-  ) {
-    return response.status(400).json({ message: 'Invalid CMS configuration.' })
+if (githubId == null) {
+  throw new Error('No GitHub ID provided.')
+}
+
+export default function handler(request: NextApiRequest, response: NextApiResponse): void {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const url = new URL(request.url!, baseUrl)
+
+  const provider = url.searchParams.get('provider')
+  const scope = url.searchParams.get('scope')
+
+  if (provider !== 'github' || scope == null) {
+    response.status(400).json({ message: 'Invalid CMS configuration.' })
+    return
   }
 
-  if (
-    process.env.GITHUB_ID === undefined ||
-    process.env.GITHUB_ID.length === 0
-  ) {
-    return response.status(400).json({ message: 'No GitHub ID provided.' })
-  }
-
-  const redirectUri = new URL('/api/auth/callback', baseUrl)
+  const callbackUrl = new URL('/api/auth/callback', baseUrl)
   const state = randomBytes(64).toString('hex')
 
-  const url = new URL('https://github.com/login/oauth/authorize')
-  url.searchParams.set('client_id', process.env.GITHUB_ID)
-  url.searchParams.set('redirect_uri', String(redirectUri))
-  url.searchParams.set('scope', scope)
-  url.searchParams.set('state', state)
+  const redirectUrl = new URL('https://github.com/login/oauth/authorize')
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  redirectUrl.searchParams.set('client_id', githubId!)
+  redirectUrl.searchParams.set('redirect_uri', String(callbackUrl))
+  redirectUrl.searchParams.set('scope', scope)
+  redirectUrl.searchParams.set('state', state)
 
   response.redirect(302, String(url))
 }

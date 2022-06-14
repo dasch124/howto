@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 
-import { useQuiz } from '@/cms/components/quiz/Quiz'
+import { useQuiz } from '@/cms/components/quiz/quiz'
 
 export interface QuizCardProps {
   children?: ReactNode
@@ -18,8 +18,6 @@ export function QuizCard(props: QuizCardProps): JSX.Element {
 /**
  * Type guard for QuizCard component.
  */
-export function isQuizCard(
-  component: JSX.Element,
-): component is ReactElement<QuizCardProps> {
+export function isQuizCard(component: JSX.Element): component is ReactElement<QuizCardProps> {
   return component.type === QuizCard
 }
