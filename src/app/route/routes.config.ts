@@ -14,7 +14,7 @@ export function imprint() {
 }
 
 export function posts(searchParams?: PostsPageParams) {
-  return { pathname: '/posts', searchParams }
+  return { pathname: '/posts', query: searchParams }
 }
 
 export function post(params: PostPageParams) {

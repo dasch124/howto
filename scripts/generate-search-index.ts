@@ -30,7 +30,9 @@ function createAdminSearchClient(): Client {
   const apiKey = process.env['TYPESENSE_ADMIN_API_KEY']
 
   if (host == null || port == null || protocol == null || apiKey == null) {
-    const error = new Error('Failed to update search index because no Algolia config was provided.')
+    const error = new Error(
+      'Failed to update search index because no Typesense config was provided.',
+    )
     delete error.stack
     throw error
   }
@@ -73,11 +75,8 @@ const plaintext = remark()
   })
 
 /**
- * We want to highlight matches on the `title` and `content` fields (which means algolia
+ * We want to highlight matches on the `title` and `content` fields (which means Typesense
  * will insert `<mark>` elements), so we need to html-escape those fields.
- *
- * @see https://www.algolia.com/doc/guides/building-search-ui/ui-and-ux-patterns/highlighting-snippeting/js/#sanitization-of-the-results
- * @see https://www.algolia.com/doc/guides/sending-and-managing-data/prepare-your-data/in-depth/data-sanitization/
  */
 async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
   const vfile = new VFile({ value: post.body.raw })
@@ -126,9 +125,9 @@ async function generate() {
 
   /** Clear search index to avoid stale entries (or stale entry chunks). */
   await collection.documents().clear()
-  const { objectIDs } = await collection.documents().import([...postsChunks])
+  const response = await collection.documents().import([...postsChunks])
 
-  return objectIDs.length
+  return response.length
 }
 
 generate()

@@ -55,7 +55,7 @@ jobs:
             NEXT_PUBLIC_TYPESENSE_PROTOCOL=https
             NEXT_PUBLIC_TYPESENSE_SEARCH_API_KEY=${{ secrets.NEXT_PUBLIC_TYPESENSE_SEARCH_API_KEY }}
           secrets: |
-            "ALGOLIA_ADMIN_API_KEY=${{ secrets.ALGOLIA_ADMIN_API_KEY }}"
+            "TYPESENSE_ADMIN_API_KEY=${{ secrets.TYPESENSE_ADMIN_API_KEY }}"
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

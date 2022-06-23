@@ -1,6 +1,8 @@
 import { InitialThemeScript } from '@stefanprobst/next-theme'
 import { Head, Html, Main, NextScript } from 'next/document'
 
+import { typesenseHost, typesensePort, typesenseProtocol } from '~/config/search.config'
+
 export default function Document(): JSX.Element {
   return (
     <Html>
@@ -10,10 +12,10 @@ export default function Document(): JSX.Element {
           href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap"
           rel="stylesheet"
         />
-        {process.env['NEXT_PUBLIC_ALGOLIA_APP_ID'] != null ? (
+        {typesenseProtocol != null && typesenseHost != null && typesensePort != null ? (
           <link
             crossOrigin="anonymous"
-            href={`https://${process.env['NEXT_PUBLIC_ALGOLIA_APP_ID']}-dsn.algolia.net/`}
+            href={`${typesenseProtocol}://${typesenseHost}:${typesensePort}`}
             rel="preconnect"
           />
         ) : null}

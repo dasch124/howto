@@ -1,5 +1,4 @@
 - rss feed in de+en (currently links assumes both locales exist, but only "en" is generated)
-- algolia
 
 - currently we have /resources/posts/page/1 as route
 

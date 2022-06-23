@@ -1,4 +1,5 @@
 import { Tab } from '@headlessui/react'
+import cx from 'clsx'
 import type { ReactNode } from 'react'
 
 interface TabsProps {
@@ -18,7 +19,11 @@ interface TabsListProps {
 function TabsList(props: TabsListProps): JSX.Element {
   const { children } = props
 
-  return <Tab.List className="mb-2 flex items-center gap-2 border-b pb-1">{children}</Tab.List>
+  return (
+    <Tab.List className="my-2 flex items-center gap-4 border-b border-gray-500">
+      {children}
+    </Tab.List>
+  )
 }
 
 interface TabsTabProps {
@@ -31,7 +36,7 @@ function TabsTab(props: TabsTabProps): JSX.Element {
   return (
     <Tab
       className={({ selected }) => {
-        return selected ? '' : 'text-gray-500'
+        return cx('-mb-px p-1', selected && 'border-b')
       }}
     >
       {children}
