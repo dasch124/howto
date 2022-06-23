@@ -1,6 +1,5 @@
-import { range } from '@stefanprobst/range'
-
-const defaultPageSize = 12
+import { getPageRange } from '@/lib/get-page-range'
+import { defaultPageSize } from '~/config/ui.config'
 
 export interface Page<T> {
   items: Array<T>
@@ -18,9 +17,4 @@ export function paginate<T>(items: Array<T>, pageSize = defaultPageSize): Array<
       pages: pages.length,
     }
   })
-}
-
-export function getPageRange(items: Array<unknown>, pageSize = defaultPageSize): Array<number> {
-  const pages = Math.ceil(items.length / pageSize)
-  return range(pages, 1)
 }

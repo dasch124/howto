@@ -72,7 +72,7 @@ export function MultipleChoice(props: MultipleChoiceProps): JSX.Element {
                 type={type}
                 name={name}
                 onChange={() => {
-                  return toggle(index)
+                  toggle(index)
                 }}
                 checked={checked.has(index)}
               />

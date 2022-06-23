@@ -17,3 +17,13 @@ export const minSearchTermLength = 3
  * Debounce search-on-type by n milliseconds.
  */
 export const delay = 150
+
+export const typesenseHost = process.env['NEXT_PUBLIC_TYPESENSE_HOST']
+
+export const typesensePort = process.env['NEXT_PUBLIC_TYPESENSE_PORT']
+
+export const typesenseProtocol = process.env['NEXT_PUBLIC_TYPESENSE_PROTOCOL']
+
+export const typesenseSearchApiKey = process.env['NEXT_PUBLIC_TYPESENSE_SEARCH_API_KEY']
+
+export const typesenseCollectionName = 'howto'

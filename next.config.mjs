@@ -6,6 +6,8 @@
 import createBundleAnalyzerPlugin from '@next/bundle-analyzer'
 import { log } from '@stefanprobst/log'
 import { createContentlayerPlugin } from 'next-contentlayer'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 const locales = /** @type {Array<Locale>} */ (['en', 'de'])
 const defaultLocale = /** @type {Locale} */ ('en')
@@ -68,6 +70,40 @@ const config = {
   },
   pageExtensions: ['page.tsx', 'api.ts'],
   reactStrictMode: true,
+  async redirects() {
+    /** @type {Awaited<ReturnType<Exclude<NextConfig['redirects'], undefined>>>} */
+    const redirects = []
+
+    async function fileExists(/** @type {string} */ filePath) {
+      try {
+        await fs.stat(filePath)
+        return true
+      } catch {
+        return false
+      }
+    }
+
+    const postsRedirectsManifest = path.join(process.cwd(), 'redirects.posts.json')
+    if (await fileExists(postsRedirectsManifest)) {
+      const posts = JSON.parse(await fs.readFile(postsRedirectsManifest, { encoding: 'utf-8' }))
+      redirects.push(
+        ...Object.entries(posts).map(([uuid, id]) => {
+          return {
+            source: `/id/${uuid}`,
+            destination: `/posts/${id}`,
+            permanent: false,
+          }
+        }),
+      )
+    }
+
+    return redirects
+  },
+  async rewrites() {
+    const rewrites = [{ source: '/posts', destination: '/posts/page/1' }]
+
+    return rewrites
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

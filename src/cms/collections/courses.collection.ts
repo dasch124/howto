@@ -130,7 +130,7 @@ export const collection: CmsCollection = {
       label: 'Content',
       hint: '',
       widget: 'markdown',
-      editor_components: ['image', 'code-block', 'Download', 'Video', 'SideNote', 'Figure', 'Tabs'],
+      editor_components: ['image', 'code-block', 'Download', 'Figure', 'SideNote', 'Tabs', 'Video'],
     },
   ],
 }

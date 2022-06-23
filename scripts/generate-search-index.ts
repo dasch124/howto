@@ -1,8 +1,6 @@
 import nextEnv from '@next/env'
 import { log } from '@stefanprobst/log'
 import { pick } from '@stefanprobst/pick'
-import type { SearchIndex } from 'algoliasearch'
-import algoliasearch from 'algoliasearch'
 import type { Post } from 'contentlayer/generated'
 import { allPosts } from 'contentlayer/generated'
 import escape from 'escape-html'
@@ -12,34 +10,38 @@ import withGfm from 'remark-gfm'
 import withMdx from 'remark-mdx'
 import withHeadingIds from 'remark-slug'
 import toPlaintext from 'strip-markdown'
+import { Client } from 'typesense'
 import { VFile } from 'vfile'
 
 import type { IndexedPost } from '@/app/search/types'
 import { getPersonCore, getTagCore } from '@/cms/cms.client'
 import withChunks from '@/lib/remark-chunks'
+import {
+  typesenseCollectionName,
+  typesenseHost as host,
+  typesensePort as port,
+  typesenseProtocol as protocol,
+} from '~/config/search.config'
 
 // eslint-disable-next-line import/no-named-as-default-member
 nextEnv.loadEnvConfig(process.cwd())
 
-function getAlgoliaAdminSearchIndex(): SearchIndex {
-  if (
-    process.env['NEXT_PUBLIC_ALGOLIA_APP_ID'] == null ||
-    process.env['ALGOLIA_ADMIN_API_KEY'] == null ||
-    process.env['NEXT_PUBLIC_ALGOLIA_INDEX_NAME'] == null
-  ) {
+function createAdminSearchClient(): Client {
+  const apiKey = process.env['TYPESENSE_ADMIN_API_KEY']
+
+  if (host == null || port == null || protocol == null || apiKey == null) {
     const error = new Error('Failed to update search index because no Algolia config was provided.')
     delete error.stack
     throw error
   }
 
-  const searchClient = algoliasearch(
-    process.env['NEXT_PUBLIC_ALGOLIA_APP_ID'],
-    process.env['ALGOLIA_ADMIN_API_KEY'],
-  )
+  const client = new Client({
+    nodes: [{ host, port: Number(port), protocol }],
+    apiKey,
+    connectionTimeoutSeconds: 2,
+  })
 
-  const searchIndex = searchClient.initIndex(process.env['NEXT_PUBLIC_ALGOLIA_INDEX_NAME'])
-
-  return searchIndex
+  return client
 }
 
 const processor = remark()
@@ -117,13 +119,14 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 }
 
 async function generate() {
-  const searchIndex = getAlgoliaAdminSearchIndex()
+  const client = createAdminSearchClient()
+  const collection = client.collections(typesenseCollectionName)
 
   const postsChunks = await Promise.all(allPosts.flatMap(getIndexedPostChunks))
 
   /** Clear search index to avoid stale entries (or stale entry chunks). */
-  await searchIndex.clearObjects()
-  const { objectIDs } = await searchIndex.saveObjects([...postsChunks])
+  await collection.documents().clear()
+  const { objectIDs } = await collection.documents().import([...postsChunks])
 
   return objectIDs.length
 }

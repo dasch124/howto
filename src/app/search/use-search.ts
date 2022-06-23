@@ -1,7 +1,6 @@
-import type { Hit } from '@algolia/client-search'
 import { useEffect, useState } from 'react'
 
-import { getAlgoliaSearchIndex } from '@/app/search/get-algolia-search-index'
+import { createSearchClient } from '@/app/search/create_search-client'
 import type { IndexedPost } from '@/app/search/types'
 import { useDebouncedState } from '@/lib/use-debounced-state'
 import { delay, maxSearchResults, minSearchTermLength, snippetWords } from '~/config/search.config'
@@ -20,7 +19,7 @@ export function useSearch(searchTerm: string): {
   error: Error | null
 } {
   const [searchIndex] = useState(() => {
-    return getAlgoliaSearchIndex()
+    return createSearchClient()
   })
   const [searchResults, setSearchResults] = useState<Array<SearchResult>>([])
   const [status, setStatus] = useState<SearchStatus>('idle')

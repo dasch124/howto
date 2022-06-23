@@ -35,7 +35,7 @@ interface PostPageProps {
 
 export function getStaticPaths(
   context: GetStaticPathsContext,
-): GetStaticPathsResult<PostPageParams> {
+): GetStaticPathsResult<PageParams<PostPageParams>> {
   const locales = context.locales as Array<Locale>
   const paths = locales.flatMap((locale) => {
     const ids = getPostIds()

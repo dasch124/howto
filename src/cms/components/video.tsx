@@ -23,8 +23,9 @@ interface VideoProps {
 }
 
 export function Video(props: VideoProps): JSX.Element {
-  const url = useVideo(props.provider ?? 'youtube', props.id, props.autoPlay, props.startTime)
+  const { autoPlay, caption, id, provider = 'youtube', startTime } = props
 
+  const url = useVideo(provider, id, autoPlay, startTime)
   const [isLoadingIframe, setIsLoadingIframe] = useState(true)
 
   function onLoadIframe() {
@@ -32,23 +33,22 @@ export function Video(props: VideoProps): JSX.Element {
   }
 
   return (
-    <figure className="flex flex-col items-center justify-center">
-      <div className="aspect-w-16 aspect-h-9 w-full">
-        <div className="text-primary-600 absolute inset-0 flex flex-col items-center justify-center">
-          <Spinner className={isLoadingIframe ? undefined : 'hidden'} />
+    <figure className="grid place-items-center">
+      <div className="aspect-video w-full">
+        <div className="text-primary-600 absolute inset-0 grid place-items-center">
+          {isLoadingIframe ? <Spinner /> : null}
         </div>
         <iframe
-          src={String(url)}
-          title="Video player"
-          allowFullScreen
           allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
           loading="lazy"
           onLoad={onLoadIframe}
-          className=""
+          src={String(url)}
+          title="Video player"
         />
       </div>
-      {props.caption !== undefined ? (
-        <figcaption className="py-2 font-medium">{props.caption}</figcaption>
+      {caption !== undefined ? (
+        <figcaption className="py-2 font-medium">{caption}</figcaption>
       ) : null}
     </figure>
   )
@@ -65,7 +65,7 @@ function useVideo(provider: VideoProvider, id: string, autoPlay = false, startTi
   }
 }
 
-function getYouTubeUrl(id: string, autoPlay = false, startTime?: number) {
+function getYouTubeUrl(id: string, autoPlay: boolean, startTime?: number) {
   const embedUrl = createUrl({
     baseUrl: 'https://www.youtube-nocookie.com/embed/',
     pathname: id,
@@ -78,7 +78,7 @@ function getYouTubeUrl(id: string, autoPlay = false, startTime?: number) {
   return embedUrl
 }
 
-function getVimeoUrl(id: string, autoPlay = false, startTime?: number) {
+function getVimeoUrl(id: string, autoPlay: boolean, startTime?: number) {
   const embedUrl = createUrl({
     baseUrl: 'https://player.vimeo.com/video/',
     pathname: id,
@@ -91,7 +91,7 @@ function getVimeoUrl(id: string, autoPlay = false, startTime?: number) {
   return embedUrl
 }
 
-function getNakalaUrl(id: string, _autoPlay = false, _startTime?: number) {
+function getNakalaUrl(id: string, _autoPlay: boolean, _startTime?: number) {
   const embedUrl = createUrl({
     baseUrl: 'https://api.nakala.fr/embed/',
     pathname: id,
