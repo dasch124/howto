@@ -12,6 +12,8 @@ export interface IndexedPost extends Pick<PostCore, 'date' | 'id' | 'lang' | 'ti
   authors: Array<string>
   // NOTE: typesense cannot currently store nested objects in documents
   // tags: Array<Omit<PostCore['tags'][number], '_id'>>
+  // `date` field as unix timestamp
+  timestamp: number
   tags: Array<string>
   kind: 'post'
   /** Either the `abstract`, or a chunk of the `body`. */

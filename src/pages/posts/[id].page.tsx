@@ -21,6 +21,7 @@ import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import type { PostDetails } from '@/cms/cms.client'
 import { getPersonFullName, getPost, getPostIds } from '@/cms/cms.client'
 import { MainContent } from '@/components/main-content'
+import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { useMdx } from '@/lib/use-mdx'
 import type { Locale } from '~/config/i18n.config'
@@ -31,6 +32,7 @@ export type PostPageParams = {
 
 interface PostPageProps {
   post: PostDetails
+  timestamp: number
 }
 
 export function getStaticPaths(
@@ -49,18 +51,19 @@ export function getStaticPaths(
 
 export const getStaticProps = withDictionaries(
   ['common'],
-  function getStaticProps(
+  async function getStaticProps(
     context: GetStaticPropsContext<PostPageParams>,
-  ): GetStaticPropsResult<PostPageProps> {
+  ): Promise<GetStaticPropsResult<PostPageProps>> {
     const { id } = context.params as PostPageParams
     const post = getPost(id)
+    const timestamp = await getLastUpdatedTimestamp(post._id)
 
-    return { props: { post } }
+    return { props: { post, timestamp } }
   },
 )
 
 export default function PostPage(props: PostPageProps): JSX.Element {
-  const { post } = props
+  const { post, timestamp } = props
 
   const canonicalUrl = useCanonicalUrl()
   const appMetadata = useAppMetadata()
@@ -160,6 +163,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
             <Content components={components} />
           </div>
         </div>
+        <LastUpdated timestamp={timestamp} />
       </MainContent>
     </Fragment>
   )
@@ -224,5 +228,24 @@ function PostHeader(props: PostHeaderProps): JSX.Element {
         </div>
       </dl>
     </header>
+  )
+}
+
+interface LastUpdatedProps {
+  timestamp: number
+}
+
+function LastUpdated(props: LastUpdatedProps): JSX.Element {
+  const { timestamp } = props
+
+  const { formatDateTime, t } = useI18n<'common'>()
+
+  return (
+    <div>
+      {t(['common', 'post', 'last-updated'], {
+        // FIXME: `<time />`
+        values: { date: formatDateTime(timestamp, { dateStyle: 'long' }) },
+      })}
+    </div>
   )
 }

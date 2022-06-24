@@ -41,6 +41,10 @@ RUN npm run build
 # docker buildkit currently cannot mount secrets directly to env vars
 # @see https://github.com/moby/buildkit/issues/2122
 USER root
+RUN --mount=type=secret,id=GITHUB_API_TOKEN \
+  export GITHUB_API_TOKEN="$(cat /run/secrets/GITHUB_API_TOKEN)" && \
+  yarn create:search-index && \
+  unset GITHUB_API_TOKEN
 RUN --mount=type=secret,id=TYPESENSE_ADMIN_API_KEY \
   export TYPESENSE_ADMIN_API_KEY="$(cat /run/secrets/TYPESENSE_ADMIN_API_KEY)" && \
   yarn create:search-index && \

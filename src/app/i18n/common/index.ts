@@ -45,6 +45,7 @@ export interface Dictionary {
     footnotes: string
     'reading-time': string
     minute: Plurals
+    'last-updated': string
   }
   cms: {
     metadata: {
@@ -63,4 +64,5 @@ export interface Dictionary {
   'rss-feed': string
   'next-page': string
   'previous-page': string
+  'posts-pages': string
 }

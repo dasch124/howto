@@ -54,6 +54,7 @@ export const dictionary: Dictionary = {
       one: '{{time}} minute',
       other: '{{time}} minutes',
     },
+    'last-updated': 'Last updated on {{date}}',
   },
   cms: {
     metadata: {
@@ -79,4 +80,5 @@ export const dictionary: Dictionary = {
   'rss-feed': 'RSS Feed',
   'next-page': 'Next page',
   'previous-page': 'Previous page',
+  'posts-pages': 'Posts pages',
 }

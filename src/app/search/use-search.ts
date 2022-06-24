@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
+import type { SearchParams, SearchResponse } from 'typesense/lib/Typesense/Documents'
+import type { SearchOnlyCollection } from 'typesense/lib/Typesense/SearchOnlyCollection'
 
 import { createSearchClient } from '@/app/search/create_search-client'
+import { posts as postsSchema } from '@/app/search/schemas'
 import type { IndexedPost } from '@/app/search/types'
 import { useDebouncedState } from '@/lib/use-debounced-state'
 import { delay, maxSearchResults, minSearchTermLength, snippetWords } from '~/config/search.config'
@@ -9,19 +12,24 @@ const searchStatus = ['idle', 'loading', 'success', 'error', 'disabled'] as cons
 
 export type SearchResultData = IndexedPost
 
-export type SearchResult = Hit<SearchResultData>
+export type SearchResult = SearchResponse<SearchResultData>
 
 export type SearchStatus = typeof searchStatus[number]
 
 export function useSearch(searchTerm: string): {
-  data: Array<SearchResult> | undefined
+  data: SearchResult | null
   status: SearchStatus
   error: Error | null
 } {
-  const [searchIndex] = useState(() => {
-    return createSearchClient()
+  const [collection] = useState<SearchOnlyCollection<SearchResultData> | null>(() => {
+    const client = createSearchClient()
+    if (client == null) return null
+    const collection = client.collections(
+      postsSchema.name,
+    ) as SearchOnlyCollection<SearchResultData>
+    return collection
   })
-  const [searchResults, setSearchResults] = useState<Array<SearchResult>>([])
+  const [searchResults, setSearchResults] = useState<SearchResult | null>(null)
   const [status, setStatus] = useState<SearchStatus>('idle')
   const [error, setError] = useState<Error | null>(null)
 
@@ -31,18 +39,13 @@ export function useSearch(searchTerm: string): {
     let wasCanceled = false
 
     async function search() {
-      if (searchIndex == null) {
+      if (collection == null) {
         setStatus('disabled')
         return
       }
 
       if (debouncedSearchTerm.length < minSearchTermLength) {
-        setSearchResults((searchResults) => {
-          if (searchResults.length !== 0) {
-            return []
-          }
-          return searchResults
-        })
+        setSearchResults(null)
         setStatus('idle')
         return
       }
@@ -50,18 +53,23 @@ export function useSearch(searchTerm: string): {
       setStatus('loading')
 
       try {
-        const results = await searchIndex.search<SearchResultData>(debouncedSearchTerm, {
-          hitsPerPage: maxSearchResults,
-          attributesToRetrieve: ['type', 'kind', 'id', 'title', 'tags', 'heading'],
-          attributesToHighlight: ['title', 'content'],
-          attributesToSnippet: [`content:${snippetWords}`],
-          highlightPreTag: '<mark>',
-          highlightPostTag: '</mark>',
-          snippetEllipsisText: '...',
-        })
+        const searchParams: SearchParams = {
+          q: debouncedSearchTerm,
+          query_by: 'title,tags,content,authors',
+          sort_by: 'timestamp:desc',
+          // hitsPerPage: maxSearchResults,
+          // attributesToRetrieve: ['type', 'kind', 'id', 'title', 'tags', 'heading'],
+          // attributesToHighlight: ['title', 'content'],
+          // attributesToSnippet: [`content:${snippetWords}`],
+          // highlightPreTag: '<mark>',
+          // highlightPostTag: '</mark>',
+          // snippetEllipsisText: '...',
+        }
+
+        const results = await collection.documents().search(searchParams, {})
 
         if (!wasCanceled) {
-          setSearchResults(results.hits)
+          setSearchResults(results)
           setStatus('success')
         }
       } catch (error) {
@@ -77,7 +85,7 @@ export function useSearch(searchTerm: string): {
     return () => {
       wasCanceled = true
     }
-  }, [debouncedSearchTerm, searchIndex])
+  }, [debouncedSearchTerm, collection])
 
   return {
     data: searchResults,

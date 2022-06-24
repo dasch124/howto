@@ -124,35 +124,36 @@ interface PostsPageNavigationProps {
   pages: number
 }
 
-function PostsPageNavigation(props: PostsPageNavigationProps): JSX.Element {
+function PostsPageNavigation(props: PostsPageNavigationProps): JSX.Element | null {
   const { page, pages } = props
 
   const { t } = useI18n<'common'>()
 
+  const hasPreviousPage = page > 1
+  const hasNextPage = page < pages
+
+  if (!hasPreviousPage && !hasNextPage) return null
+
   return (
-    <nav>
+    <nav aria-label={t(['common', 'posts-pages'])}>
       <ul
         className="flex items-center justify-between text-sm text-accent-secondary-text"
         // role="list"
       >
-        <li>
-          <Link
-            aria-disabled={page - 1 < 1}
-            href={routes.posts({ page: Math.max(page - 1, 1) })}
-            rel="prev"
-          >
-            &laquo; {t(['common', 'previous-page'])}
-          </Link>
-        </li>
-        <li>
-          <Link
-            aria-disabled={page + 1 > pages}
-            href={routes.posts({ page: Math.min(page + 1, pages) })}
-            rel="next"
-          >
-            {t(['common', 'next-page'])} &raquo;
-          </Link>
-        </li>
+        {hasPreviousPage ? (
+          <li className="justify-self-start">
+            <Link href={routes.posts({ page: Math.max(page - 1, 1) })} rel="prev">
+              &laquo; {t(['common', 'previous-page'])}
+            </Link>
+          </li>
+        ) : null}
+        {hasNextPage ? (
+          <li className="justify-self-end">
+            <Link href={routes.posts({ page: Math.min(page + 1, pages) })} rel="next">
+              {t(['common', 'next-page'])} &raquo;
+            </Link>
+          </li>
+        ) : null}
       </ul>
     </nav>
   )

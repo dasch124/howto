@@ -4,10 +4,12 @@ import { useRouter } from 'next/router'
 import { useI18n } from '@/app/i18n/use-i18n'
 import * as routes from '@/app/route/routes.config'
 import { useLocale } from '@/app/route/use-locale'
+import { usePathname } from '@/app/route/use-pathname'
 import { SearchDialogTrigger } from '@/components/search-dialog-trigger'
 
 export function PageHeader(): JSX.Element {
   const { t } = useI18n<'common'>()
+  const pathname = usePathname()
 
   return (
     <header className="flex items-center justify-between gap-8 px-8 py-4">
@@ -23,7 +25,12 @@ export function PageHeader(): JSX.Element {
         <nav className="font-medium">
           <ul role="list">
             <li>
-              <Link href={routes.posts()}>{t(['common', 'posts', 'metadata', 'title'])}</Link>
+              <Link
+                aria-current={pathname.startsWith(routes.posts().pathname) ? 'page' : undefined}
+                href={routes.posts()}
+              >
+                {t(['common', 'posts', 'metadata', 'title'])}
+              </Link>
             </li>
           </ul>
         </nav>

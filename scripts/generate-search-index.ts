@@ -13,11 +13,11 @@ import toPlaintext from 'strip-markdown'
 import { Client } from 'typesense'
 import { VFile } from 'vfile'
 
+import { posts as postsSchema } from '@/app/search/schemas'
 import type { IndexedPost } from '@/app/search/types'
 import { getPersonCore, getPersonFullName, getTagCore } from '@/cms/cms.client'
 import withChunks from '@/lib/remark-chunks'
 import {
-  typesenseCollectionName,
   typesenseHost as host,
   typesensePort as port,
   typesenseProtocol as protocol,
@@ -89,6 +89,8 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
     kind: 'post' as const,
     ...pick(post, ['date', 'id', 'lang', 'uuid']),
     title: escape(post.title),
+    /** JavaScript timestamps are in milliseconds, unix timestamps in seconds. */
+    timestamp: Math.floor(new Date(post.date).getTime() / 1000),
     authors: post.authors.map((id) => {
       const person = getPersonCore(id)
       return getPersonFullName(person)
@@ -121,7 +123,10 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 
 async function generate() {
   const client = createAdminSearchClient()
-  const collection = client.collections(typesenseCollectionName)
+  if (!(await client.collections(postsSchema.name).exists())) {
+    await client.collections().create(postsSchema)
+  }
+  const collection = client.collections(postsSchema.name)
 
   const postsChunks = await Promise.all(allPosts.map(getIndexedPostChunks))
   const documents = [...postsChunks.flat()]

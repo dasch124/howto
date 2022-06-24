@@ -45,3 +45,12 @@
 ## post layout with tailwind typography currently does not work in grid coontainer
 
 because it relies on margin collapse
+
+## search with typesense
+
+- should each content type (posts, curricula) have their own typesense schema/collection? currently
+  we have a single one, named in `~/config/search.config.ts`
+
+## Table of contents
+
+- incl. floating table of contents on mobile
