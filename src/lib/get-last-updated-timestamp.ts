@@ -1,6 +1,7 @@
 import { log } from '@stefanprobst/log'
 import type { RequestOptions } from '@stefanprobst/request'
 import { createUrl, request } from '@stefanprobst/request'
+import path from 'node:path'
 
 const apiToken = process.env['GITHUB_API_TOKEN']
 const repo = process.env['NEXT_PUBLIC_GIT_REPO'] ?? 'acdh-oeaw/howto'
@@ -13,7 +14,7 @@ export async function getLastUpdatedTimestamp(filePath: string): Promise<number>
 
   const url = createUrl({
     baseUrl: 'https://api.github.com',
-    pathname: `/repos/${repo}/commits`,
+    pathname: path.posix.join('repos', repo, 'commits'),
     searchParams: {
       path: filePath,
       page: 1,

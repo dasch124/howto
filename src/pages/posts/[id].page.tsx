@@ -9,6 +9,7 @@ import type {
   GetStaticPropsContext,
   GetStaticPropsResult,
 } from 'next'
+import path from 'node:path'
 import { Fragment } from 'react'
 
 import { useI18n } from '@/app/i18n/use-i18n'
@@ -56,7 +57,8 @@ export const getStaticProps = withDictionaries(
   ): Promise<GetStaticPropsResult<PostPageProps>> {
     const { id } = context.params as PostPageParams
     const post = getPost(id)
-    const timestamp = await getLastUpdatedTimestamp(post._id)
+    const filePath = path.posix.join('content', post._id)
+    const timestamp = await getLastUpdatedTimestamp(filePath)
 
     return { props: { post, timestamp } }
   },

@@ -19,9 +19,9 @@ body,
 }
 
 :root {
-  font-family: var(--font-family);
   background-color: var(--color-background);
   color: var(--color-text);
+  font-family: var(--font-family);
 }
 
 a {

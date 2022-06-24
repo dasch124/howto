@@ -98,7 +98,7 @@ const config = {
                 marginBlockStart: 0,
               },
               '.footnotes': {
-                fontSize: theme('fontSize.lg'),
+                fontSize: theme('fontSize.lg')[0],
               },
             },
           },

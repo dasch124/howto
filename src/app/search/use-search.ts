@@ -57,13 +57,11 @@ export function useSearch(searchTerm: string): {
           q: debouncedSearchTerm,
           query_by: 'title,tags,content,authors',
           sort_by: 'timestamp:desc',
-          // hitsPerPage: maxSearchResults,
-          // attributesToRetrieve: ['type', 'kind', 'id', 'title', 'tags', 'heading'],
-          // attributesToHighlight: ['title', 'content'],
-          // attributesToSnippet: [`content:${snippetWords}`],
-          // highlightPreTag: '<mark>',
-          // highlightPostTag: '</mark>',
-          // snippetEllipsisText: '...',
+          highlight_affix_num_tokens: snippetWords,
+          highlight_fields: 'content',
+          highlight_full_fields: 'title',
+          include_fields: 'kind,id,title,tags,content,authors,heading',
+          limit_hits: maxSearchResults,
         }
 
         const results = await collection.documents().search(searchParams, {})

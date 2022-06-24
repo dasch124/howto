@@ -123,6 +123,11 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 
 async function generate() {
   const client = createAdminSearchClient()
+  /**
+   * When querying more than one collection, use federated search.
+   *
+   * @see https://typesense.org/docs/0.23.0/api/documents.html#federated-multi-search
+   */
   if (!(await client.collections(postsSchema.name).exists())) {
     await client.collections().create(postsSchema)
   }
@@ -132,6 +137,17 @@ async function generate() {
   const documents = [...postsChunks.flat()]
 
   const response = await collection.documents().import(documents, { action: 'upsert' })
+
+  /** Typesense will always respond with HTTP 200 OK. */
+  const errors = response.filter((document) => {
+    return document.success === false
+  })
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Failed to update ${errors.length} documents.\n` + JSON.stringify(errors, null, 2),
+    )
+  }
 
   return response.length
 }

@@ -1,7 +1,7 @@
 /**
- * Number of words in content snippet.
+ * Number of words in content snippet on each side of the match.
  */
-export const snippetWords = 20
+export const snippetWords = 8
 
 /**
  * Max number of search results.
