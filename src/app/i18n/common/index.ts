@@ -61,4 +61,6 @@ export interface Dictionary {
   'search-results-count': Plurals
   'read-more': string
   'rss-feed': string
+  'next-page': string
+  'previous-page': string
 }

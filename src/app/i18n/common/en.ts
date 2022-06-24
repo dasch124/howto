@@ -7,7 +7,7 @@ export const dictionary: Dictionary = {
     },
     hero: {
       title:
-        '<Accent>Share</Accent> and <Accent>expand</Accent> your knowledge in <Accent>Digital Humanities</Accent>',
+        '<PrimaryAccent>Share</PrimaryAccent> and <PrimaryAccent>expand</PrimaryAccent> your knowledge in <SecondaryAccent>Digital Humanities</SecondaryAccent>',
       text: 'Welcome to ACDH-CH Learning Resources. This living space gathers interactive learning material, practical HowTo articles and best practices on a wide range of Digital Humanities topics, methodologies and infrastructures. These resources can be used for self-guided learning as well as for teaching in higher education. It is part of our mission to actively transfer knowledge from ongoing research into the wider Digital Humanities Community as well as to educate a new generation of humanities researchers with digital methods.',
     },
   },
@@ -77,4 +77,6 @@ export const dictionary: Dictionary = {
   },
   'read-more': 'Read more',
   'rss-feed': 'RSS Feed',
+  'next-page': 'Next page',
+  'previous-page': 'Previous page',
 }

@@ -7,7 +7,7 @@ export const dictionary: Dictionary = {
     },
     hero: {
       title:
-        '<Accent>Teilen</Accent> und <Accent>erweitern</Accent> Sie Ihr Wissen im Bereich <Accent>Digital Humanities</Accent>',
+        '<PrimaryAccent>Teilen</PrimaryAccent> und <PrimaryAccent>erweitern</PrimaryAccent> Sie Ihr Wissen im Bereich <SecondaryAccent>Digital Humanities</SecondaryAccent>',
       text: 'Willkommen bei den ACDH-CH Lernressourcen. Hier finden Sie interaktives Lernmaterial, praktische HowTo-Artikel und Best Practices Beispiele zu einem breiten Spektrum von Themen, Methoden und Infrastrukturen aus den Digital Humanities. Diese Ressourcen können sowohl für das selbstgesteuerte Lernen als auch für die Lehre im Hochschulbereich genutzt werden. Es ist Teil unserer Mission, Wissen aus der laufenden Forschung aktiv in die breitere Digital Humanities Community zu transferieren und damit eine neue Generation von Geisteswissenschaftlern in der Nutzung von digitalen Methoden auszubilden.',
     },
   },
@@ -77,4 +77,6 @@ export const dictionary: Dictionary = {
   },
   'read-more': 'Weiterlesen',
   'rss-feed': 'RSS Feed',
+  'next-page': 'Nächste Seite',
+  'previous-page': 'Vorherige Seite',
 }

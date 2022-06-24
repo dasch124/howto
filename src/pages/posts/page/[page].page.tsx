@@ -112,7 +112,9 @@ function PostsSection(props: PostsSectionProps): JSX.Element {
         {t(['common', 'posts', 'all-posts'])}
       </h2>
       <PostsList posts={posts} />
-      <PostsPageNavigation page={page} pages={pages} />
+      <div className="my-12">
+        <PostsPageNavigation page={page} pages={pages} />
+      </div>
     </section>
   )
 }
@@ -125,14 +127,31 @@ interface PostsPageNavigationProps {
 function PostsPageNavigation(props: PostsPageNavigationProps): JSX.Element {
   const { page, pages } = props
 
+  const { t } = useI18n<'common'>()
+
   return (
     <nav>
-      <ul>
+      <ul
+        className="flex items-center justify-between text-sm text-accent-secondary-text"
+        // role="list"
+      >
         <li>
-          <Link href={routes.posts({ page: Math.max(page - 1, 1) })} rel="prev"></Link>
+          <Link
+            aria-disabled={page - 1 < 1}
+            href={routes.posts({ page: Math.max(page - 1, 1) })}
+            rel="prev"
+          >
+            &laquo; {t(['common', 'previous-page'])}
+          </Link>
         </li>
         <li>
-          <Link href={routes.posts({ page: Math.min(page + 1, pages) })} rel="next"></Link>
+          <Link
+            aria-disabled={page + 1 > pages}
+            href={routes.posts({ page: Math.min(page + 1, pages) })}
+            rel="next"
+          >
+            {t(['common', 'next-page'])} &raquo;
+          </Link>
         </li>
       </ul>
     </nav>

@@ -52,21 +52,31 @@ function HomePageHeader(): JSX.Element {
   return (
     <header className="my-16 grid gap-8">
       <h1 className="text-5xl font-black text-heading-text">
-        {t(['common', 'home', 'hero', 'title'], { components: { Accent } })}
+        {t(['common', 'home', 'hero', 'title'], { components: { PrimaryAccent, SecondaryAccent } })}
       </h1>
       <p>{t(['common', 'home', 'hero', 'text'])}</p>
     </header>
   )
 }
 
-interface AccentProps {
+interface PrimaryAccentProps {
   children?: ReactNode
 }
 
-function Accent(props: AccentProps): JSX.Element {
+function PrimaryAccent(props: PrimaryAccentProps): JSX.Element {
   const { children } = props
 
   return <span className="text-accent-primary-text">{children}</span>
+}
+
+interface SecondaryAccentProps {
+  children?: ReactNode
+}
+
+function SecondaryAccent(props: SecondaryAccentProps): JSX.Element {
+  const { children } = props
+
+  return <span className="text-accent-secondary-text">{children}</span>
 }
 
 interface RecentPostsSectionProps {

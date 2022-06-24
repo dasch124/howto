@@ -391,7 +391,15 @@ export default makeSource({
       remarkPlugins: [
         withFrontmatter,
         withGfm,
-        withSmartQuotes,
+        [
+          withSmartQuotes,
+          locale === 'de'
+            ? {
+                openingQuotes: { double: '„', single: ',' },
+                closingQuotes: { double: '”', single: '’' },
+              }
+            : undefined,
+        ],
         [
           toNlcst as Plugin,
           unified()

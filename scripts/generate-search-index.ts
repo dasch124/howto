@@ -14,7 +14,7 @@ import { Client } from 'typesense'
 import { VFile } from 'vfile'
 
 import type { IndexedPost } from '@/app/search/types'
-import { getPersonCore, getTagCore } from '@/cms/cms.client'
+import { getPersonCore, getPersonFullName, getTagCore } from '@/cms/cms.client'
 import withChunks from '@/lib/remark-chunks'
 import {
   typesenseCollectionName,
@@ -90,17 +90,19 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
     ...pick(post, ['date', 'id', 'lang', 'uuid']),
     title: escape(post.title),
     authors: post.authors.map((id) => {
-      return pick(getPersonCore(id), ['firstName', 'id', 'lastName'])
+      const person = getPersonCore(id)
+      return getPersonFullName(person)
     }),
     tags: post.tags.map((id) => {
-      return pick(getTagCore(id), ['id', 'name'])
+      const tag = getTagCore(id)
+      return tag.name
     }),
   }
 
   return Promise.all([
     Promise.resolve({
       ...shared,
-      objectID: post.uuid,
+      id: post.uuid,
       content: escape(post.abstract),
     }),
     ...chunks.map(async (chunk, index) => {
@@ -109,7 +111,7 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 
       return {
         ...shared,
-        objectID: [post.uuid, index].join('+'),
+        id: [post.uuid, index].join('_'),
         content: escape(content),
         heading: { id: chunk.id, title: chunk.title, depth: chunk.depth },
       }
@@ -121,11 +123,10 @@ async function generate() {
   const client = createAdminSearchClient()
   const collection = client.collections(typesenseCollectionName)
 
-  const postsChunks = await Promise.all(allPosts.flatMap(getIndexedPostChunks))
+  const postsChunks = await Promise.all(allPosts.map(getIndexedPostChunks))
+  const documents = [...postsChunks.flat()]
 
-  /** Clear search index to avoid stale entries (or stale entry chunks). */
-  await collection.documents().clear()
-  const response = await collection.documents().import([...postsChunks])
+  const response = await collection.documents().import(documents, { action: 'upsert' })
 
   return response.length
 }

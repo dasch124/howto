@@ -13,8 +13,8 @@ export function imprint() {
   return { pathname: '/imprint' }
 }
 
-export function posts(searchParams?: PostsPageParams) {
-  return { pathname: '/posts', query: searchParams }
+export function posts(params?: PostsPageParams) {
+  return { pathname: `/posts/page/${params?.page ?? 1}` }
 }
 
 export function post(params: PostPageParams) {
