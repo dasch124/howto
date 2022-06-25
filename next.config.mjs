@@ -2,7 +2,6 @@
 /** @typedef {import('webpack').Configuration} WebpackConfig */
 /** @typedef {import('~/config/i18n.config').Locale} Locale */
 
-// @ts-expect-error Missing module declaration.
 import createBundleAnalyzerPlugin from '@next/bundle-analyzer'
 import { log } from '@stefanprobst/log'
 import { createContentlayerPlugin } from 'next-contentlayer'
@@ -22,6 +21,9 @@ const config = {
   },
   experimental: {
     browsersListForSwc: true,
+    images: {
+      allowFutureImage: true,
+    },
     legacyBrowsers: false,
     newNextLinkBehavior: true,
     outputStandalone: true,

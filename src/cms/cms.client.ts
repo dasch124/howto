@@ -1,4 +1,5 @@
 import { assert } from '@stefanprobst/assert'
+import { groupBy } from '@stefanprobst/group-by'
 import { isNonEmptyString } from '@stefanprobst/is-nonempty-string'
 import { keyBy } from '@stefanprobst/key-by'
 import { pick } from '@stefanprobst/pick'
@@ -62,6 +63,10 @@ const peopleById = keyBy(allPeople, (person) => {
 
 const postsById = keyBy(allPosts, (post) => {
   return post.id
+})
+
+const postsByTag = groupBy(allPosts, (post) => {
+  return post.tags
 })
 
 const tagsById = keyBy(allTags, (tag) => {
@@ -151,6 +156,28 @@ export function getPostIds(): Array<Post['id']> {
 
 export function getPostsCore(): Array<PostCore> {
   const posts = allPosts
+    .map((post) => {
+      return getPostCore(post.id)
+    })
+    .sort((a, b) => {
+      return compareDesc(new Date(a.date), new Date(b.date))
+    })
+
+  return posts
+}
+
+export function getPostsCoreByTags(ids: Array<Tag['id']>): Array<PostCore> {
+  const allPostsByTags = ids.flatMap((id) => {
+    return postsByTag[id] ?? []
+  })
+
+  const uniquePostsByTags = Object.values(
+    keyBy(allPostsByTags, (post) => {
+      return post.id
+    }),
+  )
+
+  const posts = uniquePostsByTags
     .map((post) => {
       return getPostCore(post.id)
     })

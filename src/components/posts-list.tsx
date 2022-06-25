@@ -33,7 +33,7 @@ export function PostsList(props: PostsListProps): JSX.Element {
                 <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
                 <dd>
                   <ul
-                    className="flex flex-wrap gap-3 text-sm font-medium text-accent-primary-text"
+                    className="flex flex-wrap gap-3 text-sm font-medium leading-none text-accent-primary-text"
                     role="list"
                   >
                     {post.tags.map((tag) => {
@@ -54,7 +54,7 @@ export function PostsList(props: PostsListProps): JSX.Element {
                   <dt className="sr-only">{t(['common', 'post', 'author', 'other'])}</dt>
                   <dd>
                     <ul
-                      className="flex flex-wrap gap-3 text-sm font-medium text-accent-primary-text"
+                      className="flex flex-wrap gap-3 text-sm font-medium leading-none text-accent-primary-text"
                       role="list"
                     >
                       {post.authors.map((author) => {

@@ -10,26 +10,24 @@ import { delay, maxSearchResults, minSearchTermLength, snippetWords } from '~/co
 
 const searchStatus = ['idle', 'loading', 'success', 'error', 'disabled'] as const
 
-export type SearchResultData = IndexedPost
+export type SearchResult = IndexedPost
 
-export type SearchResult = SearchResponse<SearchResultData>
+export type { SearchResponseHit } from 'typesense/lib/Typesense/Documents'
 
 export type SearchStatus = typeof searchStatus[number]
 
 export function useSearch(searchTerm: string): {
-  data: SearchResult | null
+  data: SearchResponse<SearchResult> | null
   status: SearchStatus
   error: Error | null
 } {
-  const [collection] = useState<SearchOnlyCollection<SearchResultData> | null>(() => {
+  const [collection] = useState<SearchOnlyCollection<SearchResult> | null>(() => {
     const client = createSearchClient()
     if (client == null) return null
-    const collection = client.collections(
-      postsSchema.name,
-    ) as SearchOnlyCollection<SearchResultData>
+    const collection = client.collections(postsSchema.name) as SearchOnlyCollection<SearchResult>
     return collection
   })
-  const [searchResults, setSearchResults] = useState<SearchResult | null>(null)
+  const [searchResults, setSearchResults] = useState<SearchResponse<SearchResult> | null>(null)
   const [status, setStatus] = useState<SearchStatus>('idle')
   const [error, setError] = useState<Error | null>(null)
 

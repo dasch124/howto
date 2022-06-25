@@ -1,6 +1,8 @@
 import 'tailwindcss/tailwind.css'
 import '@/styles/index.css'
 import '@/styles/nprogress.css'
+import '@wooorm/starry-night/style/core.css'
+import '@/styles/syntax-highlighting.css'
 
 import { ErrorBoundary } from '@stefanprobst/next-error-boundary'
 import { PageMetadata } from '@stefanprobst/next-page-metadata'

@@ -55,6 +55,8 @@ export const dictionary: Dictionary = {
       other: '{{time}} minutes',
     },
     'last-updated': 'Last updated on {{date}}',
+    'edit-post-in-cms': 'Edit this post',
+    'related-posts': 'Related posts',
   },
   cms: {
     metadata: {

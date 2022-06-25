@@ -4,12 +4,7 @@
 import { ClockIcon } from '@heroicons/react/outline'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
-import type {
-  GetStaticPathsContext,
-  GetStaticPathsResult,
-  GetStaticPropsContext,
-  GetStaticPropsResult,
-} from 'next'
+import type { GetStaticPropsResult } from 'next'
 import Link from 'next/link'
 import path from 'node:path'
 import { Fragment } from 'react'
@@ -23,14 +18,14 @@ import { usePageTitleTemplate } from '@/app/metadata/use-page-title-template'
 import * as routes from '@/app/route/routes.config'
 import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import type { PostCore, PostDetails } from '@/cms/cms.client'
-import { getPersonFullName, getPost, getPostIds, getPostsCoreByTags } from '@/cms/cms.client'
+import { getPersonFullName, getPost, getPostsCoreByTags } from '@/cms/cms.client'
 import { EditInCmsLink } from '@/components/edit-in-cms-link'
 import { MainContent } from '@/components/main-content'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useMdx } from '@/lib/use-mdx'
-import type { Locale } from '~/config/i18n.config'
+import styles from '@/styles/markdown.module.css'
 import { relatedPostsCount } from '~/config/ui.config'
 
 export type PostPageParams = {
@@ -43,43 +38,26 @@ interface PostPageProps {
   timestamp: number
 }
 
-export function getStaticPaths(
-  context: GetStaticPathsContext,
-): GetStaticPathsResult<PageParams<PostPageParams>> {
-  const locales = context.locales as Array<Locale>
-  const paths = locales.flatMap((locale) => {
-    const ids = getPostIds()
-    return ids.map((id) => {
-      return { locale, params: { id } }
-    })
-  })
-
-  return { paths, fallback: false }
-}
-
-export const getStaticProps = withDictionaries(
-  ['common'],
-  async function getStaticProps(
-    context: GetStaticPropsContext<PostPageParams>,
-  ): Promise<GetStaticPropsResult<PostPageProps>> {
-    const { id } = context.params as PostPageParams
-    const post = getPost(id)
-    const filePath = path.posix.join('content', post._id)
-    const timestamp = await getLastUpdatedTimestamp(filePath)
-    const relatedPosts = pickRandom(
-      getPostsCoreByTags(
-        post.tags.map((tag) => {
-          return tag.id
-        }),
-      ).filter((post) => {
-        return post.id !== id
+export const getStaticProps = withDictionaries(['common'], async function getStaticProps(): Promise<
+  GetStaticPropsResult<PostPageProps>
+> {
+  const id = 'introduction-to-figma'
+  const post = getPost(id)
+  const filePath = path.posix.join('content', post._id)
+  const timestamp = await getLastUpdatedTimestamp(filePath)
+  const relatedPosts = pickRandom(
+    getPostsCoreByTags(
+      post.tags.map((tag) => {
+        return tag.id
       }),
-      relatedPostsCount,
-    )
+    ).filter((post) => {
+      return post.id !== id
+    }),
+    relatedPostsCount,
+  )
 
-    return { props: { post, relatedPosts, timestamp } }
-  },
-)
+  return { props: { post, relatedPosts, timestamp } }
+})
 
 export default function PostPage(props: PostPageProps): JSX.Element {
   const { post, relatedPosts, timestamp } = props
@@ -176,11 +154,12 @@ export default function PostPage(props: PostPageProps): JSX.Element {
       />
       <MainContent className="mx-auto my-16 grid w-full max-w-6xl content-start gap-16 px-8 py-8">
         <PostHeader post={post} />
-        <div className="prose mx-auto grid grid-cols-prose">
-          {/* Extra wrapping div necessary to preserve margin-collapsing, which will not work for grid items. */}
-          <div className="[grid-column:content]">
-            <Content components={components} />
-          </div>
+        <div
+          className={
+            styles['markdown'] + ' mx-auto grid grid-cols-prose [&>:where(*)]:[grid-column:content]'
+          }
+        >
+          <Content components={components} />
         </div>
         <div className="grid justify-items-end gap-2 justify-self-end">
           <LastUpdated timestamp={timestamp} />

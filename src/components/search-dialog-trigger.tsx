@@ -1,13 +1,14 @@
 import { Combobox, Dialog, Transition } from '@headlessui/react'
 import { SearchIcon } from '@heroicons/react/outline'
 import { isNonEmptyArray } from '@stefanprobst/is-nonempty-array'
+import { keyBy } from '@stefanprobst/key-by'
 import cx from 'clsx'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 
 import { useI18n } from '@/app/i18n/use-i18n'
 import * as routes from '@/app/route/routes.config'
-import type { SearchResult } from '@/app/search/use-search'
+import type { SearchResponseHit, SearchResult } from '@/app/search/use-search'
 import { useSearch } from '@/app/search/use-search'
 import { Spinner } from '@/components/spinner'
 import { useDialogState } from '@/lib/use-dialog-state'
@@ -17,8 +18,10 @@ export function SearchDialogTrigger(): JSX.Element {
   const router = useRouter()
   const dialog = useDialogState()
   const [searchTerm, setSearchTerm] = useState('')
-  const searchResults = useSearch(searchTerm)
-  const [selectedKey, _setSelectedKey] = useState<SearchResult | null>(null)
+  const query = useSearch(searchTerm)
+  const [selectedKey, _setSelectedKey] = useState<SearchResponseHit<SearchResult> | null>(null)
+
+  const searchResults = query.data?.hits ?? []
 
   useEffect(() => {
     function open(event: KeyboardEvent) {
@@ -36,12 +39,12 @@ export function SearchDialogTrigger(): JSX.Element {
     }
   })
 
-  function onSelectionChange(searchResult: SearchResult) {
-    // setSelectedKey(searchResult)
+  function onSelectionChange(searchResult: SearchResponseHit<SearchResult>) {
+    // _setSelectedKey(searchResult)
     dialog.close()
 
-    const href = routes.post({ id: searchResult.id })
-    const hash = searchResult.heading?.id
+    const href = routes.post({ id: searchResult.document.id })
+    const hash = searchResult.document.heading?.id
     router.push({ ...href, hash })
   }
 
@@ -100,9 +103,9 @@ export function SearchDialogTrigger(): JSX.Element {
                       autoComplete="off"
                       autoCorrect="off"
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
-                      displayValue={(searchResult: SearchResult | null) => {
+                      displayValue={(searchResult: SearchResponseHit<SearchResult> | null) => {
                         if (searchResult == null) return ''
-                        return searchResult.title
+                        return searchResult.document.title
                       }}
                       name="search-term"
                       onChange={(event) => {
@@ -113,15 +116,15 @@ export function SearchDialogTrigger(): JSX.Element {
                       type="search"
                     />
                   </div>
-                  {isNonEmptyArray(searchResults.data) ? (
+                  {isNonEmptyArray(searchResults) ? (
                     <Combobox.Options
                       static
                       className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-400"
                     >
-                      {searchResults.data.map((searchResult) => {
+                      {searchResults.map((searchResult) => {
                         return (
                           <Combobox.Option
-                            key={searchResult.id}
+                            key={searchResult.document.id}
                             value={searchResult}
                             className={({ active }) => {
                               return cx(
@@ -135,22 +138,22 @@ export function SearchDialogTrigger(): JSX.Element {
                         )
                       })}
                     </Combobox.Options>
-                  ) : searchResults.status === 'success' ? (
+                  ) : query.status === 'success' ? (
                     <p className="p-4 text-sm text-gray-400">
                       {t(['common', 'no-search-results'])}
                     </p>
                   ) : null}
                 </Combobox>
                 <footer className="flex flex-wrap items-center bg-gray-900 py-2.5 px-4 text-xs text-gray-400">
-                  {searchResults.status === 'loading' ? (
+                  {query.status === 'loading' ? (
                     <span className="inline-flex gap-2">
                       <Spinner className="h-4 w-4" />
                       {t(['common', 'loading'])}
                     </span>
-                  ) : searchResults.status === 'success' ? (
-                    isNonEmptyArray(searchResults.data) ? (
-                      t(['common', 'search-results-count', plural(searchResults.data.length)], {
-                        values: { count: String(searchResults.data.length) },
+                  ) : query.status === 'success' ? (
+                    query.data != null && query.data.found > 0 ? (
+                      t(['common', 'search-results-count', plural(query.data.found)], {
+                        values: { count: String(query.data.found) },
                       })
                     ) : (
                       t(['common', 'no-search-results'])
@@ -169,7 +172,7 @@ export function SearchDialogTrigger(): JSX.Element {
 }
 
 interface SearchResultPreviewProps {
-  searchResult: SearchResult
+  searchResult: SearchResponseHit<SearchResult>
 }
 
 function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
@@ -177,31 +180,35 @@ function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
 
   const { formatDateTime, t } = useI18n<'common'>()
 
+  const highlights = keyBy(searchResult.highlights ?? [], (highlight) => {
+    return highlight.field
+  })
+
   return (
     <article>
-      {searchResult._highlightResult?.title != null ? (
-        <h2 dangerouslySetInnerHTML={{ __html: searchResult._highlightResult.title.value }} />
+      {'title' in highlights ? (
+        <h2 dangerouslySetInnerHTML={{ __html: highlights.title.snippet! }} />
       ) : (
-        <h2>{searchResult.title}</h2>
+        <h2>{searchResult.document.title}</h2>
       )}
       <div className="text-muted-text">
-        <time dateTime={searchResult.date}>
-          {formatDateTime(new Date(searchResult.date), { dateStyle: 'long' })}
+        <time dateTime={searchResult.document.date}>
+          {formatDateTime(new Date(searchResult.document.date), { dateStyle: 'long' })}
         </time>
-        {searchResult.heading != null ? (
+        {searchResult.document.heading != null ? (
           <span>
-            {'#'.repeat(searchResult.heading.depth)} {searchResult.heading.title}
+            {'#'.repeat(searchResult.document.heading.depth)} {searchResult.document.heading.title}
           </span>
         ) : null}
-        {searchResult._snippetResult != null ? (
-          <div dangerouslySetInnerHTML={{ __html: searchResult._snippetResult.content.value }} />
+        {'content' in highlights ? (
+          <div dangerouslySetInnerHTML={{ __html: highlights.content.snippet! }} />
         ) : null}
         <dl>
           <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
           <dd>
             <ul className="flex gap-2" role="list">
-              {searchResult.tags.map((tag) => {
-                return <li key={tag.id}>{tag.name}</li>
+              {searchResult.document.tags.map((tag) => {
+                return <li key={tag}>{tag}</li>
               })}
             </ul>
           </dd>

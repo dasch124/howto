@@ -46,6 +46,8 @@ export interface Dictionary {
     'reading-time': string
     minute: Plurals
     'last-updated': string
+    'edit-post-in-cms': string
+    'related-posts': string
   }
   cms: {
     metadata: {

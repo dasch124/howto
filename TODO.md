@@ -54,3 +54,7 @@ because it relies on margin collapse
 ## Table of contents
 
 - incl. floating table of contents on mobile
+
+## images optimization
+
+- ensure we use `sizes` attribute on post images
