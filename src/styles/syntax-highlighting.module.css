@@ -1,4 +1,6 @@
-:root {
+/* stylelint-disable color-no-hex */
+
+.synatx-highlighting {
   --color-prettylights-syntax-comment: #8b949e;
   --color-prettylights-syntax-constant: #79c0ff;
   --color-prettylights-syntax-entity: #d2a8ff;

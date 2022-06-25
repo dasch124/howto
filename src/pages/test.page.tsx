@@ -1,9 +1,9 @@
-// import '@wooorm/starry-night/style/core.css'
-// import '@/styles/syntax-highlighting.css'
+import '@wooorm/starry-night/style/core.css'
 
 import { ClockIcon } from '@heroicons/react/outline'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
+import cx from 'clsx'
 import type { GetStaticPropsResult } from 'next'
 import Link from 'next/link'
 import path from 'node:path'
@@ -25,7 +25,8 @@ import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useMdx } from '@/lib/use-mdx'
-import styles from '@/styles/markdown.module.css'
+import proseStyles from '@/styles/prose.module.css'
+import syntaxStyles from '@/styles/syntax-highlighting.module.css'
 import { relatedPostsCount } from '~/config/ui.config'
 
 export type PostPageParams = {
@@ -155,9 +156,11 @@ export default function PostPage(props: PostPageProps): JSX.Element {
       <MainContent className="mx-auto my-16 grid w-full max-w-6xl content-start gap-16 px-8 py-8">
         <PostHeader post={post} />
         <div
-          className={
-            styles['markdown'] + ' mx-auto grid grid-cols-prose [&>:where(*)]:[grid-column:content]'
-          }
+          className={cx(
+            proseStyles['prose'],
+            syntaxStyles['syntax-highlighting'],
+            'mx-auto grid grid-cols-prose [&>:where(*)]:[grid-column:content]',
+          )}
         >
           <Content components={components} />
         </div>

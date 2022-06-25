@@ -1,9 +1,9 @@
-// import '@wooorm/starry-night/style/core.css'
-// import '@/styles/syntax-highlighting.css'
+import '@wooorm/starry-night/style/core.css'
 
 import { ClockIcon } from '@heroicons/react/outline'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
+import cx from 'clsx'
 import type {
   GetStaticPathsContext,
   GetStaticPathsResult,
@@ -30,6 +30,8 @@ import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useMdx } from '@/lib/use-mdx'
+import proseStyles from '@/styles/prose.module.css'
+import syntaxStyles from '@/styles/syntax-highlighting.module.css'
 import type { Locale } from '~/config/i18n.config'
 import { relatedPostsCount } from '~/config/ui.config'
 
@@ -176,7 +178,13 @@ export default function PostPage(props: PostPageProps): JSX.Element {
       />
       <MainContent className="mx-auto my-16 grid w-full max-w-6xl content-start gap-16 px-8 py-8">
         <PostHeader post={post} />
-        <div className="prose mx-auto grid grid-cols-prose">
+        <div
+          className={cx(
+            // proseStyles['prose'],
+            // syntaxStyles['syntax-highlighting'],
+            'prose mx-auto grid grid-cols-prose',
+          )}
+        >
           {/* Extra wrapping div necessary to preserve margin-collapsing, which will not work for grid items. */}
           <div className="[grid-column:content]">
             <Content components={components} />
