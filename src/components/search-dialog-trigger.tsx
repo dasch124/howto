@@ -43,7 +43,7 @@ export function SearchDialogTrigger(): JSX.Element {
     // _setSelectedKey(searchResult)
     dialog.close()
 
-    const href = routes.post({ id: searchResult.document.id })
+    const href = routes.post({ id: searchResult.document.postId })
     const hash = searchResult.document.heading?.id
     router.push({ ...href, hash })
   }
@@ -178,32 +178,37 @@ interface SearchResultPreviewProps {
 function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
   const { searchResult } = props
 
-  const { formatDateTime, t } = useI18n<'common'>()
+  const { formatDateTime } = useI18n<'common'>()
 
   const highlights = keyBy(searchResult.highlights ?? [], (highlight) => {
     return highlight.field
   })
 
   return (
-    <article>
-      {'title' in highlights ? (
-        <h2 dangerouslySetInnerHTML={{ __html: highlights.title.snippet! }} />
-      ) : (
-        <h2>{searchResult.document.title}</h2>
-      )}
-      <div className="text-muted-text">
-        <time dateTime={searchResult.document.date}>
-          {formatDateTime(new Date(searchResult.document.date), { dateStyle: 'long' })}
-        </time>
-        {searchResult.document.heading != null ? (
-          <span>
-            {'#'.repeat(searchResult.document.heading.depth)} {searchResult.document.heading.title}
-          </span>
-        ) : null}
+    <article className="grid gap-1">
+      <h2
+        className="font-medium"
+        dangerouslySetInnerHTML={{
+          __html:
+            'title' in highlights ? highlights.title.snippet ?? '' : searchResult.document.title,
+        }}
+      />
+      <div className="grid gap-0.5 text-muted-text">
+        <div className="flex gap-2 text-xs">
+          <time dateTime={searchResult.document.date}>
+            {formatDateTime(new Date(searchResult.document.date), { dateStyle: 'long' })}
+          </time>
+          {searchResult.document.heading != null ? (
+            <span>
+              {'#'.repeat(searchResult.document.heading.depth)}{' '}
+              {searchResult.document.heading.title}
+            </span>
+          ) : null}
+        </div>
         {'content' in highlights ? (
-          <div dangerouslySetInnerHTML={{ __html: highlights.content.snippet! }} />
+          <div dangerouslySetInnerHTML={{ __html: highlights.content.snippet ?? '' }} />
         ) : null}
-        <dl>
+        {/* <dl className="text-xs">
           <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
           <dd>
             <ul className="flex gap-2" role="list">
@@ -212,7 +217,7 @@ function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
               })}
             </ul>
           </dd>
-        </dl>
+        </dl> */}
       </div>
     </article>
   )

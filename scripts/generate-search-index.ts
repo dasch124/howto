@@ -85,7 +85,8 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 
   const shared = {
     kind: 'post' as const,
-    ...pick(post, ['date', 'id', 'locale', 'uuid']),
+    ...pick(post, ['date', 'locale', 'uuid']),
+    postId: post.id,
     title: escape(post.title),
     /** JavaScript timestamps are in milliseconds, unix timestamps in seconds. */
     timestamp: Math.floor(new Date(post.date).getTime() / 1000),

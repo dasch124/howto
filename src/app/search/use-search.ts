@@ -56,9 +56,9 @@ export function useSearch(searchTerm: string): {
           query_by: 'title,tags,content,authors',
           sort_by: 'timestamp:desc',
           highlight_affix_num_tokens: snippetWords,
-          highlight_fields: 'content',
+          highlight_fields: 'content,title',
           highlight_full_fields: 'title',
-          include_fields: 'kind,id,title,tags,content,authors,heading',
+          include_fields: 'title,content,tags,authors,date,kind,id,heading',
           limit_hits: maxSearchResults,
         }
 

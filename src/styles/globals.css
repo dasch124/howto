@@ -41,6 +41,13 @@ h3 {
   line-height: 1.15;
 }
 
+mark {
+  background-color: transparent;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
 p {
   line-height: 1.75;
 }
