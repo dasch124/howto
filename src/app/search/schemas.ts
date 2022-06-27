@@ -10,5 +10,7 @@ export const posts: CollectionCreateSchema = {
     { name: 'content', type: 'string', facet: false },
     { name: 'authors', type: 'string[]', facet: false },
     { name: 'tags', type: 'string[]', facet: false },
+    /** Needed for grouping document chunks. */
+    { name: 'uuid', type: 'string', facet: true },
   ],
 }

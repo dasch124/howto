@@ -53,13 +53,15 @@ export function useSearch(searchTerm: string): {
       try {
         const searchParams: SearchParams = {
           q: debouncedSearchTerm,
-          query_by: 'title,tags,content,authors',
+          query_by: 'title,content,tags,authors',
           sort_by: 'timestamp:desc',
           highlight_affix_num_tokens: snippetWords,
           highlight_fields: 'content,title',
           highlight_full_fields: 'title',
           include_fields: 'title,content,tags,authors,date,kind,id,heading',
           limit_hits: maxSearchResults,
+          group_limit: 1,
+          group_by: 'uuid',
         }
 
         const results = await collection.documents().search(searchParams, {})
