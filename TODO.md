@@ -58,3 +58,7 @@ because it relies on margin collapse
 ## images optimization
 
 - ensure we use `sizes` attribute on post images
+
+## mdx
+
+- consider supporting custom heading id syntax with `remark-custom-heading-id`

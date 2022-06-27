@@ -54,6 +54,7 @@ export const dictionary: Dictionary = {
       one: '{{time}} Minute',
       other: '{{time}} Minuten',
     },
+    'table-of-contents': 'Inhaltsverzeichnis',
     'last-updated': 'Zuletzt aktualisiert am {{date}}',
     'edit-post-in-cms': 'Post editieren',
     'related-posts': 'Ähnliche Posts',

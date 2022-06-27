@@ -26,7 +26,6 @@ const config = {
     },
     legacyBrowsers: false,
     newNextLinkBehavior: true,
-    outputStandalone: true,
   },
   headers() {
     const headers = [
@@ -48,6 +47,16 @@ const config = {
           },
         ],
       },
+      // TODO: in case there is measurable advantage over current swr pattern with `must-revalidate`
+      // {
+      //   source: '/assets/images/static/:path*',
+      //   headers: [
+      //     {
+      //       key: 'Cache-Control',
+      //       value: 'public, immutable, max-age=31536000',
+      //     },
+      //   ],
+      // },
     ]
 
     if (!isProductionDeploy) {
@@ -70,6 +79,7 @@ const config = {
     defaultLocale,
     locales,
   },
+  output: 'standalone',
   pageExtensions: ['page.tsx', 'api.ts'],
   reactStrictMode: true,
   async redirects() {

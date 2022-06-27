@@ -29,6 +29,7 @@ import { MainContent } from '@/components/main-content'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
+import { useFirstVisibleHeading } from '@/lib/use-first-visible-heading'
 import { useMdx } from '@/lib/use-mdx'
 import proseStyles from '@/styles/prose.module.css'
 import syntaxStyles from '@/styles/syntax-highlighting.module.css'
@@ -79,6 +80,9 @@ export const getStaticProps = withDictionaries(
       relatedPostsCount,
     )
 
+    // FIXME: don't send post.body.raw and post.body.data.matter
+    // FIXME: PostDetails should Pick, not Omit, and also only pick what's needed from body.data
+    // FIXME: only send post.body.data.toc when post.toc is true
     return { props: { post, relatedPosts, timestamp } }
   },
 )
@@ -180,20 +184,18 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         <PostHeader post={post} />
         <div
           className={cx(
-            // proseStyles['prose'],
-            // syntaxStyles['syntax-highlighting'],
-            'prose mx-auto grid grid-cols-prose',
+            proseStyles['prose'],
+            syntaxStyles['syntax-highlighting'],
+            'mx-auto grid grid-cols-prose [&>:where(*)]:[grid-column:content]',
           )}
         >
-          {/* Extra wrapping div necessary to preserve margin-collapsing, which will not work for grid items. */}
-          <div className="[grid-column:content]">
-            <Content components={components} />
-          </div>
+          <Content components={components} />
         </div>
         <div className="grid justify-items-end gap-2 justify-self-end">
           <LastUpdated timestamp={timestamp} />
           <EditInCmsLink id={post.id} />
         </div>
+        <TableOfContents tableOfContents={post.body.data.toc} />
         <RelatedPosts posts={relatedPosts} />
       </MainContent>
     </Fragment>
@@ -285,10 +287,12 @@ interface RelatedPostsProps {
   posts: Array<PostCore>
 }
 
-function RelatedPosts(props: RelatedPostsProps): JSX.Element {
+function RelatedPosts(props: RelatedPostsProps): JSX.Element | null {
   const { posts } = props
 
   const { t } = useI18n<'common'>()
+
+  if (posts.length === 0) return null
 
   return (
     <section className="grid gap-2">
@@ -307,5 +311,62 @@ function RelatedPosts(props: RelatedPostsProps): JSX.Element {
         </ul>
       </nav>
     </section>
+  )
+}
+
+interface TableOfContentsProps {
+  tableOfContents: PostDetails['body']['data']['toc']
+}
+
+function TableOfContents(props: TableOfContentsProps): JSX.Element | null {
+  const { tableOfContents } = props
+
+  const { t } = useI18n<'common'>()
+  const highlightedHeadingId = useFirstVisibleHeading()
+
+  if (tableOfContents == null || tableOfContents.length === 0) return null
+
+  return (
+    <nav aria-label={t(['common', 'post', 'table-of-contents'])}>
+      <TableOfContentsLevel highlightedHeadingId={highlightedHeadingId} level={tableOfContents} />
+    </nav>
+  )
+}
+
+interface TableOfContentsLevelProps {
+  /** @default 0 */
+  depth?: number
+  highlightedHeadingId: string | null
+  level: PostDetails['body']['data']['toc']
+}
+
+function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | null {
+  const { depth = 0, highlightedHeadingId, level } = props
+
+  if (level == null || level.length === 0) return null
+
+  return (
+    <ol
+      className="grid gap-1 text-sm"
+      data-toc-level={depth}
+      style={{ marginInlineStart: depth * 8 }}
+    >
+      {level.map((heading) => {
+        const isHighlighted = highlightedHeadingId != null && heading.id === highlightedHeadingId
+
+        return (
+          <li key={heading.id} className="grid gap-1">
+            <Link className={isHighlighted ? 'font-bold' : undefined} href={{ hash: heading.id }}>
+              {heading.value}
+            </Link>
+            <TableOfContentsLevel
+              depth={depth + 1}
+              highlightedHeadingId={highlightedHeadingId}
+              level={heading.children}
+            />
+          </li>
+        )
+      })}
+    </ol>
   )
 }

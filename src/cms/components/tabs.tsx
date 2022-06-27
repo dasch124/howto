@@ -20,7 +20,7 @@ function TabsList(props: TabsListProps): JSX.Element {
   const { children } = props
 
   return (
-    <Tab.List className="my-2 flex items-center gap-4 border-b border-gray-500">
+    <Tab.List className="mt-4 mb-2 flex items-center gap-4 border-b border-gray-500">
       {children}
     </Tab.List>
   )
@@ -44,7 +44,17 @@ function TabsTab(props: TabsTabProps): JSX.Element {
   )
 }
 
+interface TabsPanelsProps {
+  children: ReactNode
+}
+
+function TabsPanels(props: TabsPanelsProps): JSX.Element {
+  const { children } = props
+
+  return <Tab.Panels className="mb-4">{children}</Tab.Panels>
+}
+
 Tabs.List = TabsList
 Tabs.Tab = TabsTab
-Tabs.Panels = Tab.Panels
+Tabs.Panels = TabsPanels
 Tabs.Panel = Tab.Panel

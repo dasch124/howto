@@ -6,7 +6,7 @@ interface Heading {
   depth: number
 }
 
-export interface IndexedPost extends Pick<PostCore, 'date' | 'id' | 'lang' | 'title' | 'uuid'> {
+export interface IndexedPost extends Pick<PostCore, 'date' | 'id' | 'locale' | 'title' | 'uuid'> {
   // NOTE: typesense cannot currently store nested objects in documents
   // authors: Array<Omit<PostCore['authors'][number], '_id'>>
   authors: Array<string>

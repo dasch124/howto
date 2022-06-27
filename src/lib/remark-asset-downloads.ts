@@ -26,7 +26,7 @@ const withAssetDownloads: Plugin<[Options?], Mdast.Root> = function withAssetDow
       if (isAbsoluteUrl(node.url)) return
 
       const sourceFilePath = path.join(directory, path.normalize(node.url))
-      const publicPath = path.join(publicDirectory, path.relative(sourceFilePath, process.cwd()))
+      const publicPath = path.join(publicDirectory, path.relative(process.cwd(), sourceFilePath))
       const destinationFilePath = path.join(publicFolder, publicPath)
 
       async function copyAsset() {

@@ -7,8 +7,7 @@ import type { Curriculum, Licence, Person, Post, Tag } from 'contentlayer/genera
 import { allCurriculums, allLicences, allPeople, allPosts, allTags } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 
-// TODO: create map for core and details types once, not in the functions
-// TODO: add prev/next to post and course
+// TODO: create map for core and details types once, not on demand in a functions
 
 export type CurriculumCore = Pick<
   Curriculum,
@@ -30,12 +29,13 @@ type PersonCore = Pick<Person, '_id' | 'firstName' | 'id' | 'lastName'>
 
 export type PostCore = Pick<
   Post,
-  '_id' | 'abstract' | 'date' | 'id' | 'lang' | 'title' | 'uuid'
+  '_id' | 'abstract' | 'date' | 'id' | 'locale' | 'title' | 'uuid'
 > & {
   authors: Array<PersonCore>
   tags: Array<TagCore>
 }
 
+// FIXME: Pick not Omit
 export type PostDetails = Omit<
   Post,
   'authors' | 'contributors' | 'editors' | 'licence' | 'tags'

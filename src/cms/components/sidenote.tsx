@@ -42,11 +42,13 @@ export function SideNote(props: SideNoteProps): JSX.Element {
   const Icon = icons[type]
 
   return (
-    <aside className={cx('my-6 rounded border-l-4 bg-muted-background px-8 py-2', styles[type])}>
-      <strong className="mt-[1.25em] flex items-center gap-2 font-bold">
-        <Icon className="h-6 w-6 flex-shrink-0" width="1em" />
-        <span>{title}</span>
-      </strong>
+    <aside className={cx('my-6 rounded border-l-4 bg-muted-background px-8 py-4', styles[type])}>
+      <p>
+        <strong className="flex items-center gap-2 font-bold">
+          <Icon className="h-6 w-6 flex-shrink-0" width="1em" />
+          <span>{title}</span>
+        </strong>
+      </p>
       {props.children}
     </aside>
   )

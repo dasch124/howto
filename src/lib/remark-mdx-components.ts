@@ -4,7 +4,7 @@ import assert from 'node:assert'
 import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 
-import { isDefined } from '@/lib/is-defined'
+import { isNonNullable } from '@/lib/is-non-nullable'
 
 const withComponents: Plugin<[], Mdast.Root> = function withComponents() {
   return function transformer(tree) {
@@ -77,7 +77,7 @@ const withComponents: Plugin<[], Mdast.Root> = function withComponents() {
             .map((tab) => {
               return getAttribute(tab, 'title')
             })
-            .filter(isDefined)
+            .filter(isNonNullable)
 
           const panels = tabs.map((tab) => {
             return tab.children

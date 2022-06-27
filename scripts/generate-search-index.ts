@@ -17,16 +17,14 @@ import { posts as postsSchema } from '@/app/search/schemas'
 import type { IndexedPost } from '@/app/search/types'
 import { getPersonCore, getPersonFullName, getTagCore } from '@/cms/cms.client'
 import withChunks from '@/lib/remark-chunks'
-import {
-  typesenseHost as host,
-  typesensePort as port,
-  typesenseProtocol as protocol,
-} from '~/config/search.config'
 
 // eslint-disable-next-line import/no-named-as-default-member
 nextEnv.loadEnvConfig(process.cwd())
 
 function createAdminSearchClient(): Client {
+  const protocol = process.env['NEXT_PUBLIC_TYPESENSE_PROTOCOL']
+  const host = process.env['NEXT_PUBLIC_TYPESENSE_HOST']
+  const port = process.env['NEXT_PUBLIC_TYPESENSE_PORT']
   const apiKey = process.env['TYPESENSE_ADMIN_API_KEY']
 
   if (host == null || port == null || protocol == null || apiKey == null) {
@@ -87,7 +85,7 @@ async function getIndexedPostChunks(post: Post): Promise<Array<IndexedPost>> {
 
   const shared = {
     kind: 'post' as const,
-    ...pick(post, ['date', 'id', 'lang', 'uuid']),
+    ...pick(post, ['date', 'id', 'locale', 'uuid']),
     title: escape(post.title),
     /** JavaScript timestamps are in milliseconds, unix timestamps in seconds. */
     timestamp: Math.floor(new Date(post.date).getTime() / 1000),

@@ -45,6 +45,7 @@ export interface Dictionary {
     footnotes: string
     'reading-time': string
     minute: Plurals
+    'table-of-contents': string
     'last-updated': string
     'edit-post-in-cms': string
     'related-posts': string
