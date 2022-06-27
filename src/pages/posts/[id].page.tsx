@@ -30,6 +30,7 @@ import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useFirstVisibleHeading } from '@/lib/use-first-visible-heading'
+import { useHumanReadableDate } from '@/lib/use-human-readable-date'
 import { useMdx } from '@/lib/use-mdx'
 import proseStyles from '@/styles/prose.module.css'
 import syntaxStyles from '@/styles/syntax-highlighting.module.css'
@@ -186,7 +187,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           className={cx(
             proseStyles['prose'],
             syntaxStyles['syntax-highlighting'],
-            'mx-auto grid grid-cols-prose [&>:where(*)]:[grid-column:content]',
+            'mx-auto grid grid-cols-prose [:where(&>*)]:[grid-column:content]',
           )}
         >
           <Content components={components} />
@@ -209,7 +210,8 @@ interface PostHeaderProps {
 function PostHeader(props: PostHeaderProps): JSX.Element {
   const { post } = props
 
-  const { formatDateTime, plural, t } = useI18n<'common'>()
+  const { plural, t } = useI18n<'common'>()
+  const publishDate = useHumanReadableDate(post.date)
 
   const readingTime = post.body.data['readingTime'] as number
 
@@ -230,7 +232,7 @@ function PostHeader(props: PostHeaderProps): JSX.Element {
       </dl>
       <h1 className="text-5xl font-black text-accent-primary-text">{post.title}</h1>
       <time className="text-sm font-medium" dateTime={post.date}>
-        {formatDateTime(new Date(post.date), { dateStyle: 'long' })}
+        {publishDate}
       </time>
       <dl className="flex items-center justify-between gap-8">
         <div>

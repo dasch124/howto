@@ -12,6 +12,7 @@ import type { SearchResponseHit, SearchResult } from '@/app/search/use-search'
 import { useSearch } from '@/app/search/use-search'
 import { Spinner } from '@/components/spinner'
 import { useDialogState } from '@/lib/use-dialog-state'
+import { useHumanReadableDate } from '@/lib/use-human-readable-date'
 
 export function SearchDialogTrigger(): JSX.Element {
   const { plural, t } = useI18n<'common'>()
@@ -21,7 +22,12 @@ export function SearchDialogTrigger(): JSX.Element {
   const query = useSearch(searchTerm)
   const [selectedKey, _setSelectedKey] = useState<SearchResponseHit<SearchResult> | null>(null)
 
-  const searchResults = query.data?.hits ?? []
+  const searchResultsGroups = query.data?.grouped_hits ?? []
+  // FIXME: actually use groups
+  const searchResults = searchResultsGroups.flatMap((group) => {
+    return group.hits
+  })
+  const searchResultsCount = query.data?.found ?? 0
 
   useEffect(() => {
     function open(event: KeyboardEvent) {
@@ -151,9 +157,9 @@ export function SearchDialogTrigger(): JSX.Element {
                       {t(['common', 'loading'])}
                     </span>
                   ) : query.status === 'success' ? (
-                    query.data != null && query.data.found > 0 ? (
-                      t(['common', 'search-results-count', plural(query.data.found)], {
-                        values: { count: String(query.data.found) },
+                    searchResultsCount > 0 ? (
+                      t(['common', 'search-results-count', plural(searchResultsCount)], {
+                        values: { count: String(searchResultsCount) },
                       })
                     ) : (
                       t(['common', 'no-search-results'])
@@ -178,7 +184,8 @@ interface SearchResultPreviewProps {
 function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
   const { searchResult } = props
 
-  const { formatDateTime } = useI18n<'common'>()
+  // const { t } = useI18n<'common'>()
+  const publishDate = useHumanReadableDate(searchResult.document.date)
 
   const highlights = keyBy(searchResult.highlights ?? [], (highlight) => {
     return highlight.field
@@ -195,9 +202,7 @@ function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
       />
       <div className="grid gap-0.5 text-muted-text">
         <div className="flex gap-2 text-xs">
-          <time dateTime={searchResult.document.date}>
-            {formatDateTime(new Date(searchResult.document.date), { dateStyle: 'long' })}
-          </time>
+          <time dateTime={searchResult.document.date}>{publishDate}</time>
           {searchResult.document.heading != null ? (
             <span>
               {'#'.repeat(searchResult.document.heading.depth)}{' '}

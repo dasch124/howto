@@ -9,6 +9,11 @@ export const snippetWords = 8
 export const maxSearchResults = 10
 
 /**
+ * Max number of chunks per search result document.
+ */
+export const maxSearchResultChunks = 3
+
+/**
  * Dispatch search requests when search term has at least n characters.
  */
 export const minSearchTermLength = 3

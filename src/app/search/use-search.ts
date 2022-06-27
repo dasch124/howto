@@ -6,7 +6,13 @@ import { createSearchClient } from '@/app/search/create_search-client'
 import { posts as postsSchema } from '@/app/search/schemas'
 import type { IndexedPost } from '@/app/search/types'
 import { useDebouncedState } from '@/lib/use-debounced-state'
-import { delay, maxSearchResults, minSearchTermLength, snippetWords } from '~/config/search.config'
+import {
+  delay,
+  maxSearchResultChunks,
+  maxSearchResults,
+  minSearchTermLength,
+  snippetWords,
+} from '~/config/search.config'
 
 const searchStatus = ['idle', 'loading', 'success', 'error', 'disabled'] as const
 
@@ -58,9 +64,9 @@ export function useSearch(searchTerm: string): {
           highlight_affix_num_tokens: snippetWords,
           highlight_fields: 'content,title',
           highlight_full_fields: 'title',
-          include_fields: 'title,content,tags,authors,date,kind,id,heading',
+          include_fields: 'postId,title,content,tags,authors,date,kind,heading',
           limit_hits: maxSearchResults,
-          group_limit: 1,
+          group_limit: maxSearchResultChunks,
           group_by: 'uuid',
         }
 
