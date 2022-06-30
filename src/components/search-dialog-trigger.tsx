@@ -122,25 +122,35 @@ export function SearchDialogTrigger(): JSX.Element {
                       type="search"
                     />
                   </div>
-                  {isNonEmptyArray(searchResults) ? (
+                  {isNonEmptyArray(searchResultsGroups) ? (
                     <Combobox.Options
                       static
                       className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-400"
                     >
-                      {searchResults.map((searchResult) => {
+                      {searchResultsGroups.map((searchResultsGroup) => {
+                        const searchResults = searchResultsGroup.hits
+                        // TODO: probably need to return UUID as group_key
+                        const [key] = searchResultsGroup.group_key
+
                         return (
-                          <Combobox.Option
-                            key={searchResult.document.id}
-                            value={searchResult}
-                            className={({ active }) => {
-                              return cx(
-                                'cursor-default select-none px-4 py-2',
-                                active && 'bg-gray-800 text-white',
+                          <div key={key} role="group">
+                            {searchResults.map((searchResult) => {
+                              return (
+                                <Combobox.Option
+                                  key={searchResult.document.id}
+                                  value={searchResult}
+                                  className={({ active }) => {
+                                    return cx(
+                                      'cursor-default select-none px-4 py-2',
+                                      active && 'bg-gray-800 text-white',
+                                    )
+                                  }}
+                                >
+                                  <SearchResultPreview searchResult={searchResult} />
+                                </Combobox.Option>
                               )
-                            }}
-                          >
-                            <SearchResultPreview searchResult={searchResult} />
-                          </Combobox.Option>
+                            })}
+                          </div>
                         )
                       })}
                     </Combobox.Options>

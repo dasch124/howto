@@ -1,15 +1,12 @@
 import cx from 'clsx'
 
-import { ActionButton } from '@/cms/components/quiz/ActionButton'
+import { ActionButton } from '@/cms/components/quiz/action-button'
 import { QuizCardStatus, useQuiz } from '@/cms/components/quiz/quiz'
 
 export interface QuizControlsProps {
   onValidate: () => void
 }
 
-/**
- * Quiz controls.
- */
 export function QuizControls(props: QuizControlsProps): JSX.Element {
   const quiz = useQuiz()
 
@@ -20,7 +17,7 @@ export function QuizControls(props: QuizControlsProps): JSX.Element {
   }
 
   function getButtonVariant(status: QuizCardStatus | undefined) {
-    if (status === undefined) return undefined
+    if (status == null) return undefined
     return buttonVariants[status]
   }
 
@@ -36,21 +33,21 @@ export function QuizControls(props: QuizControlsProps): JSX.Element {
       {!isSingleQuestionQuiz ? (
         <ActionButton
           isDisabled={!quiz.hasPrevious}
-          onPress={quiz.previous}
+          onClick={quiz.previous}
           variant={getButtonVariant(quiz.previousStatus)}
         >
           {quiz.labels.previous}
         </ActionButton>
       ) : null}
       <div>
-        <ActionButton onPress={props.onValidate} variant={getButtonVariant(quiz.status)}>
+        <ActionButton onClick={props.onValidate} variant={getButtonVariant(quiz.status)}>
           {quiz.labels.validate}
         </ActionButton>
       </div>
       {!isSingleQuestionQuiz ? (
         <ActionButton
           isDisabled={!quiz.hasNext}
-          onPress={quiz.next}
+          onClick={quiz.next}
           variant={getButtonVariant(quiz.nextStatus)}
         >
           {quiz.labels.next}

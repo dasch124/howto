@@ -1,14 +1,17 @@
-import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
+import { createContext, useContext, useState } from 'react'
 
-import { getChildElements } from '@/cms/components/quiz/getChildElements'
-import { MultipleChoice } from '@/cms/components/quiz/MultipleChoice'
-import { isQuizCard, QuizCard } from '@/cms/components/quiz/QuizCard'
-import { QuizMessage } from '@/cms/components/quiz/QuizMessage'
-import { QuizQuestion } from '@/cms/components/quiz/QuizQuestion'
-import { XmlCodeEditor } from '@/cms/components/quiz/XmlCodeEditor'
-import { useI18n } from '@/i18n/useI18n'
-import type { Values } from '@/utils/ts/enum'
+import { useI18n } from '@/app/i18n/use-i18n'
+import { getChildElements } from '@/cms/components/quiz/get-child-elements'
+import { isQuizCard, QuizCard } from '@/cms/components/quiz/quiz-card'
+import { QuizMessage } from '@/cms/components/quiz/quiz-message'
+import { QuizMultipleChoice } from '@/cms/components/quiz/quiz-multiple-choice'
+import { QuizQuestion } from '@/cms/components/quiz/quiz-question'
+import { QuizXmlCodeEditor } from '@/cms/components/quiz/quiz-xml-code-editor'
+
+type Values<T> = {
+  [K in keyof T]: T[K]
+}[keyof T]
 
 export interface QuizService {
   hasNext: boolean
@@ -44,17 +47,15 @@ export const QuizCardStatus = {
   INCORRECT: 'incorrect',
   CORRECT: 'correct',
 } as const
+
 export type QuizCardStatus = Values<typeof QuizCardStatus>
 
 export interface QuizProps {
   children?: ReactNode
 }
 
-/**
- * Quiz.
- */
 export function Quiz(props: QuizProps): JSX.Element | null {
-  const { t } = useI18n()
+  const { t } = useI18n<'common'>()
 
   const childElements = getChildElements(props.children)
   const cards = childElements.filter(isQuizCard)
@@ -103,9 +104,9 @@ export function Quiz(props: QuizProps): JSX.Element | null {
         const isHidden = index !== currentIndex
 
         const labels = {
-          validate: card.props.validateButtonLabel ?? t('common.quiz.validate'),
-          next: t('common.quiz.next'),
-          previous: t('common.quiz.previous'),
+          validate: card.props.validateButtonLabel ?? t(['common', 'quiz', 'validate']),
+          next: t(['common', 'quiz', 'next']),
+          previous: t(['common', 'quiz', 'previous']),
         }
 
         const service = {
@@ -134,5 +135,5 @@ export function Quiz(props: QuizProps): JSX.Element | null {
 Quiz.Card = QuizCard
 Quiz.Question = QuizQuestion
 Quiz.Message = QuizMessage
-Quiz.MultipleChoice = MultipleChoice
-Quiz.XmlCodeEditor = XmlCodeEditor
+Quiz.MultipleChoice = QuizMultipleChoice
+Quiz.XmlCodeEditor = QuizXmlCodeEditor

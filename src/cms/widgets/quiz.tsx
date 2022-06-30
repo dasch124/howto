@@ -1,13 +1,11 @@
 import type { MDXJsxFlowElement } from 'hast-util-to-estree'
 import type { EditorComponentOptions } from 'netlify-cms-core'
 import { remark } from 'remark'
-import withFootnotes from 'remark-footnotes'
 import withGitHubMarkdown from 'remark-gfm'
+import withMdx from 'remark-mdx'
 import type { Node } from 'unist'
 import { visit } from 'unist-util-visit'
 import type { VFile } from 'vfile'
-import { remarkMarkAndUnravel as withUnraveledJsxChildren } from 'xdm/lib/plugin/remark-mark-and-unravel.js'
-import { remarkMdx as withMdx } from 'xdm/lib/plugin/remark-mdx.js'
 
 import { QuizCardStatus } from '@/cms/components/quiz/quiz'
 
@@ -30,10 +28,8 @@ function withQuizCards() {
           const validateButtonLabel = node.attributes.find((attribute: any) => {
             return attribute.name === 'validateButtonLabel'
           })?.value
-          // @ts-expect-error Waiting for updated remark types.
           if (validateButtonLabel != null && validateButtonLabel.length > 0) {
             card.controls = card.controls ?? {}
-            // @ts-expect-error Waiting for updated remark types.
             card.controls.validate = validateButtonLabel
           }
           cards.push(card)
@@ -43,7 +39,7 @@ function withQuizCards() {
           const last = cards[cards.length - 1]
           last.question = processor.stringify({
             type: 'root',
-            // @ts-expect-error Waiting for updated remark types.
+            /* @ts-expect-error Waiting for updated remark types. */
             children: node.children,
           })
           break
@@ -54,12 +50,10 @@ function withQuizCards() {
           const type = node.attributes.find((attribute: any) => {
             return attribute.name === 'type'
           })?.value
-          // @ts-expect-error Waiting for updated remark types.
           if (type != null && allowedQuizMessageTypes.includes(type)) {
-            // @ts-expect-error Waiting for updated remark types.
             last.messages[type] = processor.stringify({
               type: 'root',
-              // @ts-expect-error Waiting for updated remark types.
+              /* @ts-expect-error Waiting for updated remark types. */
               children: node.children,
             })
           }
@@ -71,6 +65,10 @@ function withQuizCards() {
           last.type = 'MultipleChoice'
           last.question = ''
           last.options = []
+          const variantAttribute = node.attributes.find((attribute: any) => {
+            return attribute.name === 'variant'
+          })
+          last.variant = variantAttribute?.value ?? 'multiple'
           break
         }
         case 'Quiz.MultipleChoice.Option': {
@@ -78,7 +76,7 @@ function withQuizCards() {
           last.options.push({
             option: processor.stringify({
               type: 'root',
-              // @ts-expect-error Waiting for updated remark types.
+              /* @ts-expect-error Waiting for updated remark types. */
               children: node.children,
             }),
             isCorrect: node.attributes.some((attribute: any) => {
@@ -156,7 +154,7 @@ function createStringLiteralAttribute(value: string) {
 function getStringLiteralAttribute(value: any) {
   if (typeof value === 'string') return value
   const expression = value.data?.estree?.body?.[0]?.expression
-  //* Template literal or regular string.
+  /** Template literal or regular string. */
   return expression?.quasis?.[0]?.value?.cooked ?? expression?.value
 }
 
@@ -174,9 +172,7 @@ const processor = remark()
     },
   })
   .use(withMdx)
-  .use(withUnraveledJsxChildren)
   .use(withGitHubMarkdown)
-  .use(withFootnotes)
   .use(withQuizCards)
 
 const quizQuestion = {
@@ -223,14 +219,25 @@ const quizControls = {
   ],
 }
 
-export const QuizEditorWidget: EditorComponentOptions = {
+const quizChoiceVariant = {
+  name: 'variant',
+  label: 'Variant',
+  widget: 'select',
+  options: ['mulitiple', 'single'],
+  default: 'multiple',
+}
+
+/**
+ * Netlify CMS richtext editor widget for Quiz component.
+ */
+export const quizEditorWidget: EditorComponentOptions = {
   id: 'Quiz',
   label: 'Quiz',
   fields: [
     {
       name: 'cards',
       label: 'Cards',
-      // @ts-expect-error Missing in upstream type.
+      /* @ts-expect-error Missing in upstream type. */
       label_singular: 'Card',
       widget: 'list',
       types: [
@@ -264,6 +271,7 @@ export const QuizEditorWidget: EditorComponentOptions = {
             },
             quizMessages,
             quizControls,
+            quizChoiceVariant,
           ],
         },
         {
@@ -310,12 +318,12 @@ export const QuizEditorWidget: EditorComponentOptions = {
   ],
   pattern: /^<Quiz>\n([^]*?)\n<\/Quiz>/,
   fromBlock(match) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
     const children = match[1]!
     const ast = processor.parse(children)
     const file = { data: {} }
     processor.runSync(ast, file)
-    // @ts-expect-error Cards are mutated in the transformer.
+    /* @ts-expect-error Cards are mutated in the transformer. */
     const cards = file.data.cards
 
     return {
@@ -372,6 +380,13 @@ export const QuizEditorWidget: EditorComponentOptions = {
                 children.push({
                   type: 'mdxJsxFlowElement',
                   name: `Quiz.${card.type}`,
+                  attributes: [
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'variant',
+                      value: card.variant,
+                    },
+                  ],
                   children: [
                     quizQuestion,
                     ...(card.options?.map((option: any) => {
@@ -446,6 +461,9 @@ export const QuizEditorWidget: EditorComponentOptions = {
 
     return String(processor.stringify(ast))
   },
+  /**
+   * This is only used in `getWidgetFor` (which we don't use).
+   */
   toPreview() {
     return `Quiz`
   },

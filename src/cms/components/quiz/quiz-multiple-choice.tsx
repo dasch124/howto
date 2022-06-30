@@ -1,19 +1,16 @@
 import type { ReactElement, ReactNode } from 'react'
 import { useState } from 'react'
 
-import { getChildElements } from '@/cms/components/quiz/getChildElements'
+import { getChildElements } from '@/cms/components/quiz/get-child-elements'
 import { QuizCardStatus, useQuiz } from '@/cms/components/quiz/quiz'
-import { QuizCardLayout } from '@/cms/components/quiz/QuizCardLayout'
+import { QuizCardLayout } from '@/cms/components/quiz/quiz-card-layout'
 
-export interface MultipleChoiceProps {
+export interface QuizMultipleChoiceProps {
   children?: ReactNode
   variant?: 'multiple' | 'single'
 }
 
-/**
- * Multiple choice quiz.
- */
-export function MultipleChoice(props: MultipleChoiceProps): JSX.Element {
+export function QuizMultipleChoice(props: QuizMultipleChoiceProps): JSX.Element {
   const quiz = useQuiz()
 
   const childElements = getChildElements(props.children)
@@ -91,27 +88,21 @@ export function MultipleChoice(props: MultipleChoiceProps): JSX.Element {
   )
 }
 
-MultipleChoice.isQuizCard = true
+QuizMultipleChoice.isQuizCard = true
 
 export interface MultipleChoiceOptionProps {
   children?: ReactNode
   isCorrect?: boolean
 }
 
-/**
- * Multiple choice option.
- */
-export function MultipleChoiceOption(props: MultipleChoiceOptionProps): JSX.Element {
+export function QuizMultipleChoiceOption(props: MultipleChoiceOptionProps): JSX.Element {
   return <span>{props.children}</span>
 }
 
-/**
- * Type guard for MultipleChoiceOption component.
- */
 export function isMultipleChoiceOption(
   component: JSX.Element,
 ): component is ReactElement<MultipleChoiceOptionProps> {
-  return component.type === MultipleChoiceOption
+  return component.type === QuizMultipleChoiceOption
 }
 
-MultipleChoice.Option = MultipleChoiceOption
+QuizMultipleChoice.Option = QuizMultipleChoiceOption

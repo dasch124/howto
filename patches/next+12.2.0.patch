@@ -1,0 +1,56 @@
+diff --git a/node_modules/next/dist/client/future/image.js b/node_modules/next/dist/client/future/image.js
+index e9008da..e4f3736 100755
+--- a/node_modules/next/dist/client/future/image.js
++++ b/node_modules/next/dist/client/future/image.js
+@@ -174,7 +174,7 @@ function Image(_param) {
+         }
+     }
+     const imgStyle = Object.assign({}, style);
+-    const svgBlurPlaceholder = `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http%3A//www.w3.org/2000/svg' xmlns%3Axlink='http%3A//www.w3.org/1999/xlink' viewBox='0 0 ${widthInt} ${heightInt}'%3E%3Cfilter id='b' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='50'%3E%3C/feGaussianBlur%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='1 1'%3E%3C/feFuncA%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cimage filter='url(%23b)' x='0' y='0' height='100%25' width='100%25' href='${blurDataURL}'%3E%3C/image%3E%3C/svg%3E");`;
++    const svgBlurPlaceholder = `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 ${widthInt} ${heightInt}'%3E%3Cfilter id='b' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='50'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cimage filter='url(%23b)' x='0' y='0' height='100%25' width='100%25' href='${blurDataURL}'/%3E%3C/svg%3E")`;
+     const blurStyle = placeholder === 'blur' && !blurComplete ? _extends({
+         backgroundSize: imgStyle.objectFit || 'cover',
+         backgroundPosition: imgStyle.objectPosition || '0% 0%'
+diff --git a/node_modules/next/dist/client/link.js b/node_modules/next/dist/client/link.js
+index 48ec135..3c5e139 100755
+--- a/node_modules/next/dist/client/link.js
++++ b/node_modules/next/dist/client/link.js
+@@ -56,7 +56,7 @@ function linkClicked(e, router, href, as, replace, shallow, scroll, locale, star
+     const { nodeName  } = e.currentTarget;
+     // anchors inside an svg have a lowercase nodeName
+     const isAnchorNodeName = nodeName.toUpperCase() === 'A';
+-    if (isAnchorNodeName && (isModifiedEvent(e) || !(0, _router).isLocalURL(href))) {
++    if (isAnchorNodeName && (isModifiedEvent(e) || !(0, _router).isLocalURL(href) || e.currentTarget.hasAttribute('download'))) {
+         // ignore click for browser’s default behavior
+         return;
+     }
+diff --git a/node_modules/next/dist/shared/lib/router/router.js b/node_modules/next/dist/shared/lib/router/router.js
+index 2310ec5..66a649e 100755
+--- a/node_modules/next/dist/shared/lib/router/router.js
++++ b/node_modules/next/dist/shared/lib/router/router.js
+@@ -1267,6 +1267,12 @@ function resolveHref(router, href, resolveAs) {
+     // we use a dummy base url for relative urls
+     let base;
+     let urlAsString = typeof href === "string" ? href : (0, _formatUrl).formatWithValidation(href);
++    // Return because it cannot be routed by the Next.js router
++    if (!isLocalURL(urlAsString)) {
++      return resolveAs ? [
++          urlAsString
++      ] : urlAsString;
++    }
+     // repeated slashes and backslashes in the URL are considered
+     // invalid and will never match a Next.js page/file
+     const urlProtoMatch = urlAsString.match(/^[a-zA-Z]{1,}:\/\//);
+@@ -1277,12 +1283,6 @@ function resolveHref(router, href, resolveAs) {
+         const normalizedUrl = (0, _utils).normalizeRepeatedSlashes(urlAsStringNoProto);
+         urlAsString = (urlProtoMatch ? urlProtoMatch[0] : "") + normalizedUrl;
+     }
+-    // Return because it cannot be routed by the Next.js router
+-    if (!isLocalURL(urlAsString)) {
+-        return resolveAs ? [
+-            urlAsString
+-        ] : urlAsString;
+-    }
+     try {
+         base = new URL(urlAsString.startsWith("#") ? router.asPath : router.pathname, "http://n");
+     } catch (_) {

@@ -330,6 +330,9 @@ function TableOfContents(props: TableOfContentsProps): JSX.Element | null {
 
   return (
     <nav aria-label={t(['common', 'post', 'table-of-contents'])}>
+      <h2 className="text-sm font-bold uppercase tracking-wide">
+        {t(['common', 'post', 'table-of-contents'])}
+      </h2>
       <TableOfContentsLevel highlightedHeadingId={highlightedHeadingId} level={tableOfContents} />
     </nav>
   )

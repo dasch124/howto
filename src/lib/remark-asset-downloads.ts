@@ -44,7 +44,7 @@ const withAssetDownloads: Plugin<[Options?], Mdast.Root> = function withAssetDow
       node.data = node.data ?? {}
       node.data['hProperties'] = node.data['hProperties'] ?? {}
       // @ts-expect-error Unknown type for `hProperties`.
-      node.data['hProperties'].download = true
+      node.data['hProperties'].download = path.basename(sourceFilePath)
     })
 
     await Promise.all(promises)

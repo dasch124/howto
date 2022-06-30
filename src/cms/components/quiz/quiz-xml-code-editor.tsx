@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
 import { useMemo, useRef } from 'react'
 
-import { CodeMirror } from '@/cms/components/quiz/CodeMirror'
+import { CodeMirror } from '@/cms/components/quiz/code-mirror'
 import { QuizCardStatus, useQuiz } from '@/cms/components/quiz/quiz'
-import { QuizCardLayout } from '@/cms/components/quiz/QuizCardLayout'
-import { useCodeMirror } from '@/cms/components/quiz/useCodeMirror'
+import { QuizCardLayout } from '@/cms/components/quiz/quiz-card-layout'
+import { useCodeMirror } from '@/cms/components/quiz/use-code-mirror'
 
-export interface XmlCodeEditorProps {
+export interface QuizXmlCodeEditorProps {
   children?: ReactNode
   code: string
   solution: string
@@ -14,10 +14,7 @@ export interface XmlCodeEditorProps {
   validate?: 'document' | 'selection'
 }
 
-/**
- * XML code editor with syntax highlighting.
- */
-export function XmlCodeEditor(props: XmlCodeEditorProps): JSX.Element {
+export function QuizXmlCodeEditor(props: QuizXmlCodeEditorProps): JSX.Element {
   const quiz = useQuiz()
 
   const ref = useRef<HTMLDivElement>(null)
@@ -57,7 +54,7 @@ export function XmlCodeEditor(props: XmlCodeEditorProps): JSX.Element {
   )
 }
 
-XmlCodeEditor.isQuizCard = true
+QuizXmlCodeEditor.isQuizCard = true
 
 /**
  * Parses xml string into document fragment (or document in case the string

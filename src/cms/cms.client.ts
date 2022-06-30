@@ -193,7 +193,7 @@ export function getPostCore(id: Post['id']): PostCore {
   assert(_post != null)
 
   const post = {
-    ...pick(_post, ['_id', 'abstract', 'date', 'id', 'lang', 'title', 'uuid']),
+    ...pick(_post, ['_id', 'abstract', 'date', 'id', 'locale', 'title', 'uuid']),
     authors: _post.authors.map(getPersonCore),
     tags: _post.tags.map(getTagCore),
   }

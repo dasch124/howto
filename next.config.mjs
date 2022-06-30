@@ -79,6 +79,9 @@ const config = {
     defaultLocale,
     locales,
   },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
   output: 'standalone',
   pageExtensions: ['page.tsx', 'api.ts'],
   reactStrictMode: true,

@@ -4,9 +4,6 @@ import { useEffect, useState } from 'react'
 
 import { usePreview as useCmsPreview } from '@/cms/previews/preview.context'
 
-/**
- * Creates code mirror editor view.
- */
 export function useCodeMirror(
   ref: RefObject<HTMLElement>,
   initialValue?: string,
