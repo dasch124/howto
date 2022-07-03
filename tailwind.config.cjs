@@ -33,6 +33,7 @@ const config = {
         'text-inverted': 'var(--color-text-inverted)',
       },
       gridTemplateColumns: {
+        page: 'var(--grid-columns-page)',
         prose: 'var(--grid-columns-prose)',
       },
       zIndex: {

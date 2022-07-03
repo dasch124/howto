@@ -1,7 +1,6 @@
 import { Combobox, Dialog, Transition } from '@headlessui/react'
 import { SearchIcon } from '@heroicons/react/outline'
 import { isNonEmptyArray } from '@stefanprobst/is-nonempty-array'
-import { keyBy } from '@stefanprobst/key-by'
 import cx from 'clsx'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
@@ -23,10 +22,6 @@ export function SearchDialogTrigger(): JSX.Element {
   const [selectedKey, _setSelectedKey] = useState<SearchResponseHit<SearchResult> | null>(null)
 
   const searchResultsGroups = query.data?.grouped_hits ?? []
-  // FIXME: actually use groups
-  const searchResults = searchResultsGroups.flatMap((group) => {
-    return group.hits
-  })
   const searchResultsCount = query.data?.found ?? 0
 
   useEffect(() => {
@@ -129,12 +124,49 @@ export function SearchDialogTrigger(): JSX.Element {
                     >
                       {searchResultsGroups.map((searchResultsGroup) => {
                         const searchResults = searchResultsGroup.hits
-                        // TODO: probably need to return UUID as group_key
                         const [key] = searchResultsGroup.group_key
+                        const [searchResult] = searchResults
+                        if (searchResult == null) return null
+
+                        const title =
+                          searchResult.highlights?.find((highlight) => {
+                            return highlight.field === 'title'
+                          })?.snippet ?? searchResult.document.title
 
                         return (
                           <div key={key} role="group">
+                            <Combobox.Option
+                              key={searchResult.document.id}
+                              value={searchResult}
+                              className={({ active }) => {
+                                return cx(
+                                  'cursor-default select-none px-4 py-2',
+                                  active && 'bg-gray-800 text-white',
+                                )
+                              }}
+                            >
+                              <SearchResultPreview
+                                authors={searchResult.document.authors}
+                                date={searchResult.document.date}
+                                tags={searchResult.document.tags}
+                                title={title}
+                              />
+                            </Combobox.Option>
                             {searchResults.map((searchResult) => {
+                              const heading = searchResult.document.heading
+
+                              if (heading == null) return null
+
+                              const content = searchResult.highlights?.find((highlight) => {
+                                return highlight.field === 'content'
+                              })
+
+                              if (content == null) return null
+
+                              const snippet = content.snippet
+
+                              if (snippet == null) return null
+
                               return (
                                 <Combobox.Option
                                   key={searchResult.document.id}
@@ -146,7 +178,7 @@ export function SearchDialogTrigger(): JSX.Element {
                                     )
                                   }}
                                 >
-                                  <SearchResultPreview searchResult={searchResult} />
+                                  <SearchResultChunkPreview heading={heading} snippet={snippet} />
                                 </Combobox.Option>
                               )
                             })}
@@ -174,6 +206,8 @@ export function SearchDialogTrigger(): JSX.Element {
                     ) : (
                       t(['common', 'no-search-results'])
                     )
+                  ) : query.status === 'error' ? (
+                    t(['common', 'search-request-error'])
                   ) : (
                     t(['common', 'search-help-text'])
                   )}
@@ -188,52 +222,59 @@ export function SearchDialogTrigger(): JSX.Element {
 }
 
 interface SearchResultPreviewProps {
-  searchResult: SearchResponseHit<SearchResult>
+  authors: SearchResponseHit<SearchResult>['document']['authors']
+  date: SearchResponseHit<SearchResult>['document']['date']
+  tags: SearchResponseHit<SearchResult>['document']['tags']
+  title: string
 }
 
 function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
-  const { searchResult } = props
+  const { date, tags, title } = props
 
-  // const { t } = useI18n<'common'>()
-  const publishDate = useHumanReadableDate(searchResult.document.date)
-
-  const highlights = keyBy(searchResult.highlights ?? [], (highlight) => {
-    return highlight.field
-  })
+  const { t } = useI18n<'common'>()
+  const publishDate = useHumanReadableDate(date)
 
   return (
     <article className="grid gap-1">
-      <h2
-        className="font-medium"
-        dangerouslySetInnerHTML={{
-          __html:
-            'title' in highlights ? highlights.title.snippet ?? '' : searchResult.document.title,
-        }}
-      />
-      <div className="grid gap-0.5 text-muted-text">
-        <div className="flex gap-2 text-xs">
-          <time dateTime={searchResult.document.date}>{publishDate}</time>
-          {searchResult.document.heading != null ? (
-            <span>
-              {'#'.repeat(searchResult.document.heading.depth)}{' '}
-              {searchResult.document.heading.title}
-            </span>
-          ) : null}
-        </div>
-        {'content' in highlights ? (
-          <div dangerouslySetInnerHTML={{ __html: highlights.content.snippet ?? '' }} />
-        ) : null}
-        {/* <dl className="text-xs">
+      <h2 className="font-medium" dangerouslySetInnerHTML={{ __html: title }} />
+      <div className="flex gap-2 text-xs text-muted-text">
+        <time dateTime={date}>{publishDate}</time>
+        <dl className="text-xs">
           <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
           <dd>
             <ul className="flex gap-2" role="list">
-              {searchResult.document.tags.map((tag) => {
-                return <li key={tag}>{tag}</li>
+              {tags.map((tag) => {
+                return (
+                  <li
+                    className="inline-flex rounded bg-gray-500 px-1.5 font-medium text-gray-900"
+                    key={tag}
+                  >
+                    {tag}
+                  </li>
+                )
               })}
             </ul>
           </dd>
-        </dl> */}
+        </dl>
       </div>
+    </article>
+  )
+}
+
+interface SearchResultChunkPreviewProps {
+  heading: Exclude<SearchResponseHit<SearchResult>['document']['heading'], undefined>
+  snippet: string
+}
+
+function SearchResultChunkPreview(props: SearchResultChunkPreviewProps): JSX.Element {
+  const { heading, snippet } = props
+
+  return (
+    <article className="ml-2 grid gap-1 border-l border-l-muted-text pl-4">
+      <h2 className="font-medium">
+        {'#'.repeat(heading.depth)} {heading.title}
+      </h2>
+      <div className="text-xs text-muted-text" dangerouslySetInnerHTML={{ __html: snippet }} />
     </article>
   )
 }

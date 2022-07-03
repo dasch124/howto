@@ -74,6 +74,7 @@ export const dictionary: Dictionary = {
   search: 'Search',
   'search-help-text': 'Please enter search term',
   'no-search-results': 'Nothing found',
+  'search-request-error': 'Failed to fetch search results',
   'search-results-count': {
     zero: 'No match',
     one: 'One match',

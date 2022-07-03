@@ -62,6 +62,7 @@ export interface Dictionary {
   search: string
   'search-help-text': string
   'no-search-results': string
+  'search-request-error': string
   'search-results-count': Plurals
   'read-more': string
   'rss-feed': string

@@ -64,7 +64,7 @@ export function useSearch(searchTerm: string): {
           highlight_affix_num_tokens: snippetWords,
           highlight_fields: 'content,title',
           highlight_full_fields: 'title',
-          include_fields: 'postId,title,content,tags,authors,date,kind,heading',
+          include_fields: 'postId,uuid,title,content,tags,authors,date,kind,heading',
           limit_hits: maxSearchResults,
           group_limit: maxSearchResultChunks,
           group_by: 'uuid',

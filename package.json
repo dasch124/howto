@@ -8,6 +8,7 @@
     "build": "next build",
     "cms:dev": "netlify-cms-proxy-server",
     "dev": "next dev",
+    "dev:search": "docker run --rm -p 8108:8108 -v/tmp/typesense-data:/data typesense/typesense:0.23.0 --data-dir /data --api-key=${TYPESENSE_ADMIN_API_KEY} --enable-cors",
     "format": "prettier . --cache --check --ignore-path .gitignore",
     "format:fix": "npm run format -- --write",
     "generate": "npm run \"generate:content-schema\" && run-p \"generate:!(content-schema)\"",
@@ -46,6 +47,7 @@
   },
   "packageManager": "npm@8.5.5",
   "dependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/state": "^6.0.1",
     "@codemirror/view": "^6.0.2",

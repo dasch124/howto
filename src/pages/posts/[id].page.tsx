@@ -26,6 +26,7 @@ import type { PostCore, PostDetails } from '@/cms/cms.client'
 import { getPersonFullName, getPost, getPostIds, getPostsCoreByTags } from '@/cms/cms.client'
 import { EditInCmsLink } from '@/components/edit-in-cms-link'
 import { MainContent } from '@/components/main-content'
+import { PostsList } from '@/components/posts-list'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
@@ -301,17 +302,7 @@ function RelatedPosts(props: RelatedPostsProps): JSX.Element | null {
       <h2 className="text-2xl font-bold text-heading-text">
         {t(['common', 'post', 'related-posts'])}
       </h2>
-      <nav aria-label={t(['common', 'post', 'related-posts'])}>
-        <ul className="grid gap-1" role="list">
-          {posts.map((post) => {
-            return (
-              <li key={post.id}>
-                <Link href={routes.post({ id: post.id })}>{post.title}</Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
+      <PostsList posts={posts} />
     </section>
   )
 }

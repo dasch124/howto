@@ -28,6 +28,8 @@ a {
   color: currentColor;
   text-decoration: none;
   transition: color var(--animation-duration) var(--animation-timing-function);
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
 
   &:hover,
   &:focus-visible {
