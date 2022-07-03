@@ -1,6 +1,7 @@
 import '@wooorm/starry-night/style/core.css'
 
-import { ClockIcon } from '@heroicons/react/outline'
+import { Dialog, Transition } from '@headlessui/react'
+import { ClockIcon, HashtagIcon as TableOfContentsIcon } from '@heroicons/react/outline'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
 import cx from 'clsx'
@@ -11,8 +12,9 @@ import type {
   GetStaticPropsResult,
 } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import path from 'node:path'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 
 import { useI18n } from '@/app/i18n/use-i18n'
 import { withDictionaries } from '@/app/i18n/with-dictionaries'
@@ -20,7 +22,6 @@ import { DublinCore } from '@/app/metadata/dublin-core'
 import { Highwire } from '@/app/metadata/highwire'
 import { useAppMetadata } from '@/app/metadata/use-app-metadata'
 import { usePageTitleTemplate } from '@/app/metadata/use-page-title-template'
-import * as routes from '@/app/route/routes.config'
 import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import type { PostCore, PostDetails } from '@/cms/cms.client'
 import { getPersonFullName, getPost, getPostIds, getPostsCoreByTags } from '@/cms/cms.client'
@@ -30,6 +31,7 @@ import { PostsList } from '@/components/posts-list'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
+import { useDialogState } from '@/lib/use-dialog-state'
 import { useFirstVisibleHeading } from '@/lib/use-first-visible-heading'
 import { useHumanReadableDate } from '@/lib/use-human-readable-date'
 import { useMdx } from '@/lib/use-mdx'
@@ -182,13 +184,13 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         })}
         siteTitle={appMetadata.title}
       />
-      <MainContent className="mx-auto my-16 grid w-full max-w-6xl content-start gap-16 px-8 py-8">
+      <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 py-8 px-2 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
         <PostHeader post={post} />
         <div
           className={cx(
             proseStyles['prose'],
             syntaxStyles['syntax-highlighting'],
-            'mx-auto grid grid-cols-prose [:where(&>*)]:[grid-column:content]',
+            'mx-auto grid grid-cols-prose [:where(&>*)]:[grid-column:bleed] sm:[:where(&>*)]:[grid-column:content]',
           )}
         >
           <Content components={components} />
@@ -197,7 +199,14 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           <LastUpdated timestamp={timestamp} />
           <EditInCmsLink id={post.id} />
         </div>
-        <TableOfContents tableOfContents={post.body.data.toc} />
+        <aside className="hidden [grid-column:1/3] [grid-row:2] 2xl:block">
+          <div className="sticky top-12 grid justify-items-end py-2">
+            <TableOfContents tableOfContents={post.body.data.toc} />
+          </div>
+        </aside>
+        <aside className="block 2xl:hidden">
+          <FloatingTableOfContents tableOfContents={post.body.data.toc} />
+        </aside>
         <RelatedPosts posts={relatedPosts} />
       </MainContent>
     </Fragment>
@@ -222,7 +231,7 @@ function PostHeader(props: PostHeaderProps): JSX.Element {
         <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
         <dd>
           <ul
-            className="flex flex-wrap gap-3 text-sm font-medium text-accent-primary-text"
+            className="flex flex-wrap gap-x-3 gap-y-1.5 text-sm font-medium text-accent-primary-text"
             role="list"
           >
             {post.tags.map((tag) => {
@@ -240,7 +249,7 @@ function PostHeader(props: PostHeaderProps): JSX.Element {
           <dt className="sr-only">{t(['common', 'post', 'author', 'other'])}</dt>
           <dd>
             <ul
-              className="flex flex-wrap gap-3 text-sm font-medium text-accent-primary-text"
+              className="flex flex-wrap gap-x-3 gap-y-1.5 text-sm font-medium text-accent-primary-text"
               role="list"
             >
               {post.authors.map((author) => {
@@ -298,12 +307,15 @@ function RelatedPosts(props: RelatedPostsProps): JSX.Element | null {
   if (posts.length === 0) return null
 
   return (
-    <section className="grid gap-2">
-      <h2 className="text-2xl font-bold text-heading-text">
-        {t(['common', 'post', 'related-posts'])}
-      </h2>
-      <PostsList posts={posts} />
-    </section>
+    <Fragment>
+      <hr />
+      <section className="grid gap-12">
+        <h2 className="text-2xl font-bold text-heading-text">
+          {t(['common', 'post', 'related-posts'])}
+        </h2>
+        <PostsList posts={posts} />
+      </section>
+    </Fragment>
   )
 }
 
@@ -320,7 +332,7 @@ function TableOfContents(props: TableOfContentsProps): JSX.Element | null {
   if (tableOfContents == null || tableOfContents.length === 0) return null
 
   return (
-    <nav aria-label={t(['common', 'post', 'table-of-contents'])}>
+    <nav aria-label={t(['common', 'post', 'table-of-contents'])} className="grid gap-1">
       <h2 className="text-sm font-bold uppercase tracking-wide">
         {t(['common', 'post', 'table-of-contents'])}
       </h2>
@@ -345,7 +357,7 @@ function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | n
     <ol
       className="grid gap-1 text-sm"
       data-toc-level={depth}
-      style={{ marginInlineStart: depth * 8 }}
+      style={{ marginInlineStart: depth * 12 }}
     >
       {level.map((heading) => {
         const isHighlighted = highlightedHeadingId != null && heading.id === highlightedHeadingId
@@ -364,5 +376,74 @@ function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | n
         )
       })}
     </ol>
+  )
+}
+
+interface FloatingTableOfContentsProps {
+  tableOfContents: PostDetails['body']['data']['toc']
+}
+
+function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Element | null {
+  const { tableOfContents } = props
+
+  const { t } = useI18n<'common'>()
+  const dialog = useDialogState()
+  const router = useRouter()
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', dialog.close)
+
+    return () => {
+      router.events.off('routeChangeStart', dialog.close)
+    }
+  }, [router.events, dialog.close])
+
+  if (tableOfContents == null || tableOfContents.length === 0) return null
+
+  return (
+    <Fragment>
+      <button
+        aria-label={t(['common', 'post', 'table-of-contents'])}
+        className="fixed bottom-12 right-12 grid h-12 w-12 place-items-center rounded-full bg-accent-primary-background p-2 text-white transition hover:bg-accent-secondary-background"
+        onClick={dialog.toggle}
+        title={t(['common', 'post', 'table-of-contents'])}
+      >
+        <TableOfContentsIcon width="1em" />
+      </button>
+      <Transition.Root appear as={Fragment} show={dialog.isOpen}>
+        <Dialog as="div" className="relative z-dialog" onClose={dialog.close}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-dialog overflow-y-auto p-4 sm:p-6 md:p-20">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="divide-opacity-20 mx-auto max-w-2xl transform divide-y divide-gray-500 overflow-hidden rounded bg-gray-900 shadow-2xl ring-1 ring-gray-500 ring-offset-2 ring-offset-gray-500 transition-all">
+                {/* <Dialog.Title className="sr-only">{t(['common', 'post', 'table-of-contents'])}</Dialog.Title> */}
+                <div className="p-8">
+                  <TableOfContents tableOfContents={tableOfContents} />
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
+    </Fragment>
   )
 }

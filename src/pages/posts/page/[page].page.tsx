@@ -73,7 +73,7 @@ export default function PostsPage(props: PostsPageProps): JSX.Element {
   return (
     <Fragment>
       <PageMetadata title={metadata.title} titleTemplate={titleTemplate} />
-      <MainContent className="mx-auto my-16 grid w-full max-w-6xl content-start gap-16 px-8 py-8">
+      <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 px-2 py-8 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
         <PostsPageHeader title={metadata.title} />
         <PostsSection page={page} pages={pages} posts={posts} />
       </MainContent>

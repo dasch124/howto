@@ -37,8 +37,8 @@ export default function ImprintPage(props: ImprintPageProps): JSX.Element {
   return (
     <Fragment>
       <PageMetadata nofollow noindex title={metadata.title} titleTemplate={titleTemplate} />
-      <MainContent>
-        <h1>{metadata.title}</h1>
+      <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 px-2 py-8 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
+        <h1 className="text-5xl font-black text-accent-primary-text">{metadata.title}</h1>
         <div dangerouslySetInnerHTML={{ __html: html }} />
       </MainContent>
     </Fragment>

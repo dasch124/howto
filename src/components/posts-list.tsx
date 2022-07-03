@@ -20,7 +20,7 @@ export function PostsList(props: PostsListProps): JSX.Element {
 
   return (
     <ul
-      className="grid grid-cols-[repeat(auto-fill,minmax(min(400px,100%),1fr))] gap-12"
+      className="grid grid-cols-[repeat(auto-fill,minmax(min(400px,100%),1fr))] gap-16"
       role="list"
     >
       {posts.map((post) => {
