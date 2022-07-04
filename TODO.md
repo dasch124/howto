@@ -62,3 +62,7 @@ because it relies on margin collapse
 ## mdx
 
 - consider supporting custom heading id syntax with `remark-custom-heading-id`
+
+## breaking changes
+
+- we removed image captions via title attribute => use `<Figure />`

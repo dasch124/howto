@@ -50,8 +50,7 @@ const NetlifyCms = dynamic(
     const { nanoid } = await import('nanoid')
     const { default: CMS } = await import('netlify-cms-app')
     const { config, collections } = await import('@/cms/cms.config')
-    const { CoursePreview } = await import('@/cms/previews/course-preview')
-    const { ResourcePreview } = await import('@/cms/previews/resource-preview')
+    const { PostPreview } = await import('@/cms/previews/post.preview')
     const { DownloadWidget } = await import('@/cms/widgets/download')
     const { FigureEditorWidget } = await import('@/cms/widgets/figure')
     const { QuizEditorWidget } = await import('@/cms/widgets/quiz')
@@ -93,8 +92,7 @@ const NetlifyCms = dynamic(
       // plugins: [withResourceLinks], // TODO:
     })
 
-    CMS.registerPreviewTemplate(collections.posts.name, memo(ResourcePreview))
-    CMS.registerPreviewTemplate(collections.courses.name, memo(CoursePreview))
+    CMS.registerPreviewTemplate(collections.posts.name, memo(PostPreview))
 
     CMS.registerPreviewStyle('/assets/css/tailwind.css')
     CMS.registerPreviewStyle('/assets/css/index.css')

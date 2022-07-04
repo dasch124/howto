@@ -27,7 +27,7 @@ import type { Locale } from './config/i18n.config'
 import { defaultLocale, locales } from './config/i18n.config'
 import { createI18nService } from './src/app/i18n/create-i18n-service'
 import { loadDictionaries } from './src/app/i18n/load-dictionaries'
-import withStarryNight from './src/lib/rehype-starry-night.js'
+import withSyntaxHighlighting from './src/lib/rehype-starry-night.js'
 import withAssetDownloads from './src/lib/remark-asset-downloads'
 import withComponents from './src/lib/remark-mdx-components'
 import withWordCount from './src/lib/retext-word-count.js'
@@ -420,7 +420,7 @@ export default makeSource({
         withToc,
         withNoReferrerLinks,
         withListsWithAriaRole,
-        [withStarryNight, { grammars: [...common, sparql, turtle] }],
+        [withSyntaxHighlighting, { grammars: [...common, sparql, turtle] }],
       ],
     })
 

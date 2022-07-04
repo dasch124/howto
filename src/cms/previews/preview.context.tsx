@@ -16,9 +16,6 @@ export interface PreviewProviderProps extends PreviewTemplateComponentProps {
   children: ReactNode
 }
 
-/**
- * Provides preview iframe values via context.
- */
 export function PreviewProvider(props: PreviewProviderProps): JSX.Element {
   const { document, children } = props
 

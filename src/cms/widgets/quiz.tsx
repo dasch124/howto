@@ -227,10 +227,7 @@ const quizChoiceVariant = {
   default: 'multiple',
 }
 
-/**
- * Netlify CMS richtext editor widget for Quiz component.
- */
-export const quizEditorWidget: EditorComponentOptions = {
+export const QuizEditorWidget: EditorComponentOptions = {
   id: 'Quiz',
   label: 'Quiz',
   fields: [

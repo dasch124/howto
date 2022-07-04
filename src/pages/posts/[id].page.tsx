@@ -1,10 +1,7 @@
-import '@wooorm/starry-night/style/core.css'
-
 import { Dialog, Transition } from '@headlessui/react'
-import { ClockIcon, HashtagIcon as TableOfContentsIcon } from '@heroicons/react/outline'
+import { HashtagIcon as TableOfContentsIcon } from '@heroicons/react/outline'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
-import cx from 'clsx'
 import type {
   GetStaticPathsContext,
   GetStaticPathsResult,
@@ -27,16 +24,15 @@ import type { PostCore, PostDetails } from '@/cms/cms.client'
 import { getPersonFullName, getPost, getPostIds, getPostsCoreByTags } from '@/cms/cms.client'
 import { EditInCmsLink } from '@/components/edit-in-cms-link'
 import { MainContent } from '@/components/main-content'
+import { PostContent } from '@/components/post-content'
+import { PostHeader } from '@/components/post-header'
 import { PostsList } from '@/components/posts-list'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useDialogState } from '@/lib/use-dialog-state'
 import { useFirstVisibleHeading } from '@/lib/use-first-visible-heading'
-import { useHumanReadableDate } from '@/lib/use-human-readable-date'
 import { useMdx } from '@/lib/use-mdx'
-import proseStyles from '@/styles/prose.module.css'
-import syntaxStyles from '@/styles/syntax-highlighting.module.css'
 import type { Locale } from '~/config/i18n.config'
 import { relatedPostsCount } from '~/config/ui.config'
 
@@ -186,15 +182,9 @@ export default function PostPage(props: PostPageProps): JSX.Element {
       />
       <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 py-8 px-2 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
         <PostHeader post={post} />
-        <div
-          className={cx(
-            proseStyles['prose'],
-            syntaxStyles['syntax-highlighting'],
-            'mx-auto grid grid-cols-prose [:where(&>*)]:[grid-column:bleed] sm:[:where(&>*)]:[grid-column:content]',
-          )}
-        >
+        <PostContent>
           <Content components={components} />
-        </div>
+        </PostContent>
         <div className="grid justify-items-end gap-2 justify-self-end">
           <LastUpdated timestamp={timestamp} />
           <EditInCmsLink id={post.id} />
@@ -210,69 +200,6 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         <RelatedPosts posts={relatedPosts} />
       </MainContent>
     </Fragment>
-  )
-}
-
-interface PostHeaderProps {
-  post: PostDetails
-}
-
-function PostHeader(props: PostHeaderProps): JSX.Element {
-  const { post } = props
-
-  const { plural, t } = useI18n<'common'>()
-  const publishDate = useHumanReadableDate(post.date)
-
-  const readingTime = post.body.data['readingTime'] as number
-
-  return (
-    <header className="my-16 grid gap-8">
-      <dl>
-        <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
-        <dd>
-          <ul
-            className="flex flex-wrap gap-x-3 gap-y-1.5 text-sm font-medium text-accent-primary-text"
-            role="list"
-          >
-            {post.tags.map((tag) => {
-              return <li key={tag._id}>{tag.name}</li>
-            })}
-          </ul>
-        </dd>
-      </dl>
-      <h1 className="text-5xl font-black text-accent-primary-text">{post.title}</h1>
-      <time className="text-sm font-medium" dateTime={post.date}>
-        {publishDate}
-      </time>
-      <dl className="flex items-center justify-between gap-8">
-        <div>
-          <dt className="sr-only">{t(['common', 'post', 'author', 'other'])}</dt>
-          <dd>
-            <ul
-              className="flex flex-wrap gap-x-3 gap-y-1.5 text-sm font-medium text-accent-primary-text"
-              role="list"
-            >
-              {post.authors.map((author) => {
-                const name = getPersonFullName(author)
-
-                return <li key={author._id}>{name}</li>
-              })}
-            </ul>
-          </dd>
-        </div>
-        <div>
-          <dt className="sr-only">{t(['common', 'post', 'reading-time'])}</dt>
-          <dd>
-            <span className="inline-flex items-center gap-2 text-sm">
-              <ClockIcon className="flex-shrink-0" width="1em" />
-              {t(['common', 'post', 'minute', plural(readingTime)], {
-                values: { time: String(readingTime) },
-              })}
-            </span>
-          </dd>
-        </div>
-      </dl>
-    </header>
   )
 }
 

@@ -1,41 +1,39 @@
-import withSyntaxHighlighting from '@stefanprobst/rehype-shiki'
+import { compile } from '@mdx-js/mdx'
+import { common } from '@wooorm/starry-night'
+import sparql from '@wooorm/starry-night/lang/source.sparql.js'
+import turtle from '@wooorm/starry-night/lang/source.turtle.js'
 import type { PreviewTemplateComponentProps } from 'netlify-cms-core'
-import { useEffect, useMemo, useState } from 'react'
-import withHeadingIds from 'rehype-slug'
-import withFootnotes from 'remark-footnotes'
-import withGitHubMarkdown from 'remark-gfm'
-import type { Highlighter } from 'shiki'
-import { compile } from 'xdm'
+import { useCallback, useEffect, useState } from 'react'
+import withGfm from 'remark-gfm'
 
-import type { PostFrontmatter, PostMetadata } from '@/cms/api/posts.api'
-import { getSyntaxHighlighter } from '@/cms/previews/get-syntax-highlighter'
+import type { PostDetails } from '@/cms/cms.client'
+import withCmsPreviewAssets from '@/cms/lib/remark-cms-preview-assets'
 import { Preview } from '@/cms/previews/preview'
-import { Spinner } from '@/common/Spinner'
-import withHeadingLinks from '@/mdx/plugins/rehype-heading-links'
-import withImageCaptions from '@/mdx/plugins/rehype-image-captions'
-import withNoReferrerLinks from '@/mdx/plugins/rehype-no-referrer-links'
-import withCmsPreviewAssets from '@/mdx/plugins/remark-cms-preview-assets'
-import withTypographicQuotesAndDashes from '@/mdx/plugins/remark-smartypants'
-import { useDebouncedState } from '@/utils/useDebouncedState'
-import { Resource } from '@/views/Resource'
+import { PostContent } from '@/components/post-content'
+import { PostHeader } from '@/components/post-header'
+import { Spinner } from '@/components/spinner'
+import withSyntaxHighlighting from '@/lib/rehype-starry-night'
+import { useDebouncedState } from '@/lib/use-debounced-state'
+import { previewRenderDelay } from '~/config/cms.config'
+
+type PostMetadata = Omit<PostDetails, '_id' | '_raw' | 'body' | 'id' | 'uuid'>
 
 const initialMetadata: PostMetadata = {
+  type: 'Post',
   authors: [],
   tags: [],
-  licence: { id: '', name: '', url: '' },
-  uuid: '',
+  licence: { _id: '', id: '', name: '' },
   title: '',
+  locale: 'en',
   lang: 'en',
-  date: new Date(0).toISOString(),
+  toc: false,
+  date: new Date().toISOString(),
   version: '',
   abstract: '',
 }
 
-/**
- * CMS preview for resource.
- */
-export function ResourcePreview(props: PreviewTemplateComponentProps): JSX.Element {
-  const entry = useDebouncedState(props.entry, 250)
+export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
+  const entry = useDebouncedState(props.entry, previewRenderDelay)
   const { fieldsMetaData, getAsset } = props
 
   const data = entry.get('data')
@@ -43,42 +41,49 @@ export function ResourcePreview(props: PreviewTemplateComponentProps): JSX.Eleme
 
   const [metadata, setMetadata] = useState<PostMetadata>(initialMetadata)
   const [mdxContent, setMdxContent] = useState<Error | string | null>(null)
-  const [highlighter, setHighlighter] = useState<Highlighter | null>(null)
 
-  useEffect(() => {
-    async function initializeHighlighter() {
-      const highlighter = await getSyntaxHighlighter()
-      setHighlighter(highlighter)
-    }
+  // TODO: useEvent
+  const compileMdx = useCallback(
+    async function compileMdx(code: string) {
+      // TODO: compile to hyperscript, not javascript!
+      const vfile = await compile(code, {
+        outputFormat: 'function-body',
+        remarkPlugins: [
+          withGfm,
+          // [
+          //   withSmartQuotes,
+          //   locale === 'de'
+          //     ? {
+          //         openingQuotes: { double: '„', single: ',' },
+          //         closingQuotes: { double: '”', single: '’' },
+          //       }
+          //     : undefined,
+          // ],
+          // [
+          //   toNlcst as Plugin,
+          //   unified()
+          //     .use(locale === 'en' ? english : latin)
+          //     .use(withWordCount),
+          // ],
+          // withComponents,
+          // [withNextImages, { publicDirectory: '/assets/images/static' }],
+          // [withAssetDownloads, { publicDirectory: '/assets/downloads/static' }],
+          [withCmsPreviewAssets, getAsset],
+        ],
+        rehypePlugins: [
+          // withHeadingIds,
+          // [withHeadingFragmentLinks, { generate: createPermalink }],
+          // withToc,
+          // withNoReferrerLinks,
+          // withListsWithAriaRole,
+          [withSyntaxHighlighting, { grammars: [...common, sparql, turtle] }],
+        ],
+      })
 
-    initializeHighlighter()
-  }, [])
-
-  const compileMdx = useMemo(() => {
-    if (highlighter == null) return null
-
-    return async (code: string) => {
-      return String(
-        await compile(code, {
-          outputFormat: 'function-body',
-          useDynamicImport: false,
-          remarkPlugins: [
-            withGitHubMarkdown,
-            withFootnotes,
-            withTypographicQuotesAndDashes,
-            [withCmsPreviewAssets, getAsset],
-          ],
-          rehypePlugins: [
-            [withSyntaxHighlighting, { highlighter }],
-            withHeadingIds,
-            withHeadingLinks,
-            withNoReferrerLinks,
-            withImageCaptions,
-          ],
-        }),
-      )
-    }
-  }, [getAsset, highlighter])
+      return vfile
+    },
+    [getAsset],
+  )
 
   useEffect(() => {
     function resolveRelation(path: Array<string>, id: string) {
@@ -88,7 +93,7 @@ export function ResourcePreview(props: PreviewTemplateComponentProps): JSX.Eleme
     }
 
     const { body: _, ...partialFrontmatter } = data.toJS()
-    const frontmatter = partialFrontmatter as Partial<PostFrontmatter>
+    const frontmatter = partialFrontmatter
 
     const authors = Array.isArray(frontmatter.authors)
       ? frontmatter.authors
@@ -165,15 +170,14 @@ export function ResourcePreview(props: PreviewTemplateComponentProps): JSX.Eleme
 
     async function processMdx() {
       try {
-        if (compileMdx == null) return Promise.resolve()
-        const code = await compileMdx(body)
+        const code = String(await compileMdx(body))
 
         if (!wasCanceled) {
           setMdxContent(code)
         }
       } catch (error) {
         console.error(error)
-        setMdxContent(new Error('Failed to render mdx.'))
+        setMdxContent(new Error('Failed to render MDX.'))
       }
     }
 
@@ -184,35 +188,51 @@ export function ResourcePreview(props: PreviewTemplateComponentProps): JSX.Eleme
     }
   }, [body, compileMdx])
 
-  return (
-    <Preview {...props}>
-      {typeof mdxContent === 'string' ? (
-        <Resource
-          resource={{
-            id: entry.get('slug'),
-            kind: 'posts',
-            code: mdxContent,
-            data: {
-              metadata,
-              toc: [],
-              /** We don't include `remark-reading-time` in the mdx compiler for previews. */
-              timeToRead: 1,
-            },
-          }}
-          lastUpdatedAt={null}
-          isPreview
-        />
-      ) : mdxContent instanceof Error ? (
+  if (mdxContent instanceof Error) {
+    return (
+      <Preview {...props}>
         <div>
           <p>Failed to render preview.</p>
           <p>This usually indicates a syntax error in the Markdown content.</p>
         </div>
-      ) : (
+      </Preview>
+    )
+  }
+
+  if (mdxContent === null) {
+    return (
+      <Preview {...props}>
         <div className="flex items-center space-x-2">
           <Spinner className="text-primary-600 h-6 w-6" aria-label="Loading..." />
           <p>Trying to render preview...</p>
         </div>
-      )}
+      </Preview>
+    )
+  }
+
+  const id = entry.get('slug')
+  const post: PostDetails = {
+    ...metadata,
+    id,
+    uuid: id,
+    _id: id,
+    // @ts-expect-error No need for this.
+    _raw: {},
+    body: {
+      raw: '',
+      code: mdxContent,
+      data: {
+        toc: [],
+        /** We don't calculate reading time for previews. */
+        readingTime: 1,
+      },
+    },
+  }
+
+  return (
+    <Preview {...props}>
+      <PostHeader post={post} />
+      <PostContent>{mdxContent}</PostContent>
     </Preview>
   )
 }
