@@ -45,7 +45,7 @@ export function SideNote(props: SideNoteProps): JSX.Element {
     <aside className={cx('my-6 rounded border-l-4 bg-muted-background px-8 py-4', styles[type])}>
       <p>
         <strong className="flex items-center gap-2 font-bold">
-          <Icon className="h-6 w-6 flex-shrink-0" width="1em" />
+          <Icon className="h-5 w-5 flex-shrink-0" width="1em" />
           <span>{title}</span>
         </strong>
       </p>

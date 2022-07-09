@@ -1,0 +1,22 @@
+diff --git a/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js b/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js
+index 736478e..aeced91 100644
+--- a/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js
++++ b/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js
+@@ -15,7 +15,7 @@ import { _jsx_runtime } from './jsx-runtime.cjs';
+ const getMDXComponent = (code, globals = {}) => {
+     const scope = { React, ReactDOM, _jsx_runtime, ...globals };
+     const fn = new Function(...Object.keys(scope), code);
+-    return fn(...Object.values(scope)).default;
++    return fn(...Object.values(scope));
+ };
+ export const useMDXComponent = (code, globals = {}) => {
+     return React.useMemo(() => getMDXComponent(code, globals), [code, globals]);
+diff --git a/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js.map b/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js.map
+index d39a6f0..2c09220 100644
+--- a/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js.map
++++ b/node_modules/next-contentlayer/dist/hooks/useMDXComponent.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"useMDXComponent.js","sourceRoot":"","sources":["../../src/hooks/useMDXComponent.ts"],"names":[],"mappings":";;AAAA,0GAA0G;AAC1G,OAAO,KAAK,MAAM,OAAO,CAAA;AACzB,0GAA0G;AAC1G,OAAO,QAAQ,MAAM,WAAW,CAAA;AAEhC,+HAA+H;AAC/H,OAAO,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAA;AAEhD,sFAAsF;AACtF,oDAAoD;AACpD,8FAA8F;AAC9F,EAAE;AACF,iEAAiE;AACjE,oDAAoD;AAEpD,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IACxG,MAAM,KAAK,GAAG,EAAE,KAAK,EAAE,QAAQ,EAAE,YAAY,EAAE,GAAG,OAAO,EAAE,CAAA;IAC3D,MAAM,EAAE,GAAG,IAAI,QAAQ,CAAC,GAAG,MAAM,CAAC,IAAI,CAAC,KAAK,CAAC,EAAE,IAAI,CAAC,CAAA;IACpD,OAAO,EAAE,CAAC,GAAG,MAAM,CAAC,MAAM,CAAC,KAAK,CAAC,CAAC,CAAC,OAAO,CAAA;AAC5C,CAAC,CAAA;AAED,MAAM,CAAC,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IAC/G,OAAO,KAAK,CAAC,OAAO,CAAC,GAAG,EAAE,CAAC,eAAe,CAAC,IAAI,EAAE,OAAO,CAAC,EAAE,CAAC,IAAI,EAAE,OAAO,CAAC,CAAC,CAAA;AAC7E,CAAC,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"useMDXComponent.js","sourceRoot":"","sources":["../../src/hooks/useMDXComponent.ts"],"names":[],"mappings":";;AAAA,0GAA0G;AAC1G,OAAO,KAAK,MAAM,OAAO,CAAA;AACzB,0GAA0G;AAC1G,OAAO,QAAQ,MAAM,WAAW,CAAA;AAEhC,+HAA+H;AAC/H,OAAO,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAA;AAEhD,sFAAsF;AACtF,oDAAoD;AACpD,8FAA8F;AAC9F,EAAE;AACF,iEAAiE;AACjE,oDAAoD;AAEpD,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IACxG,MAAM,KAAK,GAAG,EAAE,KAAK,EAAE,QAAQ,EAAE,YAAY,EAAE,GAAG,OAAO,EAAE,CAAA;IAC3D,MAAM,EAAE,GAAG,IAAI,QAAQ,CAAC,GAAG,MAAM,CAAC,IAAI,CAAC,KAAK,CAAC,EAAE,IAAI,CAAC,CAAA;IACpD,OAAO,EAAE,CAAC,GAAG,MAAM,CAAC,MAAM,CAAC,KAAK,CAAC,CAAC,CAAA;AACpC,CAAC,CAAA;AAED,MAAM,CAAC,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IAC/G,OAAO,KAAK,CAAC,OAAO,CAAC,GAAG,EAAE,CAAC,eAAe,CAAC,IAAI,EAAE,OAAO,CAAC,EAAE,CAAC,IAAI,EAAE,OAAO,CAAC,CAAC,CAAA;AAC7E,CAAC,CAAA"}
+\ No newline at end of file

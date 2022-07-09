@@ -260,7 +260,7 @@ function TableOfContents(props: TableOfContentsProps): JSX.Element | null {
   return (
     <nav
       aria-label={t(['common', 'post', 'table-of-contents'])}
-      className="grid gap-1 text-muted-text"
+      className="grid gap-1 text-gray-400"
     >
       <h2 className="text-sm font-bold uppercase tracking-wide">
         {t(['common', 'post', 'table-of-contents'])}
@@ -289,7 +289,10 @@ function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | n
 
         return (
           <li key={heading.id} className="grid gap-1">
-            <Link className={isHighlighted ? 'font-bold' : undefined} href={{ hash: heading.id }}>
+            <Link
+              className={isHighlighted ? 'text-highlighted-text' : undefined}
+              href={{ hash: heading.id }}
+            >
               {heading.value}
             </Link>
             <TableOfContentsLevel

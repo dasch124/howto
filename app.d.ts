@@ -5,13 +5,13 @@ type UrlString = string
 type Primitive = boolean | number | string
 
 type PageParamsInput = {
-  [K: string]: Primitive | ReadonlyArray<Primitive>
+  [K: string]: Array<Primitive> | Primitive
 }
 
 type PageParams<T extends PageParamsInput> = {
   [K in keyof T as string extends K ? never : K]: Exclude<T[K], undefined> extends Primitive
     ? string
-    : ReadonlyArray<string>
+    : Array<string>
 }
 
 declare module '*.svg' {
