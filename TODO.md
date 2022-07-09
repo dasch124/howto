@@ -66,3 +66,7 @@ because it relies on margin collapse
 ## breaking changes
 
 - we removed image captions via title attribute => use `<Figure />`
+
+# featured image
+
+- currently not used

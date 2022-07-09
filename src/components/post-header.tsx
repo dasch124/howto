@@ -15,8 +15,6 @@ export function PostHeader(props: PostHeaderProps): JSX.Element {
   const { plural, t } = useI18n<'common'>()
   const publishDate = useHumanReadableDate(post.date)
 
-  const readingTime = post.body.data['readingTime'] as number
-
   return (
     <header className="my-16 grid gap-8">
       <dl>
@@ -57,8 +55,8 @@ export function PostHeader(props: PostHeaderProps): JSX.Element {
           <dd>
             <span className="inline-flex items-center gap-2 text-sm">
               <ClockIcon className="flex-shrink-0" width="1em" />
-              {t(['common', 'post', 'minute', plural(readingTime)], {
-                values: { time: String(readingTime) },
+              {t(['common', 'post', 'minute', plural(post.readingTime)], {
+                values: { time: String(post.readingTime) },
               })}
             </span>
           </dd>

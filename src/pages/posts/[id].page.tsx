@@ -1,7 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { HashtagIcon as TableOfContentsIcon } from '@heroicons/react/outline'
+import { isNonEmptyString } from '@stefanprobst/is-nonempty-string'
 import { PageMetadata, SchemaOrg } from '@stefanprobst/next-page-metadata'
 import { createUrl } from '@stefanprobst/request'
+import cx from 'clsx'
 import type {
   GetStaticPathsContext,
   GetStaticPathsResult,
@@ -30,8 +32,8 @@ import { PostsList } from '@/components/posts-list'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
 import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
+import { useCurrentTocHeading } from '@/lib/use-current-toc-heading'
 import { useDialogState } from '@/lib/use-dialog-state'
-import { useFirstVisibleHeading } from '@/lib/use-first-visible-heading'
 import { useMdx } from '@/lib/use-mdx'
 import type { Locale } from '~/config/i18n.config'
 import { relatedPostsCount } from '~/config/ui.config'
@@ -80,9 +82,6 @@ export const getStaticProps = withDictionaries(
       relatedPostsCount,
     )
 
-    // FIXME: don't send post.body.raw and post.body.data.matter
-    // FIXME: PostDetails should Pick, not Omit, and also only pick what's needed from body.data
-    // FIXME: only send post.body.data.toc when post.toc is true
     return { props: { post, relatedPosts, timestamp } }
   },
 )
@@ -93,7 +92,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
   const canonicalUrl = useCanonicalUrl()
   const appMetadata = useAppMetadata()
   const titleTemplate = usePageTitleTemplate()
-  const { default: Content } = useMdx(post.body.code)
+  const { default: Content } = useMdx(post.code)
 
   const metadata = { title: post.title }
 
@@ -119,7 +118,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           datePublished: post.date,
           abstract: post.abstract,
           description: post.abstract,
-          inLanguage: post.lang,
+          inLanguage: post.locale,
           author: post.authors.map((author) => {
             return {
               '@type': 'Person',
@@ -143,7 +142,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           }),
           version: post.version,
           license: post.licence.name,
-          image: post.featuredImage,
+          image: isNonEmptyString(post.featuredImage) ? post.featuredImage : undefined,
           keywords: post.tags.map((tag) => {
             return tag.name
           }),
@@ -191,11 +190,11 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         </div>
         <aside className="hidden [grid-column:1/3] [grid-row:2] 2xl:block">
           <div className="sticky top-12 grid justify-items-end py-2">
-            <TableOfContents tableOfContents={post.body.data.toc} />
+            <TableOfContents tableOfContents={post.toc} />
           </div>
         </aside>
         <aside className="block 2xl:hidden">
-          <FloatingTableOfContents tableOfContents={post.body.data.toc} />
+          <FloatingTableOfContents tableOfContents={post.toc} />
         </aside>
         <RelatedPosts posts={relatedPosts} />
       </MainContent>
@@ -247,19 +246,22 @@ function RelatedPosts(props: RelatedPostsProps): JSX.Element | null {
 }
 
 interface TableOfContentsProps {
-  tableOfContents: PostDetails['body']['data']['toc']
+  tableOfContents: PostDetails['toc']
 }
 
 function TableOfContents(props: TableOfContentsProps): JSX.Element | null {
   const { tableOfContents } = props
 
   const { t } = useI18n<'common'>()
-  const highlightedHeadingId = useFirstVisibleHeading()
+  const highlightedHeadingId = useCurrentTocHeading()
 
-  if (tableOfContents == null || tableOfContents.length === 0) return null
+  if (tableOfContents.length === 0) return null
 
   return (
-    <nav aria-label={t(['common', 'post', 'table-of-contents'])} className="grid gap-1">
+    <nav
+      aria-label={t(['common', 'post', 'table-of-contents'])}
+      className="grid gap-1 text-muted-text"
+    >
       <h2 className="text-sm font-bold uppercase tracking-wide">
         {t(['common', 'post', 'table-of-contents'])}
       </h2>
@@ -272,7 +274,7 @@ interface TableOfContentsLevelProps {
   /** @default 0 */
   depth?: number
   highlightedHeadingId: string | null
-  level: PostDetails['body']['data']['toc']
+  level: PostDetails['toc'] | undefined
 }
 
 function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | null {
@@ -281,11 +283,7 @@ function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | n
   if (level == null || level.length === 0) return null
 
   return (
-    <ol
-      className="grid gap-1 text-sm"
-      data-toc-level={depth}
-      style={{ marginInlineStart: depth * 12 }}
-    >
+    <ol className={cx('grid gap-1 text-sm', depth > 0 && 'ml-3')} data-toc-level={depth}>
       {level.map((heading) => {
         const isHighlighted = highlightedHeadingId != null && heading.id === highlightedHeadingId
 
@@ -307,7 +305,7 @@ function TableOfContentsLevel(props: TableOfContentsLevelProps): JSX.Element | n
 }
 
 interface FloatingTableOfContentsProps {
-  tableOfContents: PostDetails['body']['data']['toc']
+  tableOfContents: PostDetails['toc']
 }
 
 function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Element | null {
@@ -325,7 +323,7 @@ function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Eleme
     }
   }, [router.events, dialog.close])
 
-  if (tableOfContents == null || tableOfContents.length === 0) return null
+  if (tableOfContents.length === 0) return null
 
   return (
     <Fragment>

@@ -3,6 +3,7 @@ import { groupBy } from '@stefanprobst/group-by'
 import { isNonEmptyString } from '@stefanprobst/is-nonempty-string'
 import { keyBy } from '@stefanprobst/key-by'
 import { pick } from '@stefanprobst/pick'
+import type { Toc } from '@stefanprobst/rehype-extract-toc'
 import type { Curriculum, Licence, Person, Post, Tag } from 'contentlayer/generated'
 import { allCurriculums, allLicences, allPeople, allPosts, allTags } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
@@ -17,7 +18,11 @@ export type CurriculumCore = Pick<
   tags: Array<TagCore>
 }
 
-export type CurriculumDetails = Omit<Curriculum, 'editors' | 'resources' | 'tags'> & {
+export type CurriculumDetails = Pick<
+  Curriculum,
+  '_id' | 'abstract' | 'date' | 'featuredImage' | 'id' | 'locale' | 'title' | 'uuid' | 'version'
+> & {
+  code: string
   editors?: Array<PersonCore>
   resources: Array<PostCore>
   tags: Array<TagCore>
@@ -35,16 +40,18 @@ export type PostCore = Pick<
   tags: Array<TagCore>
 }
 
-// FIXME: Pick not Omit
-export type PostDetails = Omit<
+export type PostDetails = Pick<
   Post,
-  'authors' | 'contributors' | 'editors' | 'licence' | 'tags'
+  '_id' | 'abstract' | 'date' | 'featuredImage' | 'id' | 'locale' | 'title' | 'uuid' | 'version'
 > & {
   authors: Array<PersonCore>
+  code: string
   contributors?: Array<PersonCore>
   editors?: Array<PersonCore>
   licence: LicenceCore
+  readingTime: number
   tags: Array<TagCore>
+  toc: Toc
 }
 
 type TagCore = Pick<Tag, '_id' | 'id' | 'name'>
@@ -98,9 +105,10 @@ export function getCurriculumCore(id: Curriculum['id']): CurriculumCore {
   assert(_curriculum != null)
 
   const curriculum = {
-    ...pick(_curriculum, ['_id', 'abstract', 'date', 'id', 'title', 'uuid']),
+    ...pick(_curriculum, ['_id', 'abstract', 'date', 'id', 'uuid']),
     editors: _curriculum.editors?.map(getPersonCore) ?? [],
     tags: _curriculum.tags.map(getTagCore),
+    title: isNonEmptyString(_curriculum.shortTitle) ? _curriculum.shortTitle : _curriculum.title,
   }
 
   return curriculum
@@ -111,7 +119,18 @@ export function getCurriculum(id: Curriculum['id']): CurriculumDetails {
   assert(_curriculum != null)
 
   const curriculum = {
-    ..._curriculum,
+    ...pick(_curriculum, [
+      '_id',
+      'abstract',
+      'date',
+      'featuredImage',
+      'id',
+      'locale',
+      'title',
+      'uuid',
+      'version',
+    ]),
+    code: _curriculum.body.code,
     editors: _curriculum.editors?.map(getPersonCore) ?? [],
     resources: _curriculum.resources.map(getPostCore),
     tags: _curriculum.tags.map(getTagCore),
@@ -193,9 +212,10 @@ export function getPostCore(id: Post['id']): PostCore {
   assert(_post != null)
 
   const post = {
-    ...pick(_post, ['_id', 'abstract', 'date', 'id', 'locale', 'title', 'uuid']),
+    ...pick(_post, ['_id', 'abstract', 'date', 'id', 'locale', 'uuid']),
     authors: _post.authors.map(getPersonCore),
     tags: _post.tags.map(getTagCore),
+    title: isNonEmptyString(_post.shortTitle) ? _post.shortTitle : _post.title,
   }
 
   return post
@@ -206,12 +226,25 @@ export function getPost(id: Post['id']): PostDetails {
   assert(_post != null)
 
   const post = {
-    ..._post,
+    ...pick(_post, [
+      '_id',
+      'abstract',
+      'date',
+      'featuredImage',
+      'id',
+      'locale',
+      'title',
+      'uuid',
+      'version',
+    ]),
     authors: _post.authors.map(getPersonCore),
+    code: _post.body.code,
     contributors: _post.contributors?.map(getPersonCore) ?? [],
     editors: _post.editors?.map(getPersonCore) ?? [],
     licence: getLicenceCore(_post.licence),
+    readingTime: _post.body.data.readingTime ?? 0,
     tags: _post.tags.map(getTagCore),
+    toc: _post.toc ? _post.body.data.toc ?? [] : [],
   }
 
   return post

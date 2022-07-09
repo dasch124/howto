@@ -33,7 +33,7 @@ export const collection: CmsCollection = {
     {
       name: 'shortTitle',
       label: 'Short title',
-      hint: '',
+      hint: 'Will be used on the curricula overview screen if available.',
       required: false,
     },
     {

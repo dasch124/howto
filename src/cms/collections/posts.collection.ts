@@ -33,7 +33,7 @@ export const collection: CmsCollection = {
     {
       name: 'shortTitle',
       label: 'Short title',
-      hint: '',
+      hint: 'Will be used on the posts overview screen if available.',
       required: false,
     },
     {
@@ -158,7 +158,7 @@ export const collection: CmsCollection = {
     {
       name: 'toc',
       label: 'Show Table of Contents',
-      hint: '',
+      hint: 'Will display a table of contents next to the post if enabled.',
       required: false,
       widget: 'boolean',
       default: false,
