@@ -34,13 +34,14 @@ export function Video(props: VideoProps): JSX.Element {
 
   return (
     <figure className="grid place-items-center">
-      <div className="aspect-video w-full">
+      <div className="relative aspect-video w-full">
         <div className="text-primary-600 absolute inset-0 grid place-items-center">
           {isLoadingIframe ? <Spinner /> : null}
         </div>
         <iframe
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
+          className="h-full w-full"
           loading="lazy"
           onLoad={onLoadIframe}
           src={String(url)}

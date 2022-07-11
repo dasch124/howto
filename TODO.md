@@ -70,3 +70,5 @@ because it relies on margin collapse
 # featured image
 
 - currently not used
+
+# gitignore generated cms preview stylesheets

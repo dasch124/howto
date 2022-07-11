@@ -6,7 +6,7 @@ import { usePathname } from '@/app/route/use-pathname'
 import { createAppUrl } from '@/lib/create-app-url'
 
 export function useCanonicalUrl(searchParams?: UrlSearchParamsInit): URL {
-  const pathname = usePathname()
+  const { pathname } = usePathname()
   const { locale } = useLocale()
 
   const url = useMemo(() => {

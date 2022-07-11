@@ -9,6 +9,7 @@
   --prose-color-bullet: var(--color-muted-text);
   --prose-color-separator: var(--color-border);
   --prose-color-border: var(--color-border);
+  --prose-color-blockquote-border: var(--color-border);
   --prose-color-inline-code: inherit;
   --prose-color-th-border: var(--color-border);
   --prose-color-td-border: var(--color-border);
@@ -130,7 +131,7 @@
     font-style: italic;
     quotes: '\201C''\201D''\2018''\2019';
     border-inline-start-width: 0.25rem;
-    border-inline-start-color: var(--prose-color-border);
+    border-inline-start-color: var(--prose-color-blockquote-border);
   }
 
   & :where(blockquote p:first-of-type)::before {
@@ -441,5 +442,14 @@
 
   & :where(pre code)::after {
     content: none;
+  }
+
+  & :where(:global(.list-none)) {
+    padding-inline-start: 0;
+    list-style: none;
+
+    & :where(li) {
+      margin-block: 0;
+    }
   }
 }

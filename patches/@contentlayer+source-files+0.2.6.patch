@@ -313,3 +313,160 @@ index 9478129..f0dea41 100644
 \ No newline at end of file
 +{"version":3,"file":"types.d.ts","sourceRoot":"","sources":["../src/types.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,eAAe,EAAE,iBAAiB,EAAE,UAAU,EAAE,YAAY,EAAE,MAAM,oBAAoB,CAAA;AAEnH,OAAO,KAAK,EAAE,mBAAmB,EAAE,MAAM,wBAAwB,CAAA;AAEjE,aAAK,eAAe,GAAG,MAAM,CAAA;AAC7B,aAAK,eAAe,GAAG,MAAM,CAAA;AAC7B,oBAAY,kBAAkB,GAAG,MAAM,CAAC,eAAe,EAAE,eAAe,CAAC,CAAA;AAEzE,oBAAY,cAAc,GAAG,MAAM,CAAC,eAAe,EAAE,mBAAmB,GAAG,SAAS,CAAC,CAAA;AAErF,oBAAY,aAAa,GAAG,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG;IAAE,IAAI,EAAE,eAAe,CAAC;IAAC,GAAG,EAAE,MAAM,CAAA;CAAE,CAAA;AAExF,oBAAY,eAAe,GAAG;IAC5B,mCAAmC;IACnC,cAAc,EAAE,MAAM,CAAA;IACtB,cAAc,EAAE,MAAM,CAAA;IACtB,mCAAmC;IACnC,aAAa,EAAE,MAAM,CAAA;IACrB,WAAW,EAAE,mBAAmB,CAAA;IAChC,kHAAkH;IAClH,aAAa,EAAE,MAAM,CAAA;CACtB,CAAA;AAED,oBAAY,aAAa,GAAG;IAC1B,QAAQ,CAAC,EAAE,eAAe,GAAG,iBAAiB,CAAA;IAC9C,GAAG,CAAC,EAAE,UAAU,GAAG,YAAY,CAAA;IAC/B,YAAY,CAAC,EAAE,YAAY,CAAA;IAC3B,IAAI,CAAC,EAAE,WAAW,CAAA;IAClB,yBAAyB,CAAC,EAAE,OAAO,CAAA;CACpC,CAAA;AAED,oBAAY,YAAY,GAAG;IACzB;;;OAGG;IACH,aAAa,CAAC,EAAE,MAAM,CAAA;IAEtB;;;OAGG;IACH,aAAa,CAAC,EAAE,MAAM,CAAA;CACvB,CAAA;AAED,oBAAY,KAAK,GAAG;IAClB;;;;;OAKG;IACH,kBAAkB,EAAE,WAAW,GAAG,aAAa,GAAG,MAAM,CAAA;IAExD;;;;;OAKG;IACH,gBAAgB,EAAE,MAAM,GAAG,QAAQ,GAAG,MAAM,CAAA;IAE5C;;;;OAIG;IACH,2BAA2B,EAAE,WAAW,GAAG,aAAa,GAAG,MAAM,CAAA;CAClE,CAAA"}
 \ No newline at end of file
+diff --git a/node_modules/@contentlayer/source-files/src/fetchData/makeCacheItemFromFilePath.ts b/node_modules/@contentlayer/source-files/src/fetchData/makeCacheItemFromFilePath.ts
+index dc82fcf..427cffb 100644
+--- a/node_modules/@contentlayer/source-files/src/fetchData/makeCacheItemFromFilePath.ts
++++ b/node_modules/@contentlayer/source-files/src/fetchData/makeCacheItemFromFilePath.ts
+@@ -4,7 +4,8 @@ import { filePathJoin } from '@contentlayer/utils'
+ import type { HasConsole } from '@contentlayer/utils/effect'
+ import { identity, O, OT, pipe, T, These } from '@contentlayer/utils/effect'
+ import { fs } from '@contentlayer/utils/node'
+-import matter from 'gray-matter'
++import { VFile } from 'vfile'
++import { matter } from 'vfile-matter'
+ import yaml from 'yaml'
+ 
+ import { FetchDataError } from '../errors/index.js'
+@@ -148,8 +149,8 @@ const processRawContent = ({
+           const markdown = yield* $(parseMarkdown({ markdownString: fileContent, documentFilePath: relativeFilePath }))
+           return identity<RawContentMarkdown>({
+             kind: 'markdown',
+-            fields: markdown.data,
+-            body: markdown.content,
++            fields: markdown.data.matter as Record<string, any>,
++            body: String(markdown),
+             rawDocumentContent: fileContent,
+           })
+         }
+@@ -157,8 +158,8 @@ const processRawContent = ({
+           const markdown = yield* $(parseMarkdown({ markdownString: fileContent, documentFilePath: relativeFilePath }))
+           return identity<RawContentMDX>({
+             kind: 'mdx',
+-            fields: markdown.data,
+-            body: markdown.content,
++            fields: markdown.data.matter as Record<string, any>,
++            body: String(markdown),
+             rawDocumentContent: fileContent,
+           })
+         }
+@@ -214,13 +215,13 @@ const parseMarkdown = ({
+ }: {
+   markdownString: string
+   documentFilePath: PosixFilePath
+-}): T.Effect<
+-  unknown,
+-  FetchDataError.InvalidMarkdownFileError | FetchDataError.InvalidFrontmatterError,
+-  matter.GrayMatterFile<string>
+-> =>
++}): T.Effect<unknown, FetchDataError.InvalidMarkdownFileError | FetchDataError.InvalidFrontmatterError, VFile> =>
+   T.tryCatch(
+-    () => matter(markdownString),
++    () => {
++      const vfile = new VFile({ value: markdownString })
++      matter(vfile, { strip: true })
++      return vfile
++    },
+     (error: any) => {
+       if (error.name === 'YAMLException') {
+         return new FetchDataError.InvalidFrontmatterError({ error, documentFilePath })
+diff --git a/node_modules/@contentlayer/source-files/src/fetchData/mapping.ts b/node_modules/@contentlayer/source-files/src/fetchData/mapping.ts
+index b204d9d..8854c5a 100644
+--- a/node_modules/@contentlayer/source-files/src/fetchData/mapping.ts
++++ b/node_modules/@contentlayer/source-files/src/fetchData/mapping.ts
+@@ -258,51 +258,58 @@ const getDataForFieldDef = ({
+         return value
+       case 'markdown': {
+         const isBodyField = fieldDef.name === options.fieldOptions.bodyFieldName
+-        const rawDocumentData = yield* $(getFromDocumentContext('rawDocumentData'))
+         // NOTE for the body field, we're passing the entire document file contents to MDX (e.g. in case some remark/rehype plugins need access to the frontmatter)
+-        // TODO we should come up with a better way to do this
+         if (isBodyField) {
+           const rawContent = yield* $(getFromDocumentContext('rawContent'))
+           if (rawContent.kind !== 'markdown' && rawContent.kind !== 'mdx') return utils.assertNever(rawContent)
+ 
+-          const html = yield* $(
++          const { html, data } = yield* $(
+             core.markdownToHtml({
+               mdString: rawContent.rawDocumentContent,
+               options: options?.markdown,
+-              rawDocumentData,
++              contentDirPath,
++              contentFilePath: relativeFilePath,
+             }),
+           )
+-          return identity<core.Markdown>({ raw: rawFieldData, html })
++          return identity<core.Markdown>({ raw: rawFieldData, html, data })
+         } else {
+-          const html = yield* $(
+-            core.markdownToHtml({ mdString: rawFieldData, options: options?.markdown, rawDocumentData }),
++          const { html, data } = yield* $(
++            core.markdownToHtml({
++              mdString: rawFieldData,
++              options: options?.markdown,
++              contentDirPath,
++              contentFilePath: relativeFilePath,
++            }),
+           )
+-          return identity<core.Markdown>({ raw: rawFieldData, html })
++          return identity<core.Markdown>({ raw: rawFieldData, html, data })
+         }
+       }
+       case 'mdx': {
+         const isBodyField = fieldDef.name === options.fieldOptions.bodyFieldName
+-        const rawDocumentData = yield* $(getFromDocumentContext('rawDocumentData'))
+         // NOTE for the body field, we're passing the entire document file contents to MDX (e.g. in case some remark/rehype plugins need access to the frontmatter)
+-        // TODO we should come up with a better way to do this
+         if (isBodyField) {
+           const rawContent = yield* $(getFromDocumentContext('rawContent'))
+           if (rawContent.kind !== 'mdx' && rawContent.kind !== 'markdown') return utils.assertNever(rawContent)
+ 
+-          const code = yield* $(
+-            core.bundleMDX({
++          const { code, data } = yield* $(
++            core.mdxToJs({
+               mdxString: rawContent.rawDocumentContent,
+               options: options?.mdx,
+               contentDirPath,
+-              rawDocumentData,
++              contentFilePath: relativeFilePath,
+             }),
+           )
+-          return identity<core.MDX>({ raw: rawFieldData, code })
++          return identity<core.MDX>({ raw: rawFieldData, code, data })
+         } else {
+-          const code = yield* $(
+-            core.bundleMDX({ mdxString: rawFieldData, options: options?.mdx, contentDirPath, rawDocumentData }),
++          const { code, data } = yield* $(
++            core.mdxToJs({
++              mdxString: rawFieldData,
++              options: options?.mdx,
++              contentDirPath,
++              contentFilePath: relativeFilePath,
++            }),
+           )
+-          return identity<core.MDX>({ raw: rawFieldData, code })
++          return identity<core.MDX>({ raw: rawFieldData, code, data })
+         }
+       }
+       case 'boolean':
+diff --git a/node_modules/@contentlayer/source-files/src/types.ts b/node_modules/@contentlayer/source-files/src/types.ts
+index 7d96a9f..4035bf2 100644
+--- a/node_modules/@contentlayer/source-files/src/types.ts
++++ b/node_modules/@contentlayer/source-files/src/types.ts
+@@ -1,4 +1,4 @@
+-import type { DateOptions, MarkdownOptions, MarkdownUnifiedBuilderCallback, MDXOptions } from '@contentlayer/core'
++import type { DateOptions, MarkdownOptions, MarkdownProcessor, MDXOptions, MDXProcessor } from '@contentlayer/core'
+ 
+ import type { DocumentContentType } from './schema/defs/index.js'
+ 
+@@ -22,8 +22,8 @@ export type RawDocumentData = {
+ }
+ 
+ export type PluginOptions = {
+-  markdown?: MarkdownOptions | MarkdownUnifiedBuilderCallback
+-  mdx?: MDXOptions
++  markdown?: MarkdownOptions | MarkdownProcessor
++  mdx?: MDXOptions | MDXProcessor
+   fieldOptions?: FieldOptions
+   date?: DateOptions
+   disableImportAliasWarning?: boolean

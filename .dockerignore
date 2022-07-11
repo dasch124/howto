@@ -52,12 +52,14 @@ public/android-chrome-192x192.png
 public/android-chrome-512x512.png
 public/apple-touch-icon.png
 public/site.webmanifest
+public/image.webp
 public/de/favicon.ico
 public/de/icon.svg
 public/de/android-chrome-192x192.png
 public/de/android-chrome-512x512.png
 public/de/apple-touch-icon.png
 public/de/site.webmanifest
+public/de/image.webp
 
 # auto-generated mock-service-worker
 public/mockServiceWorker.js

@@ -1,15 +1,16 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { useI18n } from '@/app/i18n/use-i18n'
 import * as routes from '@/app/route/routes.config'
 import { useLocale } from '@/app/route/use-locale'
 import { usePathname } from '@/app/route/use-pathname'
+import { useSearchParams } from '@/app/route/use-search-params'
+import { useUrlFragment } from '@/app/route/use-url-fragment'
 import { SearchDialogTrigger } from '@/components/search-dialog-trigger'
 
 export function PageHeader(): JSX.Element {
   const { t } = useI18n<'common'>()
-  const pathname = usePathname()
+  const { pathname } = usePathname()
 
   return (
     <header className="flex items-center justify-between gap-8 px-8 py-4">
@@ -43,7 +44,9 @@ export function PageHeader(): JSX.Element {
 
 function LanguageToggle(): JSX.Element {
   const { locale } = useLocale()
-  const router = useRouter()
+  const { pathname } = usePathname()
+  const { searchParams } = useSearchParams()
+  const { hash } = useUrlFragment()
   const { t } = useI18n<'common'>()
 
   const language = locale === 'en' ? 'de' : 'en'
@@ -54,7 +57,8 @@ function LanguageToggle(): JSX.Element {
         values: { language: t(['common', 'language', language]) },
       })}
       className="inline-grid place-items-center rounded bg-accent-secondary-background p-1.5 text-xs font-medium text-text-inverted hover:text-text-inverted focus-visible:text-text-inverted"
-      href={router.asPath}
+      /** To avoid hydration errors we only add search params and hash clientside. */
+      href={{ pathname, query: String(searchParams), hash }}
       locale={language}
     >
       {locale.toUpperCase()}

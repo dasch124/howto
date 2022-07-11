@@ -1,7 +1,11 @@
 import { useRoute } from '@/app/route/use-route'
 
-export function usePathname(): string {
+export interface UsePathnameResult {
+  pathname: string
+}
+
+export function usePathname(): UsePathnameResult {
   const route = useRoute()
 
-  return route.pathname
+  return { pathname: route.pathname }
 }

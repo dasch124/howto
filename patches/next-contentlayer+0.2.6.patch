@@ -20,3 +20,50 @@ index d39a6f0..2c09220 100644
 \ No newline at end of file
 +{"version":3,"file":"useMDXComponent.js","sourceRoot":"","sources":["../../src/hooks/useMDXComponent.ts"],"names":[],"mappings":";;AAAA,0GAA0G;AAC1G,OAAO,KAAK,MAAM,OAAO,CAAA;AACzB,0GAA0G;AAC1G,OAAO,QAAQ,MAAM,WAAW,CAAA;AAEhC,+HAA+H;AAC/H,OAAO,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAA;AAEhD,sFAAsF;AACtF,oDAAoD;AACpD,8FAA8F;AAC9F,EAAE;AACF,iEAAiE;AACjE,oDAAoD;AAEpD,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IACxG,MAAM,KAAK,GAAG,EAAE,KAAK,EAAE,QAAQ,EAAE,YAAY,EAAE,GAAG,OAAO,EAAE,CAAA;IAC3D,MAAM,EAAE,GAAG,IAAI,QAAQ,CAAC,GAAG,MAAM,CAAC,IAAI,CAAC,KAAK,CAAC,EAAE,IAAI,CAAC,CAAA;IACpD,OAAO,EAAE,CAAC,GAAG,MAAM,CAAC,MAAM,CAAC,KAAK,CAAC,CAAC,CAAA;AACpC,CAAC,CAAA;AAED,MAAM,CAAC,MAAM,eAAe,GAAG,CAAC,IAAY,EAAE,UAAmC,EAAE,EAA4B,EAAE;IAC/G,OAAO,KAAK,CAAC,OAAO,CAAC,GAAG,EAAE,CAAC,eAAe,CAAC,IAAI,EAAE,OAAO,CAAC,EAAE,CAAC,IAAI,EAAE,OAAO,CAAC,CAAC,CAAA;AAC7E,CAAC,CAAA"}
 \ No newline at end of file
+diff --git a/node_modules/next-contentlayer/src/hooks/useMDXComponent.ts b/node_modules/next-contentlayer/src/hooks/useMDXComponent.ts
+index 83b0bcc..a2b1b50 100644
+--- a/node_modules/next-contentlayer/src/hooks/useMDXComponent.ts
++++ b/node_modules/next-contentlayer/src/hooks/useMDXComponent.ts
+@@ -16,7 +16,7 @@ import { _jsx_runtime } from './jsx-runtime.cjs'
+ const getMDXComponent = (code: string, globals: Record<string, unknown> = {}): React.ComponentType<any> => {
+   const scope = { React, ReactDOM, _jsx_runtime, ...globals }
+   const fn = new Function(...Object.keys(scope), code)
+-  return fn(...Object.values(scope)).default
++  return fn(...Object.values(scope))
+ }
+ 
+ export const useMDXComponent = (code: string, globals: Record<string, unknown> = {}): React.ComponentType<any> => {
+diff --git a/node_modules/next-contentlayer/src/index-cjs.ts b/node_modules/next-contentlayer/src/index-cjs.ts
+index d98219f..afa1d9d 100644
+--- a/node_modules/next-contentlayer/src/index-cjs.ts
++++ b/node_modules/next-contentlayer/src/index-cjs.ts
+@@ -14,12 +14,12 @@ module.exports.defaultPluginOptions = defaultPluginOptions
+  *
+  * @example
+  * ```js
+- * // next.config.mjs
+- * import { createContentlayerPlugin } from 'next-contentlayer'
++ * // next.config.js
++ * const { createContentlayerPlugin } = require('next-contentlayer')
+  *
+  * const withContentlayer = createContentlayerPlugin({ configPath: './content/contentlayer.config.ts' })
+  *
+- * export default withContentlayer({
++ * module.exports = withContentlayer({
+  *   // My Next.js config
+  * })
+  * ```
+@@ -90,10 +90,10 @@ module.exports.createContentlayerPlugin =
+  *
+  * @example
+  * ```js
+- * // next.config.mjs
+- * import { withContentlayer } from 'next-contentlayer'
++ * // next.config.js
++ * const { withContentlayer } = require('next-contentlayer')
+  *
+- * export default withContentlayer({
++ * module.exports = withContentlayer({
+  *   // My Next.js config
+  * })
+  * ```

@@ -24,7 +24,7 @@ import { manifestFileName, openGraphImageName } from '~/config/metadata.config'
 import { rssFeedFileName } from '~/config/rss-feed.config'
 
 export default function App(props: AppProps): JSX.Element {
-  const { Component, pageProps, router } = props
+  const { Component, pageProps } = props
 
   const { locale } = useLocale()
   const metadata = useAppMetadata()
@@ -74,7 +74,7 @@ export default function App(props: AppProps): JSX.Element {
         twitter={metadata.twitter}
       />
       <AnalyticsScript />
-      <ErrorBoundary key={router.asPath} fallback={<RootErrorBoundaryFallback />}>
+      <ErrorBoundary fallback={<RootErrorBoundaryFallback />}>
         <Providers {...pageProps}>
           <PageLayout {...pageProps}>
             <Component {...pageProps} />

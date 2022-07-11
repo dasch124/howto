@@ -102,6 +102,13 @@ const Curriculum = defineDocumentType(() => {
       },
     },
     computedFields: {
+      code: {
+        description: 'MDX JavaScript code',
+        type: 'string',
+        resolve(doc) {
+          return doc['body'].code
+        },
+      },
       id: {
         description: 'Identifier',
         type: 'string',
@@ -308,6 +315,13 @@ const Post = defineDocumentType(() => {
       },
     },
     computedFields: {
+      code: {
+        description: 'MDX JavaScript code',
+        type: 'string',
+        resolve(doc) {
+          return doc['body'].code
+        },
+      },
       id: {
         description: 'Identifier',
         type: 'string',
@@ -322,6 +336,20 @@ const Post = defineDocumentType(() => {
         options: locales,
         resolve(doc) {
           return doc['lang']
+        },
+      },
+      readingTime: {
+        description: 'Reading time',
+        type: 'number',
+        resolve(doc) {
+          return doc['body'].data['readingTime']
+        },
+      },
+      toc: {
+        description: 'Table of contents',
+        type: 'list', // FIXME: how to re-use existing type here?
+        resolve(doc) {
+          return doc['body'].data['toc']
         },
       },
     },

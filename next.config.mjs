@@ -119,6 +119,7 @@ const config = {
 
     return rewrites
   },
+  swcMinify: true,
   typescript: {
     ignoreBuildErrors: true,
   },

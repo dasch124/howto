@@ -12,7 +12,7 @@ export function useAlternateLanguageUrls(
   searchParams?: UrlSearchParamsInit,
 ): UseAlternateLanguageUrlsResult {
   const { locales } = useLocale()
-  const pathname = usePathname()
+  const { pathname } = usePathname()
 
   const urls = useMemo(() => {
     return locales.map((locale) => {

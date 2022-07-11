@@ -34,7 +34,7 @@ import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useCurrentTocHeading } from '@/lib/use-current-toc-heading'
 import { useDialogState } from '@/lib/use-dialog-state'
-import { useMdx } from '@/lib/use-mdx'
+import { useMdxSync as useMdx } from '@/lib/use-mdx'
 import type { Locale } from '~/config/i18n.config'
 import { relatedPostsCount } from '~/config/ui.config'
 
@@ -373,5 +373,24 @@ function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Eleme
         </Dialog>
       </Transition.Root>
     </Fragment>
+  )
+}
+
+function ShareOnTwitter(): JSX.Element {
+  const canonicalUrl = useCanonicalUrl()
+
+  const href = createUrl({
+    baseUrl: 'https://twitter.com/intent/tweet',
+    searchParams: {
+      text: 'What a great post!',
+      url: String(canonicalUrl),
+      hashtags: ['Digital Humanities'].join(','),
+    },
+  })
+
+  return (
+    <a href={String(href)} rel="noreferrer" target="_blank">
+      Share on Twitter
+    </a>
   )
 }

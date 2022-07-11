@@ -21,11 +21,11 @@ interface SideNoteProps {
 }
 
 const styles: Record<SideNoteType, string> = {
-  note: 'border-neutral-600',
-  info: 'border-blue-600',
-  tip: 'border-green-600',
-  warning: 'border-yellow-500',
-  danger: 'border-red-600',
+  note: 'border-muted-text',
+  info: 'border-informative-text',
+  tip: 'border-positive-text',
+  warning: 'border-notice-text',
+  danger: 'border-negative-text',
 }
 
 const icons: Record<SideNoteType, FC<SVGProps<SVGSVGElement>>> = {
