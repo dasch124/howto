@@ -385,7 +385,7 @@ function ShareOnTwitter(): JSX.Element {
   const href = createUrl({
     baseUrl: 'https://twitter.com/intent/tweet',
     searchParams: {
-      text: 'What a great post!',
+      text: 'Drop everything and read this!',
       url: String(canonicalUrl),
       hashtags: ['Digital Humanities'].join(','),
     },
