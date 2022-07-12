@@ -14,6 +14,7 @@ import { RouterContext } from 'next/dist/shared/lib/router-context'
 import type { NextRouter } from 'next/router'
 
 import { dictionary as common } from '@/app/i18n/common/en'
+import type { Dictionaries } from '@/app/i18n/dictionaries'
 import { createMockRouter } from '@/mocks/create-mock-router'
 
 initializeMockServiceWorker({ onUnhandledRequest: 'bypass' })
@@ -32,7 +33,8 @@ const withRouter: DecoratorFn = function withRouter(story, context) {
 }
 
 const withProviders: DecoratorFn = function withProviders(story, context) {
-  const dictionaries = { common }
+  const partial = context.parameters['router'] as Partial<Dictionaries>
+  const dictionaries = { common, ...partial }
 
   return <I18nProvider dictionaries={dictionaries}>{story(context)}</I18nProvider>
 }
