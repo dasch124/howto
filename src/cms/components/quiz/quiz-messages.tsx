@@ -26,8 +26,8 @@ export function QuizMessages(props: QuizMessagesProps): JSX.Element | null {
   }
 
   const defaultStatusMessages: Record<QuizCardStatus, string | null> = {
-    incorrect: t(['common', 'quiz', 'incorrect']),
-    correct: t(['common', 'quiz', 'correct']),
+    incorrect: t(['common', 'post', 'quiz', 'incorrect']),
+    correct: t(['common', 'post', 'quiz', 'correct']),
     unanswered: null,
   }
 

@@ -60,18 +60,19 @@ export function QuizMultipleChoice(props: QuizMultipleChoiceProps): JSX.Element 
   const type = isSingleChoice ? 'radio' : 'checkbox'
 
   const component = (
-    <ul className="quiz-multiple-choice flex flex-col space-y-4">
+    <ul className="list-none">
       {options.map((option, index) => {
         return (
           <li key={index}>
-            <label className="flex items-center space-x-4">
+            <label className="flex items-center gap-3">
               <input
-                type={type}
+                checked={checked.has(index)}
+                className="h-3-5 w-3-5 rounded"
                 name={name}
                 onChange={() => {
                   toggle(index)
                 }}
-                checked={checked.has(index)}
+                type={type}
               />
               {option}
             </label>

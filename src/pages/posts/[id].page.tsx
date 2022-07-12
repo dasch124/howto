@@ -10,6 +10,7 @@ import type {
   GetStaticPropsContext,
   GetStaticPropsResult,
 } from 'next'
+import Image from 'next/future/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import path from 'node:path'
@@ -187,6 +188,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         <div className="grid justify-items-end gap-2 justify-self-end">
           <LastUpdated timestamp={timestamp} />
           <EditInCmsLink id={post.id} />
+          <ShareOnTwitter />
         </div>
         <aside className="hidden [grid-column:1/3] [grid-row:2] 2xl:block">
           <div className="sticky top-12 grid justify-items-end py-2">
@@ -319,10 +321,10 @@ function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Eleme
   const router = useRouter()
 
   useEffect(() => {
-    router.events.on('routeChangeStart', dialog.close)
+    router.events.on('hashChangeStart', dialog.close)
 
     return () => {
-      router.events.off('routeChangeStart', dialog.close)
+      router.events.off('hashChangeStart', dialog.close)
     }
   }, [router.events, dialog.close])
 
@@ -377,6 +379,7 @@ function FloatingTableOfContents(props: FloatingTableOfContentsProps): JSX.Eleme
 }
 
 function ShareOnTwitter(): JSX.Element {
+  const { t } = useI18n<'common'>()
   const canonicalUrl = useCanonicalUrl()
 
   const href = createUrl({
@@ -389,8 +392,20 @@ function ShareOnTwitter(): JSX.Element {
   })
 
   return (
-    <a href={String(href)} rel="noreferrer" target="_blank">
-      Share on Twitter
+    <a
+      className="inline-flex items-center gap-2 text-sm"
+      href={String(href)}
+      rel="noreferrer"
+      target="_blank"
+    >
+      <Image
+        alt=""
+        className="h-5 w-5 flex-shrink-0"
+        height={20}
+        src="/assets/images/twitter.svg"
+        width={20}
+      />
+      {t(['common', 'post', 'share-on-twitter'])}
     </a>
   )
 }

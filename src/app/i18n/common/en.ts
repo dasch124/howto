@@ -58,6 +58,14 @@ export const dictionary: Dictionary = {
     'last-updated': 'Last updated on {{date}}',
     'edit-post-in-cms': 'Edit this post',
     'related-posts': 'Related posts',
+    'share-on-twitter': 'Share on Twitter',
+    quiz: {
+      previous: 'Previous',
+      next: 'Next',
+      validate: 'Validate',
+      correct: 'Correct',
+      incorrect: 'Incorrect',
+    },
   },
   cms: {
     metadata: {

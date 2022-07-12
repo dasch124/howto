@@ -5,7 +5,7 @@ export interface QuizQuestionProps {
 }
 
 export function QuizQuestion(props: QuizQuestionProps): JSX.Element {
-  return <div className="flex flex-col space-y-2">{props.children}</div>
+  return <div className="grid gap-2">{props.children}</div>
 }
 
 export function isQuizQuestion(

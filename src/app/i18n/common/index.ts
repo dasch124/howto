@@ -49,6 +49,14 @@ export interface Dictionary {
     'last-updated': string
     'edit-post-in-cms': string
     'related-posts': string
+    'share-on-twitter': string
+    quiz: {
+      previous: string
+      next: string
+      validate: string
+      correct: string
+      incorrect: string
+    }
   }
   cms: {
     metadata: {

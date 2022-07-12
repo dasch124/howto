@@ -104,9 +104,9 @@ export function Quiz(props: QuizProps): JSX.Element | null {
         const isHidden = index !== currentIndex
 
         const labels = {
-          validate: card.props.validateButtonLabel ?? t(['common', 'quiz', 'validate']),
-          next: t(['common', 'quiz', 'next']),
-          previous: t(['common', 'quiz', 'previous']),
+          validate: card.props.validateButtonLabel ?? t(['common', 'post', 'quiz', 'validate']),
+          next: t(['common', 'post', 'quiz', 'next']),
+          previous: t(['common', 'post', 'quiz', 'previous']),
         }
 
         const service = {

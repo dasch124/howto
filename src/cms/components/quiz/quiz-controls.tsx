@@ -26,7 +26,7 @@ export function QuizControls(props: QuizControlsProps): JSX.Element {
   return (
     <div
       className={cx(
-        'flex items-center space-x-2',
+        'flex items-center gap-2',
         isSingleQuestionQuiz ? 'justify-center' : 'justify-between',
       )}
     >

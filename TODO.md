@@ -72,3 +72,8 @@ because it relies on margin collapse
 - currently not used
 
 # gitignore generated cms preview stylesheets
+
+# vscode extensions
+
+- unifiedjs.vscode-remark
+- unifiedjs.vscode-mdx

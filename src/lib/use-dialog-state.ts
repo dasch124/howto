@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 interface UseDialogStateResult {
   close: () => void
@@ -10,19 +10,19 @@ interface UseDialogStateResult {
 export function useDialogState(): UseDialogStateResult {
   const [isOpen, setIsOpen] = useState(false)
 
-  function close() {
+  const close = useCallback(function close() {
     setIsOpen(false)
-  }
+  }, [])
 
-  function open() {
+  const open = useCallback(function open() {
     setIsOpen(true)
-  }
+  }, [])
 
-  function toggle() {
+  const toggle = useCallback(function toggle() {
     setIsOpen((isOpen) => {
       return !isOpen
     })
-  }
+  }, [])
 
   return { close, isOpen, open, toggle }
 }
