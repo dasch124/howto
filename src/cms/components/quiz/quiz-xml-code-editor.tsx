@@ -10,8 +10,8 @@ export interface QuizXmlCodeEditorProps {
   children?: ReactNode
   code: string
   solution: string
-  /** @default "document" */
-  validate?: 'document' | 'selection'
+  /** @default 'input' */
+  validate?: 'input' | 'selection'
 }
 
 export function QuizXmlCodeEditor(props: QuizXmlCodeEditorProps): JSX.Element {

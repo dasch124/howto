@@ -1,3 +1,4 @@
+import cx from 'clsx'
 import type { ReactElement, ReactNode } from 'react'
 import { useState } from 'react'
 
@@ -24,22 +25,20 @@ export function QuizMultipleChoice(props: QuizMultipleChoiceProps): JSX.Element 
       return options.indexOf(option)
     })
   const isSingleChoice = props.variant === 'single'
-  /**
-   * Put `Set` in a 1-tuple, so we don't need to recreate the `Set` on every change.
-   */
-  const [[checked], setChecked] = useState<[Set<number>]>([new Set()])
+  const [checked, setChecked] = useState<Set<number>>(new Set())
 
   function toggle(index: number) {
     if (isSingleChoice) {
-      setChecked([new Set([index])])
+      setChecked(new Set([index]))
     } else {
-      setChecked(([checked]) => {
+      setChecked((_checked) => {
+        const checked = new Set(_checked)
         if (checked.has(index)) {
           checked.delete(index)
         } else {
           checked.add(index)
         }
-        return [checked]
+        return checked
       })
     }
 
@@ -67,7 +66,10 @@ export function QuizMultipleChoice(props: QuizMultipleChoiceProps): JSX.Element 
             <label className="flex items-center gap-3">
               <input
                 checked={checked.has(index)}
-                className="h-3-5 w-3-5 rounded"
+                className={cx(
+                  'h-3-5 w-3-5 text-accent-primary-background focus:ring-current',
+                  !isSingleChoice && 'rounded',
+                )}
                 name={name}
                 onChange={() => {
                   toggle(index)
