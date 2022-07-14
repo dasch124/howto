@@ -24,7 +24,7 @@ export function QuizMessage(props: QuizMessageProps): JSX.Element | null {
           <Icon className="h-5 w-5 flex-shrink-0" width="1em" />{' '}
         </p>
       ) : null}
-      <div className="grid gap-y-2">{props.children}</div>
+      <div>{props.children}</div>
     </div>
   )
 }

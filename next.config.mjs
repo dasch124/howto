@@ -112,6 +112,19 @@ const config = {
       )
     }
 
+    /**
+     * Manual permanent redirects should be used when updating the URL to a post.
+     */
+    const manualRedirectsManifest = path.join(process.cwd(), 'redirects.manual.json')
+    if (await fileExists(manualRedirectsManifest)) {
+      const posts = JSON.parse(await fs.readFile(manualRedirectsManifest, { encoding: 'utf-8' }))
+      redirects.push(
+        ...Object.entries(posts).map(([source, destination]) => {
+          return { source, destination, permanent: true }
+        }),
+      )
+    }
+
     return redirects
   },
   async rewrites() {

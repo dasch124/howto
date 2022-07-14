@@ -190,8 +190,8 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           <EditInCmsLink id={post.id} />
           <ShareOnTwitter />
         </div>
-        <aside className="hidden [grid-column:1/3] [grid-row:2] 2xl:block">
-          <div className="sticky top-12 grid justify-items-end py-2">
+        <aside className="hidden items-start [grid-column:1/3] [grid-row:2] 2xl:grid">
+          <div className="sticky top-12 grid max-w-xs justify-self-end py-2">
             <TableOfContents tableOfContents={post.toc} />
           </div>
         </aside>

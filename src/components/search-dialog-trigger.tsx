@@ -120,7 +120,7 @@ export function SearchDialogTrigger(): JSX.Element {
                   {isNonEmptyArray(searchResultsGroups) ? (
                     <Combobox.Options
                       static
-                      className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-400"
+                      className="grid max-h-72 scroll-py-2 gap-2 overflow-y-auto py-2 text-sm text-gray-400"
                     >
                       {searchResultsGroups.map((searchResultsGroup) => {
                         const searchResults = searchResultsGroup.hits
@@ -235,7 +235,7 @@ function SearchResultPreview(props: SearchResultPreviewProps): JSX.Element {
   const publishDate = useHumanReadableDate(date)
 
   return (
-    <article className="grid gap-1">
+    <article className="grid gap-1.5">
       <h2 className="font-medium" dangerouslySetInnerHTML={{ __html: title }} />
       <div className="flex gap-2 text-xs text-muted-text">
         <time dateTime={date}>{publishDate}</time>
@@ -271,7 +271,7 @@ function SearchResultChunkPreview(props: SearchResultChunkPreviewProps): JSX.Ele
 
   return (
     <article className="ml-2 grid gap-1 border-l border-l-muted-text pl-4">
-      <h2 className="font-medium">
+      <h2 className="text-xs font-medium">
         {'#'.repeat(heading.depth)} {heading.title}
       </h2>
       <div className="text-xs text-muted-text" dangerouslySetInnerHTML={{ __html: snippet }} />
