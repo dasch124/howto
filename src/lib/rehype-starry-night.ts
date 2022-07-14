@@ -89,6 +89,7 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
         const lines = parseNumericRange(meta.highlight)
         lines.forEach((line) => {
           if (line < 1 || line > children.length) return
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const child = children.at(line - 1)!
           if (child.type !== 'element') return
           child.properties = child.properties ?? {}
