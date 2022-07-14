@@ -6,8 +6,27 @@ import type { Grammar } from '@wooorm/starry-night'
 import { common, createStarryNight } from '@wooorm/starry-night'
 import type * as Hast from 'hast'
 import { toString } from 'hast-util-to-string'
+import { parse } from 'json5'
+import parseNumericRange from 'parse-numeric-range'
 import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
+
+interface ParsedCodeBlockMeta {
+  title?: string
+  highlight?: string
+}
+
+function parseMeta(node: Hast.Element): ParsedCodeBlockMeta | undefined {
+  const meta = node.data?.['meta']
+  if (typeof meta !== 'string') return undefined
+  if (meta.length === 0) return undefined
+
+  try {
+    return parse(meta)
+  } catch {
+    return undefined
+  }
+}
 
 interface Options {
   /**
@@ -58,16 +77,32 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
 
       const fragment = starryNight.highlight(toString(head), scope)
       const children = fragment.children as Array<Hast.ElementContent>
+      const scopeName = scope.replace(/^source\./, '').replace(/\./g, '-')
+
+      const meta = parseMeta(node) ?? {}
+      const properties = {
+        className: ['highlight', 'highlight-' + scopeName],
+        dataLanguage: scopeName,
+        dataTitle: meta.title,
+      }
+      if (meta.highlight != null) {
+        const lines = parseNumericRange(meta.highlight)
+        lines.forEach((line) => {
+          if (line < 1 || line > children.length) return
+          const child = children.at(line - 1)!
+          if (child.type !== 'element') return
+          child.properties = child.properties ?? {}
+          if (!Array.isArray(child.properties['className'])) {
+            child.properties['className'] = []
+          }
+          child.properties['className'].push('highlight-line')
+        })
+      }
 
       parent.children.splice(index, 1, {
         type: 'element',
         tagName: 'div',
-        properties: {
-          className: [
-            'highlight',
-            'highlight-' + scope.replace(/^source\./, '').replace(/\./g, '-'),
-          ],
-        },
+        properties,
         children: [{ type: 'element', tagName: 'pre', properties: {}, children }],
       })
     })
