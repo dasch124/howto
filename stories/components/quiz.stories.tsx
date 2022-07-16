@@ -15,7 +15,7 @@ const config: Meta = {
 
 export default config
 
-export function MultipleChoice() {
+export function MultipleChoice(): JSX.Element {
   return (
     <Quiz>
       <Quiz.Card>
@@ -44,7 +44,7 @@ export function MultipleChoice() {
   )
 }
 
-export function MultipleChoiceCustomValidateButton() {
+export function MultipleChoiceCustomValidateButton(): JSX.Element {
   return (
     <Quiz>
       <Quiz.Card validateButtonLabel="Check this">
@@ -73,7 +73,7 @@ export function MultipleChoiceCustomValidateButton() {
   )
 }
 
-export function MultipleChoiceLongOptions() {
+export function MultipleChoiceLongOptions(): JSX.Element {
   return (
     <Quiz>
       <Quiz.Card validateButtonLabel="Check this">
@@ -138,7 +138,7 @@ export function MultipleChoiceLongOptions() {
   )
 }
 
-export function SingleChoice() {
+export function SingleChoice(): JSX.Element {
   return (
     <Quiz>
       <Quiz.Card>
@@ -167,7 +167,7 @@ export function SingleChoice() {
   )
 }
 
-export function XmlCodeEditor() {
+export function XmlCodeEditor(): JSX.Element {
   const code = `<html>
   <p>Hello, world!</p>
 </html>`
@@ -196,7 +196,7 @@ export function XmlCodeEditor() {
   )
 }
 
-export function XmlCodeEditorValidateSelection() {
+export function XmlCodeEditorValidateSelection(): JSX.Element {
   const code = `<html>
   <p>Hello, world!</p>
 </html>`

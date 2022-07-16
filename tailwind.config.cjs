@@ -2,7 +2,7 @@
 
 /** @type {TailwindConfig} */
 const config = {
-  content: ['./src/**/*.@(css|tsx)'],
+  content: ['./(src|stories)/**/*.@(css|tsx)'],
   corePlugins: {
     backgroundOpacity: false,
     borderOpacity: false,

@@ -5,7 +5,14 @@ import { keyBy } from '@stefanprobst/key-by'
 import { pick } from '@stefanprobst/pick'
 import type { Toc } from '@stefanprobst/rehype-extract-toc'
 import type { Curriculum, Licence, Person, Post, Tag } from 'contentlayer/generated'
-import { allCurriculums, allLicences, allPeople, allPosts, allTags } from 'contentlayer/generated'
+import {
+  allCurriculums,
+  allLicences,
+  allPeople,
+  allPosts,
+  allTags,
+  allTestPosts,
+} from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 
 // TODO: create map for core and details types once, not on demand in a functions
@@ -78,6 +85,14 @@ const postsByTag = groupBy(allPosts, (post) => {
 
 const tagsById = keyBy(allTags, (tag) => {
   return tag.id
+})
+
+const testPostsById = keyBy(allTestPosts, (post) => {
+  return post.id
+})
+
+const testPostsByTag = groupBy(allTestPosts, (post) => {
+  return post.tags
 })
 
 export function getCurriculumIds(): Array<Curriculum['id']> {
@@ -259,4 +274,89 @@ export function getTag(id: Tag['id']): Tag {
 export function getTagCore(id: Tag['id']): TagCore {
   const tag = getTag(id)
   return pick(tag, ['_id', 'id', 'name'])
+}
+
+export function getTestPostIds(): Array<Post['id']> {
+  const ids = allTestPosts.map((post) => {
+    return post.id
+  })
+
+  return ids
+}
+
+export function getTestPostsCore(): Array<PostCore> {
+  const posts = allTestPosts
+    .map((post) => {
+      return getTestPostCore(post.id)
+    })
+    .sort((a, b) => {
+      return compareDesc(new Date(a.date), new Date(b.date))
+    })
+
+  return posts
+}
+
+export function getTestPostsCoreByTags(ids: Array<Tag['id']>): Array<PostCore> {
+  const allTestPostsByTags = ids.flatMap((id) => {
+    return testPostsByTag[id] ?? []
+  })
+
+  const uniquePostsByTags = Object.values(
+    keyBy(allTestPostsByTags, (post) => {
+      return post.id
+    }),
+  )
+
+  const posts = uniquePostsByTags
+    .map((post) => {
+      return getTestPostCore(post.id)
+    })
+    .sort((a, b) => {
+      return compareDesc(new Date(a.date), new Date(b.date))
+    })
+
+  return posts
+}
+
+export function getTestPostCore(id: Post['id']): PostCore {
+  const _post = testPostsById[id]
+  assert(_post != null)
+
+  const post = {
+    ...pick(_post, ['_id', 'abstract', 'date', 'id', 'locale', 'uuid']),
+    authors: _post.authors.map(getPersonCore),
+    tags: _post.tags.map(getTagCore),
+    title: isNonEmptyString(_post.shortTitle) ? _post.shortTitle : _post.title,
+  }
+
+  return post
+}
+
+export function getTestPost(id: Post['id']): PostDetails {
+  const _post = testPostsById[id]
+  assert(_post != null)
+
+  const post = {
+    ...pick(_post, [
+      '_id',
+      'abstract',
+      'date',
+      'featuredImage',
+      'id',
+      'locale',
+      'title',
+      'uuid',
+      'version',
+    ]),
+    authors: _post.authors.map(getPersonCore),
+    code: _post.body.code,
+    contributors: _post.contributors?.map(getPersonCore) ?? [],
+    editors: _post.editors?.map(getPersonCore) ?? [],
+    licence: getLicenceCore(_post.licence),
+    readingTime: _post.body.data.readingTime ?? 0,
+    tags: _post.tags.map(getTagCore),
+    toc: _post.toc ? _post.body.data.toc ?? [] : [],
+  }
+
+  return post
 }

@@ -387,9 +387,18 @@ const Tag = defineDocumentType(() => {
   }
 })
 
+const TestPost = defineDocumentType(() => {
+  return {
+    ...Post.def(),
+    name: 'TestPost',
+    description: 'Test Posts for Storybook',
+    filePathPattern: `test-posts/**/*.mdx`,
+  }
+})
+
 export default makeSource({
   contentDirPath: 'content',
-  documentTypes: [Curriculum, Licence, Person, Post, Tag],
+  documentTypes: [Curriculum, Licence, Person, Post, Tag, TestPost],
   async mdx(value, sourceFilePath) {
     const input = new VFile({ value, path: sourceFilePath })
 

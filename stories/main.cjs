@@ -37,6 +37,7 @@ const config = {
     config.resolve = config.resolve ?? {}
     config.resolve.alias = {
       ...config.resolve.alias,
+      'contentlayer/generated': path.join(process.cwd(), '.contentlayer', 'generated'),
       '@': path.join(process.cwd(), 'src'),
       '~': process.cwd(),
     }
