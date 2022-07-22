@@ -1,8 +1,8 @@
 diff --git a/node_modules/next/dist/client/link.js b/node_modules/next/dist/client/link.js
-index cf9d6b7..c59a046 100755
+index 94ac1d3..55a3291 100644
 --- a/node_modules/next/dist/client/link.js
 +++ b/node_modules/next/dist/client/link.js
-@@ -56,7 +56,7 @@ function linkClicked(e, router, href, as, replace, shallow, scroll, locale, star
+@@ -56,7 +56,7 @@ function linkClicked(e, router, href, as, replace, soft, shallow, scroll, locale
      const { nodeName  } = e.currentTarget;
      // anchors inside an svg have a lowercase nodeName
      const isAnchorNodeName = nodeName.toUpperCase() === 'A';
@@ -12,7 +12,7 @@ index cf9d6b7..c59a046 100755
          return;
      }
 diff --git a/node_modules/next/dist/shared/lib/router/router.js b/node_modules/next/dist/shared/lib/router/router.js
-index d7e301a..6caad5e 100755
+index d7e301a..63a0d7c 100644
 --- a/node_modules/next/dist/shared/lib/router/router.js
 +++ b/node_modules/next/dist/shared/lib/router/router.js
 @@ -188,6 +188,12 @@ function resolveHref(router, href, resolveAs) {

@@ -6,6 +6,7 @@
   min-height: 0;
   margin: 0;
   padding: 0;
+  scrollbar-gutter: stable;
 }
 
 html,
@@ -37,10 +38,29 @@ a {
   }
 }
 
+blockquote,
+dd,
+dt,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+p {
+  overflow-wrap: break-word;
+}
+
 h1,
 h2,
 h3 {
   line-height: 1.15;
+}
+
+img {
+  object-fit: cover;
+  max-width: 100%;
 }
 
 mark {

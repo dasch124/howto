@@ -29,6 +29,7 @@ import { createI18nService } from './src/app/i18n/create-i18n-service'
 import { loadDictionaries } from './src/app/i18n/load-dictionaries'
 import withSyntaxHighlighting from './src/lib/rehype-starry-night.js'
 import withAssetDownloads from './src/lib/remark-asset-downloads'
+import withImageLinks from './src/lib/remark-image-links.js'
 import withComponents from './src/lib/remark-mdx-components'
 import withWordCount from './src/lib/retext-word-count.js'
 
@@ -444,6 +445,7 @@ export default makeSource({
             .use(withWordCount),
         ],
         withComponents,
+        withImageLinks,
         [withNextImages, { publicDirectory: '/assets/images/static' }],
         [withAssetDownloads, { publicDirectory: '/assets/downloads/static' }],
       ],

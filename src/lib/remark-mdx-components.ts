@@ -12,6 +12,10 @@ const withComponents: Plugin<[], Mdast.Root> = function withComponents() {
       assert(node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement')
 
       switch (node.name) {
+        case 'Disclosure': {
+          break
+        }
+
         // TODO: we could just render the `<a>` directly and replace the `<Download>` node.
         case 'Download': {
           const href = getAttribute(node, 'href')

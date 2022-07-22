@@ -14,10 +14,15 @@ interface PostLayoutProps {
   children?: ReactNode
 }
 
+// TODO:
 function PostLayout(props: PostLayoutProps): JSX.Element {
   const { children } = props
 
-  return <div className="mx-auto grid max-w-6xl pb-24">{children}</div>
+  return (
+    <div className="my-16 grid grid-cols-page content-start gap-y-16 py-8 px-2 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
+      {children}
+    </div>
+  )
 }
 
 const config: Meta = {
