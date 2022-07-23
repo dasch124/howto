@@ -136,6 +136,7 @@ export const collection: CmsCollection = {
       editor_components: [
         'image',
         'code-block',
+        'Disclosure',
         'Download',
         'Figure',
         'Quiz',
