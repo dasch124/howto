@@ -11,9 +11,10 @@ import { Fragment } from 'react'
 import { AnalyticsScript } from '@/app/analytics/analytics-script'
 import { reportPageView } from '@/app/analytics/analytics-service'
 import { useAppMetadata } from '@/app/metadata/use-app-metadata'
-import { PageLayout } from '@/app/page.layout'
+import { PageLayout as DefaultPageLayout } from '@/app/page.layout'
 import { Providers } from '@/app/providers.context'
 import { RootErrorBoundaryFallback } from '@/app/root-error-boundary-fallback'
+import * as routes from '@/app/route/routes.config'
 import { useAlternateLanguageUrls } from '@/app/route/use-alternate-language-urls'
 import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import { useLocale } from '@/app/route/use-locale'
@@ -24,13 +25,15 @@ import { manifestFileName, openGraphImageName } from '~/config/metadata.config'
 import { rssFeedFileName } from '~/config/rss-feed.config'
 
 export default function App(props: AppProps): JSX.Element {
-  const { Component, pageProps } = props
+  const { Component, pageProps, router } = props
 
   const { locale } = useLocale()
   const metadata = useAppMetadata()
   const canonicalUrl = useCanonicalUrl()
   const alternateLanguageUrls = useAlternateLanguageUrls()
   usePageLoadProgressIndicator()
+
+  const PageLayout = router.pathname === routes.cms().pathname ? Fragment : DefaultPageLayout
 
   return (
     <Fragment>

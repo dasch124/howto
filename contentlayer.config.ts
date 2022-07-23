@@ -1,4 +1,5 @@
 import { compile } from '@mdx-js/mdx'
+import { isNonEmptyString } from '@stefanprobst/is-nonempty-string'
 import withToc from '@stefanprobst/rehype-extract-toc'
 import withHeadingFragmentLinks from '@stefanprobst/rehype-fragment-links'
 import withListsWithAriaRole from '@stefanprobst/rehype-lists-with-aria-role'
@@ -20,6 +21,7 @@ import english from 'retext-english'
 import latin from 'retext-latin'
 import type { Plugin } from 'unified'
 import { unified } from 'unified'
+import type { Data } from 'vfile'
 import { VFile } from 'vfile'
 import { matter } from 'vfile-matter'
 
@@ -81,7 +83,7 @@ const Curriculum = defineDocumentType(() => {
         of: Tag,
       },
       featuredImage: {
-        description: 'Features image',
+        description: 'Featured image',
         type: 'string',
         required: false,
       },
@@ -287,7 +289,7 @@ const Post = defineDocumentType(() => {
         of: Tag,
       },
       featuredImage: {
-        description: 'Features image',
+        description: 'Featured image',
         type: 'string',
         required: false,
       },
@@ -323,6 +325,13 @@ const Post = defineDocumentType(() => {
           return doc['body'].code
         },
       },
+      featuredImage: {
+        description: 'Featured image',
+        type: 'string', // 'string | StaticImageData | undefined', // FIXME: how to re-use existing type here?
+        resolve(doc) {
+          return doc['body'].data['images']['featuredImage']
+        },
+      },
       id: {
         description: 'Identifier',
         type: 'string',
@@ -348,7 +357,7 @@ const Post = defineDocumentType(() => {
       },
       toc: {
         description: 'Table of contents',
-        type: 'list', // FIXME: how to re-use existing type here?
+        type: 'list', // 'Toc', // FIXME: how to re-use existing type here?
         resolve(doc) {
           return doc['body'].data['toc']
         },
@@ -446,7 +455,25 @@ export default makeSource({
         ],
         withComponents,
         withImageLinks,
-        [withNextImages, { publicDirectory: '/assets/images/static' }],
+        [
+          withNextImages,
+          {
+            publicDirectory: '/assets/images/static',
+            images(data: Data) {
+              const images: Array<{ key: string; filePath: string }> = []
+              const matter = data['matter'] as Record<string, unknown> | undefined
+              if (matter == null) return images
+              const keys = ['featuredImage']
+              keys.forEach((key) => {
+                const filePath = matter[key]
+                if (isNonEmptyString(filePath)) {
+                  images.push({ key, filePath })
+                }
+              })
+              return images
+            },
+          },
+        ],
         [withAssetDownloads, { publicDirectory: '/assets/downloads/static' }],
       ],
       remarkRehypeOptions: {

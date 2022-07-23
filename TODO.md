@@ -1,3 +1,8 @@
+- Netlify CMS editor widget styles should not rely on browser default css
+- bundle size!
+
+---
+
 - rss feed in de+en (currently links assumes both locales exist, but only "en" is generated)
 
 - currently we have /resources/posts/page/1 as route

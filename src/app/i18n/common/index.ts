@@ -2,15 +2,6 @@ import type { Plurals } from '@/app/i18n/dictionaries'
 import type { Locale } from '~/config/i18n.config'
 
 export interface Dictionary {
-  home: {
-    metadata: {
-      title: string
-    }
-    hero: {
-      title: string
-      text: string
-    }
-  }
   '404': {
     metadata: {
       title: string
@@ -21,18 +12,24 @@ export interface Dictionary {
       title: string
     }
   }
-  imprint: {
+  cms: {
     metadata: {
       title: string
     }
   }
-  posts: {
+  home: {
     metadata: {
       title: string
     }
-    'no-posts': string
-    'all-posts': string
-    'new-posts': string
+    hero: {
+      title: string
+      text: string
+    }
+  }
+  imprint: {
+    metadata: {
+      title: string
+    }
   }
   post: {
     metadata: {
@@ -58,13 +55,16 @@ export interface Dictionary {
       incorrect: string
     }
   }
-  cms: {
+  posts: {
     metadata: {
       title: string
     }
+    'no-posts': string
+    'all-posts': string
+    'new-posts': string
   }
-  loading: string
   'skip-to-main-content': string
+  loading: string
   'change-language-to': string
   language: Record<Locale, string>
   search: string
@@ -77,4 +77,5 @@ export interface Dictionary {
   'next-page': string
   'previous-page': string
   'posts-pages': string
+  'toggle-color-scheme': string
 }

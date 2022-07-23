@@ -1,6 +1,6 @@
 :root {
   /** Page. */
-  --page-content-width: 68rem;
+  --page-content-width: 64rem;
   --grid-columns-page: [full-bleed-start] minmax(0, 1fr) [bleed-start] minmax(0, 1rem)
     [content-start] minmax(0, var(--page-content-width)) [content-end] minmax(0, 1rem) [bleed-end]
     minmax(0, 1fr) [full-bleed-end];

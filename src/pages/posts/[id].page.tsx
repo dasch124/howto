@@ -26,16 +26,13 @@ import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import type { PostCore, PostDetails } from '@/cms/cms.client'
 import { getPersonFullName, getPost, getPostIds, getPostsCoreByTags } from '@/cms/cms.client'
 import { EditInCmsLink } from '@/components/edit-in-cms-link'
-import { MainContent } from '@/components/main-content'
-import { PostContent } from '@/components/post-content'
-import { PostHeader } from '@/components/post-header'
+import { MainLayout } from '@/components/main.layout'
+import { Post } from '@/components/post'
 import { PostsList } from '@/components/posts-list'
 import { getLastUpdatedTimestamp } from '@/lib/get-last-updated-timestamp'
-import { components } from '@/lib/mdx-components'
 import { pickRandom } from '@/lib/pick-random'
 import { useCurrentTocHeading } from '@/lib/use-current-toc-heading'
 import { useDialogState } from '@/lib/use-dialog-state'
-import { useMdxSync as useMdx } from '@/lib/use-mdx'
 import type { Locale } from '~/config/i18n.config'
 import { relatedPostsCount } from '~/config/ui.config'
 
@@ -93,7 +90,6 @@ export default function PostPage(props: PostPageProps): JSX.Element {
   const canonicalUrl = useCanonicalUrl()
   const appMetadata = useAppMetadata()
   const titleTemplate = usePageTitleTemplate()
-  const { default: Content } = useMdx(post.code)
 
   const metadata = { title: post.title }
 
@@ -180,11 +176,8 @@ export default function PostPage(props: PostPageProps): JSX.Element {
         })}
         siteTitle={appMetadata.title}
       />
-      <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 py-8 px-2 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
-        <PostHeader post={post} />
-        <PostContent>
-          <Content components={components} />
-        </PostContent>
+      <MainLayout>
+        <Post post={post} />
         <div className="grid justify-items-end gap-2 justify-self-end">
           <LastUpdated timestamp={timestamp} />
           <EditInCmsLink id={post.id} />
@@ -199,7 +192,7 @@ export default function PostPage(props: PostPageProps): JSX.Element {
           <FloatingTableOfContents tableOfContents={post.toc} />
         </aside>
         <RelatedPosts posts={relatedPosts} />
-      </MainContent>
+      </MainLayout>
     </Fragment>
   )
 }

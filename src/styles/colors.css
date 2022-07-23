@@ -45,5 +45,28 @@
 }
 
 :root[data-color-scheme='dark'] {
+  /** Named colors. */
+  --color-accent-primary-background: var(--color-blue);
+  --color-accent-primary-text: var(--color-light-blue);
+  --color-accent-secondary-background: var(--color-turquoise);
+  --color-accent-secondary-text: var(--color-light-turquoise);
+  --color-background: var(--color-black);
+  --color-muted-background: var(--color-dark-gray);
+  --color-border: var(--color-brand-acdh-ch-muted);
+  --color-page-load-progress-indicator: var(--color-brand-acdh-ch-primary);
+  --color-heading-text: var(--color-white);
+  --color-muted-text: var(--color-gray);
+  --color-highlighted-text: var(--color-white);
+  --color-text: var(--color-light-gray);
+  --color-text-inverted: var(--color-black);
+  --color-informative-text: theme(colors.blue.400);
+  --color-informative-background: theme(colors.blue.600);
+  --color-notice-text: theme(colors.orange.400);
+  --color-notice-background: theme(colors.orange.600);
+  --color-positive-text: theme(colors.green.400);
+  --color-positive-background: theme(colors.green.600);
+  --color-negative-text: theme(colors.red.400);
+  --color-negative-background: theme(colors.red.600);
+
   color-scheme: dark;
 }

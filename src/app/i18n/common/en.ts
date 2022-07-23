@@ -93,4 +93,5 @@ export const dictionary: Dictionary = {
   'next-page': 'Next page',
   'previous-page': 'Previous page',
   'posts-pages': 'Posts pages',
+  'toggle-color-scheme': 'Toggle color scheme',
 }

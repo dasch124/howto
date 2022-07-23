@@ -1,4 +1,5 @@
 import { PageMetadata } from '@stefanprobst/next-page-metadata'
+import withResourceLinks from '@stefanprobst/remark-resource-links'
 import dynamic from 'next/dynamic'
 import { Fragment, memo } from 'react'
 
@@ -89,7 +90,8 @@ const NetlifyCms = dynamic(
         bullet: '-',
         emphasis: '_',
       },
-      // plugins: [withResourceLinks], // TODO:
+      /** Avoid saving autolinks, which are invalid in mdx. */
+      plugins: [withResourceLinks],
     })
 
     CMS.registerPreviewTemplate(collections.posts.name, memo(PostPreview))
@@ -106,11 +108,23 @@ const NetlifyCms = dynamic(
       const message =
         error != null ? (
           <div>
-            Failed to load CMS! <button onClick={retry}>Retry</button>
+            Failed to load CMS!{' '}
+            <button
+              className="transition hover:text-accent-primary-text focus-visible:text-accent-primary-text"
+              onClick={retry}
+            >
+              Retry
+            </button>
           </div>
         ) : timedOut === true ? (
           <div>
-            Taking a long time to load CMS... <button onClick={retry}>Retry</button>
+            Taking a long time to load CMS...{' '}
+            <button
+              className="transition hover:text-accent-primary-text focus-visible:text-accent-primary-text"
+              onClick={retry}
+            >
+              Retry
+            </button>
           </div>
         ) : pastDelay === true ? (
           <div>Loading CMS...</div>

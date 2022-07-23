@@ -15,7 +15,7 @@ import { usePageTitleTemplate } from '@/app/metadata/use-page-title-template'
 import * as routes from '@/app/route/routes.config'
 import type { PostCore } from '@/cms/cms.client'
 import { getPostsCore } from '@/cms/cms.client'
-import { MainContent } from '@/components/main-content'
+import { MainLayout } from '@/components/main.layout'
 import { PostsList } from '@/components/posts-list'
 import { getPage } from '@/lib/get-page'
 import { getPageRange } from '@/lib/get-page-range'
@@ -73,10 +73,10 @@ export default function PostsPage(props: PostsPageProps): JSX.Element {
   return (
     <Fragment>
       <PageMetadata title={metadata.title} titleTemplate={titleTemplate} />
-      <MainContent className="my-16 grid grid-cols-page content-start gap-y-16 px-2 py-8 sm:px-8 2xl:gap-x-16 [:where(&>*)]:[grid-column:content]">
+      <MainLayout>
         <PostsPageHeader title={metadata.title} />
         <PostsSection page={page} pages={pages} posts={posts} />
-      </MainContent>
+      </MainLayout>
     </Fragment>
   )
 }
@@ -89,7 +89,7 @@ function PostsPageHeader(props: PostsPageHeaderProps): JSX.Element {
   const { title } = props
 
   return (
-    <header className="my-16 grid gap-8">
+    <header className="my-8 grid gap-8">
       <h1 className="text-5xl font-black text-accent-primary-text">{title}</h1>
     </header>
   )
