@@ -5,7 +5,6 @@ import { MainLayout } from '@/components/main.layout'
 import { Post } from '@/components/post'
 
 const post = getTestPost('storybook')
-process.env['__NEXT_NEW_LINK_BEHAVIOR'] = 'true'
 
 const config: Meta = {
   component: Post,

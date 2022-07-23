@@ -17,6 +17,18 @@ const config = {
   core: {
     builder: 'webpack5',
   },
+  // @ts-expect-error Missing upstream.
+  env(config) {
+    return {
+      ...config,
+      __NEXT_NEW_LINK_BEHAVIOR: true,
+      __NEXT_IMAGE_OPTS: {
+        experimentalFuture: true,
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+      },
+    }
+  },
   features: {
     babelModeV7: true,
     breakingChangesV7: true,

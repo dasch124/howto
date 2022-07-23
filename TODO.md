@@ -1,5 +1,7 @@
+- bundle size! avoid including cms.client
+- disclosure widget for cms
+- copy button for code blocks
 - Netlify CMS editor widget styles should not rely on browser default css
-- bundle size!
 
 ---
 

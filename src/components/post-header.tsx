@@ -53,7 +53,7 @@ export function PostHeader(props: PostHeaderProps): JSX.Element {
         <div>
           <dt className="sr-only">{t(['common', 'post', 'reading-time'])}</dt>
           <dd>
-            <span className="inline-flex items-center gap-2 text-sm">
+            <span className="inline-flex items-center gap-2 whitespace-nowrap text-sm">
               <ClockIcon className="flex-shrink-0" width="1em" />
               {t(['common', 'post', 'minute', plural(post.readingTime)], {
                 values: { time: String(post.readingTime) },

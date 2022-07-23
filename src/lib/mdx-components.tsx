@@ -20,7 +20,6 @@ export const components: MDXComponents = {
   Figure,
   // @ts-expect-error Required props `src`.
   img: PostImage,
-  Image: PostImage,
   Quiz,
   SideNote,
   Tabs,
