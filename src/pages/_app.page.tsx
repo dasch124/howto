@@ -18,6 +18,7 @@ import * as routes from '@/app/route/routes.config'
 import { useAlternateLanguageUrls } from '@/app/route/use-alternate-language-urls'
 import { useCanonicalUrl } from '@/app/route/use-canonical-url'
 import { useLocale } from '@/app/route/use-locale'
+import { CmsLayout } from '@/cms/cms.layout'
 import { createAppUrl } from '@/lib/create-app-url'
 import { createAssetLink } from '@/lib/create-asset-link'
 import { usePageLoadProgressIndicator } from '@/lib/use-page-load-progress-indicator'
@@ -33,7 +34,7 @@ export default function App(props: AppProps): JSX.Element {
   const alternateLanguageUrls = useAlternateLanguageUrls()
   usePageLoadProgressIndicator()
 
-  const PageLayout = router.pathname === routes.cms().pathname ? Fragment : DefaultPageLayout
+  const PageLayout = router.pathname === routes.cms().pathname ? CmsLayout : DefaultPageLayout
 
   return (
     <Fragment>

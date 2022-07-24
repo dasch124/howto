@@ -3,7 +3,7 @@ import { common } from '@wooorm/starry-night'
 import sparql from '@wooorm/starry-night/lang/source.sparql.js'
 import turtle from '@wooorm/starry-night/lang/source.turtle.js'
 import type { PreviewTemplateComponentProps } from 'netlify-cms-core'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import withGfm from 'remark-gfm'
 
 import type { PostDetails } from '@/cms/cms.client'
@@ -14,22 +14,25 @@ import { PostHeader } from '@/components/post-header'
 import { Spinner } from '@/components/spinner'
 import withSyntaxHighlighting from '@/lib/rehype-starry-night'
 import { useDebouncedState } from '@/lib/use-debounced-state'
+import { useEvent } from '@/lib/use-event'
 import { previewRenderDelay } from '~/config/cms.config'
 
-type PostMetadata = Omit<PostDetails, '_id' | '_raw' | 'body' | 'id' | 'uuid'>
+type PostMetadata = Omit<PostDetails, '_id' | 'code' | 'id' | 'uuid'>
 
 const initialMetadata: PostMetadata = {
-  type: 'Post',
-  authors: [],
-  tags: [],
-  licence: { _id: '', id: '', name: '' },
-  title: '',
-  locale: 'en',
-  lang: 'en',
-  toc: false,
-  date: new Date().toISOString(),
-  version: '',
   abstract: '',
+  date: new Date().toISOString(),
+  authors: [],
+  contributors: [],
+  editors: [],
+  featuredImage: undefined,
+  licence: { _id: 'cc-by-4.0', id: 'cc-by-4.0', name: 'CC-BY 4.0' },
+  locale: 'en',
+  readingTime: 0,
+  tags: [],
+  title: '',
+  toc: [],
+  version: '',
 }
 
 export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
@@ -42,66 +45,33 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
   const [metadata, setMetadata] = useState<PostMetadata>(initialMetadata)
   const [mdxContent, setMdxContent] = useState<Error | string | null>(null)
 
-  // TODO: useEvent
-  const compileMdx = useCallback(
-    async function compileMdx(code: string) {
-      // TODO: compile to hyperscript, not javascript!
-      const vfile = await compile(code, {
-        outputFormat: 'function-body',
-        remarkPlugins: [
-          withGfm,
-          // [
-          //   withSmartQuotes,
-          //   locale === 'de'
-          //     ? {
-          //         openingQuotes: { double: '„', single: ',' },
-          //         closingQuotes: { double: '”', single: '’' },
-          //       }
-          //     : undefined,
-          // ],
-          // [
-          //   toNlcst as Plugin,
-          //   unified()
-          //     .use(locale === 'en' ? english : latin)
-          //     .use(withWordCount),
-          // ],
-          // withComponents,
-          // [withNextImages, { publicDirectory: '/assets/images/static' }],
-          // [withAssetDownloads, { publicDirectory: '/assets/downloads/static' }],
-          [withCmsPreviewAssets, getAsset],
-        ],
-        rehypePlugins: [
-          // withHeadingIds,
-          // [withHeadingFragmentLinks, { generate: createPermalink }],
-          // withToc,
-          // withNoReferrerLinks,
-          // withListsWithAriaRole,
-          [withSyntaxHighlighting, { grammars: [...common, sparql, turtle] }],
-        ],
-      })
+  const compileMdx = useEvent(async function compileMdx(code: string) {
+    // TODO: compile to hyperscript, not javascript!
+    const vfile = await compile(code, {
+      outputFormat: 'function-body',
+      remarkPlugins: [withGfm, [withCmsPreviewAssets, getAsset]],
+      rehypePlugins: [[withSyntaxHighlighting, { grammars: [...common, sparql, turtle] }]],
+    })
 
-      return vfile
-    },
-    [getAsset],
-  )
+    return vfile
+  })
+
+  const resolveRelation = useEvent(function resolveRelation(path: Array<string>, id: string) {
+    const metadata = fieldsMetaData.getIn([...path, id])
+    if (metadata == null) return null
+    return { id, ...metadata.toJS() }
+  })
 
   useEffect(() => {
-    function resolveRelation(path: Array<string>, id: string) {
-      const metadata = fieldsMetaData.getIn([...path, id])
-      if (metadata == null) return null
-      return { id, ...metadata.toJS() }
-    }
-
-    const { body: _, ...partialFrontmatter } = data.toJS()
-    const frontmatter = partialFrontmatter
+    const { body: _, ...frontmatter } = data.toJS()
 
     const authors = Array.isArray(frontmatter.authors)
       ? frontmatter.authors
-          .map((id) => {
+          .map((id: string) => {
             return resolveRelation(['authors', 'people'], id)
           })
           .filter(Boolean)
-          .map((author) => {
+          .map((author: any) => {
             // FIXME: how to resolve asset path on related item?
             // We cannot use `getAsset` because that is bound to the `posts` collection.
             return {
@@ -113,7 +83,7 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
 
     const contributors = Array.isArray(frontmatter.contributors)
       ? frontmatter.contributors
-          .map((id) => {
+          .map((id: string) => {
             return resolveRelation(['contributors', 'people'], id)
           })
           .filter(Boolean)
@@ -121,7 +91,7 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
 
     const editors = Array.isArray(frontmatter.editors)
       ? frontmatter.editors
-          .map((id) => {
+          .map((id: string) => {
             return resolveRelation(['editors', 'people'], id)
           })
           .filter(Boolean)
@@ -129,7 +99,7 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
 
     const tags = Array.isArray(frontmatter.tags)
       ? frontmatter.tags
-          .map((id) => {
+          .map((id: string) => {
             return resolveRelation(['tags', 'tags'], id)
           })
           .filter(Boolean)
@@ -163,7 +133,7 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
     }
 
     setMetadata(metadata)
-  }, [data, fieldsMetaData, getAsset])
+  }, [data, getAsset, resolveRelation])
 
   useEffect(() => {
     let wasCanceled = false
@@ -202,8 +172,8 @@ export function PostPreview(props: PreviewTemplateComponentProps): JSX.Element {
   if (mdxContent === null) {
     return (
       <Preview {...props}>
-        <div className="flex items-center space-x-2">
-          <Spinner className="text-primary-600 h-6 w-6" aria-label="Loading..." />
+        <div className="flex items-center gap-2">
+          <Spinner />
           <p>Trying to render preview...</p>
         </div>
       </Preview>

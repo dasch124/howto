@@ -59,6 +59,7 @@ export const dictionary: Dictionary = {
     'edit-post-in-cms': 'Edit this post',
     'related-posts': 'Related posts',
     'share-on-twitter': 'Share on Twitter',
+    'show-fullsize-image': 'Show fullsize image',
     quiz: {
       previous: 'Previous',
       next: 'Next',

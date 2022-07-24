@@ -47,6 +47,7 @@ export interface Dictionary {
     'edit-post-in-cms': string
     'related-posts': string
     'share-on-twitter': string
+    'show-fullsize-image': string
     quiz: {
       previous: string
       next: string

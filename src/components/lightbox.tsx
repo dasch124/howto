@@ -13,8 +13,13 @@ export function LightBox(props: LightBoxProps): JSX.Element {
   const dialog = useDialogState()
 
   return (
-    <div>
-      <button aria-label={t(['common', 'post', 'show-fullsize-image'])} onClick={dialog.open}>
+    <Fragment>
+      <button
+        aria-label={t(['common', 'post', 'show-fullsize-image'])}
+        className="w-full"
+        data-lightbox
+        onClick={dialog.open}
+      >
         <ResponsiveImage {...props} />
       </button>
 
@@ -32,7 +37,7 @@ export function LightBox(props: LightBoxProps): JSX.Element {
             <div className="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-dialog overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-dialog grid place-items-center overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -42,13 +47,13 @@ export function LightBox(props: LightBoxProps): JSX.Element {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="divide-opacity-20 mx-auto max-w-2xl transform divide-y divide-gray-500 overflow-hidden rounded bg-gray-900 shadow-2xl ring-1 ring-gray-500 ring-offset-2 ring-offset-gray-500 transition-all">
+              <Dialog.Panel className="max-w-7xl transform overflow-hidden rounded bg-gray-900 shadow-2xl ring-1 ring-gray-500 ring-offset-2 ring-offset-gray-500 transition-all">
                 <ResponsiveImage {...props} sizes={undefined} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
         </Dialog>
       </Transition.Root>
-    </div>
+    </Fragment>
   )
 }

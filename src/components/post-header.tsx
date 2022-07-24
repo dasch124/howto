@@ -16,7 +16,7 @@ export function PostHeader(props: PostHeaderProps): JSX.Element {
   const publishDate = useHumanReadableDate(post.date)
 
   return (
-    <header className="my-8 grid gap-8">
+    <header className="my-8 grid w-full gap-8">
       <dl>
         <dt className="sr-only">{t(['common', 'post', 'tag', 'other'])}</dt>
         <dd>

@@ -294,6 +294,14 @@
     cursor: pointer;
   }
 
+  & :where(img) {
+    margin-block: var(--prose-margin-media);
+  }
+
+  & :where(video) {
+    margin-block: var(--prose-margin-media);
+  }
+
   & :where(figure) {
     margin-block: var(--prose-margin-media);
   }
@@ -302,18 +310,14 @@
     margin-block: 0;
   }
 
+  & :where(figure [data-lightbox] > *) {
+    margin-block: 0;
+  }
+
   & :where(figcaption) {
     color: var(--prose-color-caption);
     font-size: var(--prose-font-size-caption);
     line-height: 1.5;
-  }
-
-  & :where(img) {
-    margin-block: var(--prose-margin-media);
-  }
-
-  & :where(video) {
-    margin-block: var(--prose-margin-media);
   }
 
   & :where([data-footnote-ref]) {

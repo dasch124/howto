@@ -9,7 +9,6 @@ import { SearchDialogTrigger } from '@/components/search-dialog-trigger'
 
 export function PageHeader(): JSX.Element {
   const { t } = useI18n<'common'>()
-  const { pathname } = usePathname()
 
   return (
     <header className="flex items-center justify-between gap-8 px-8 py-4">
@@ -22,22 +21,31 @@ export function PageHeader(): JSX.Element {
         </svg>
       </Link>
       <div className="flex items-center gap-8">
-        <nav className="font-medium">
-          <ul role="list">
-            <li>
-              <Link
-                aria-current={pathname.startsWith(routes.posts().pathname) ? 'page' : undefined}
-                href={routes.posts()}
-              >
-                {t(['common', 'posts', 'metadata', 'title'])}
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <PageNavigation />
         <SearchDialogTrigger />
         <LanguageToggle />
         <ColorSchemeToggle />
       </div>
     </header>
+  )
+}
+
+function PageNavigation(): JSX.Element {
+  const { t } = useI18n<'common'>()
+  const { pathname } = usePathname()
+
+  return (
+    <nav className="font-medium">
+      <ul role="list">
+        <li>
+          <Link
+            aria-current={pathname.startsWith(routes.posts().pathname) ? 'page' : undefined}
+            href={routes.posts()}
+          >
+            {t(['common', 'posts', 'metadata', 'title'])}
+          </Link>
+        </li>
+      </ul>
+    </nav>
   )
 }

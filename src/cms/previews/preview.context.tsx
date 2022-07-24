@@ -2,7 +2,7 @@ import type { PreviewTemplateComponentProps } from 'netlify-cms-core'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-interface PreviewContextValues {
+interface PreviewContextValue {
   /**
    * The preview iframe's `document`.
    */
@@ -10,7 +10,7 @@ interface PreviewContextValues {
   isPreview?: boolean
 }
 
-const PreviewContext = createContext<PreviewContextValues>({})
+const PreviewContext = createContext<PreviewContextValue>({})
 
 export interface PreviewProviderProps extends PreviewTemplateComponentProps {
   children: ReactNode
@@ -26,6 +26,6 @@ export function PreviewProvider(props: PreviewProviderProps): JSX.Element {
   return <PreviewContext.Provider value={context}>{children}</PreviewContext.Provider>
 }
 
-export function usePreview(): PreviewContextValues {
+export function usePreview(): PreviewContextValue {
   return useContext(PreviewContext)
 }

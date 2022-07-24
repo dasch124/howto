@@ -23,8 +23,10 @@ export function ResponsiveImage(props: ResponsiveImageProps): JSX.Element {
      *
      * @see https://jakearchibald.com/2022/img-aspect-ratio/
      */
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...imageProps} alt="" height={9} src={src} width={16} />
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img {...imageProps} alt="" className="h-auto w-auto" height={9} src={src} width={16} />
+    )
   }
 
   return <Image {...props} />

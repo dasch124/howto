@@ -1,14 +1,19 @@
+## priority
+
+- post preview
+- mobile nav menu
 - bundle size! avoid including cms.client
-- copy button for code blocks
+- code blocks: line highlights, line numbers, copy button, and ensure `<pre><code>` not just `<pre>`
+- code block light theme
+- post image (and lightbox) should have better `sizes` attribute
 - Netlify CMS editor widget styles should not rely on browser default css
+- permanent redirects /resource/posts/_ => /posts/_
 
 ---
 
 - rss feed in de+en (currently links assumes both locales exist, but only "en" is generated)
 
 - currently we have /resources/posts/page/1 as route
-
-- pagination
 
 - should we server-side render, to better handle url<=>search mapping?
 
@@ -48,18 +53,10 @@
 - https://github.com/mdx-js/eslint-mdx/issues/250#issuecomment-734137140
 - https://github.com/mdx-js/eslint-mdx/issues/92#issuecomment-963847211
 
-## post layout with tailwind typography currently does not work in grid coontainer
-
-because it relies on margin collapse
-
 ## search with typesense
 
 - should each content type (posts, curricula) have their own typesense schema/collection? currently
   we have a single one, named in `~/config/search.config.ts`
-
-## Table of contents
-
-- incl. floating table of contents on mobile
 
 ## images optimization
 
@@ -75,11 +72,10 @@ because it relies on margin collapse
 
 # featured image
 
-- currently not used
+- do we need it?
 
 # gitignore generated cms preview stylesheets
 
 # vscode extensions
 
-- unifiedjs.vscode-remark
 - unifiedjs.vscode-mdx

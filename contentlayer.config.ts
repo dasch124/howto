@@ -485,7 +485,13 @@ export default makeSource({
         withToc,
         withNoReferrerLinks,
         withListsWithAriaRole,
-        [withSyntaxHighlighting, { grammars: [...common, sparql, turtle] }],
+        [
+          withSyntaxHighlighting,
+          {
+            grammars: [...common, sparql, turtle],
+
+          },
+        ],
       ],
     })
 

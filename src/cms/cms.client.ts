@@ -16,6 +16,7 @@ import {
 import { compareDesc } from 'date-fns'
 
 // TODO: create map for core and details types once, not on demand in a functions
+// FIXME: exports which are not explicitly used server-side (e.g. in `getStaticProps`) will end up in the client bundle
 
 export type CurriculumCore = Pick<
   Curriculum,

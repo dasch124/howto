@@ -52,6 +52,7 @@ const NetlifyCms = dynamic(
     const { default: CMS } = await import('netlify-cms-app')
     const { config, collections } = await import('@/cms/cms.config')
     const { PostPreview } = await import('@/cms/previews/post.preview')
+    const { DisclosureEditorWidget } = await import('@/cms/widgets/disclosure')
     const { DownloadWidget } = await import('@/cms/widgets/download')
     const { FigureEditorWidget } = await import('@/cms/widgets/figure')
     const { QuizEditorWidget } = await import('@/cms/widgets/quiz')
@@ -78,6 +79,7 @@ const NetlifyCms = dynamic(
       },
     })
 
+    CMS.registerEditorComponent(DisclosureEditorWidget)
     CMS.registerEditorComponent(DownloadWidget)
     CMS.registerEditorComponent(FigureEditorWidget)
     CMS.registerEditorComponent(QuizEditorWidget)

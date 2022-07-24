@@ -18,7 +18,7 @@ export function PostContent(props: PostContentProps): JSX.Element {
       className={cx(
         proseStyles['prose'],
         syntaxStyles['syntax-highlighting'],
-        'mx-auto grid grid-cols-prose [:where(&>*)]:[grid-column:bleed] sm:[:where(&>*)]:[grid-column:content]',
+        'mx-auto grid w-full grid-cols-prose [:where(&>*)]:[grid-column:bleed] sm:[:where(&>*)]:[grid-column:content]',
       )}
     >
       {children}

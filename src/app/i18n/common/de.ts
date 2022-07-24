@@ -59,6 +59,7 @@ export const dictionary: Dictionary = {
     'edit-post-in-cms': 'Post editieren',
     'related-posts': 'Ähnliche Posts',
     'share-on-twitter': 'Auf Twitter teilen',
+    'show-fullsize-image': 'Bild in voller Größe anzeigen',
     quiz: {
       previous: 'Vorherige',
       next: 'Nächste',
