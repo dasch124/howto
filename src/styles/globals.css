@@ -23,6 +23,8 @@ body,
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-family);
+  overflow-wrap: break-word;
+  text-size-adjust: none;
 }
 
 a {
@@ -38,20 +40,6 @@ a {
   }
 }
 
-blockquote,
-dd,
-dt,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-li,
-p {
-  overflow-wrap: break-word;
-}
-
 h1,
 h2,
 h3 {
@@ -61,6 +49,7 @@ h3 {
 img {
   object-fit: cover;
   max-width: 100%;
+  height: auto;
   border-radius: 4px;
 }
 
@@ -73,6 +62,10 @@ mark {
 
 p {
   line-height: 1.75;
+}
+
+summary {
+  cursor: pointer;
 }
 
 table {

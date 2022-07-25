@@ -1,0 +1,43 @@
+diff --git a/node_modules/@wooorm/starry-night/lib/parse.js b/node_modules/@wooorm/starry-night/lib/parse.js
+index e6f1bee..9be9f30 100644
+--- a/node_modules/@wooorm/starry-night/lib/parse.js
++++ b/node_modules/@wooorm/starry-night/lib/parse.js
+@@ -36,6 +36,15 @@ export function parse(value, grammar, colors) {
+     const match = search.exec(value)
+     const end = match ? match.index : value.length
+ 
++    /** @type {Element} */
++    const line = {
++      type: 'element',
++      tagName: 'span',
++      properties: {className: ['pl-line']},
++      children: []
++    }
++    tree.children.push(line)
++
+     // Empty lines could still match `source` and be turned into a span.
+     // Ignore those.
+     if (start !== end) {
+@@ -53,8 +62,8 @@ export function parse(value, grammar, colors) {
+         const fg = (metadata & FOREGROUND_MASK) >>> FOREGROUND_OFFSET
+         const bg = (metadata & BACKGROUND_MASK) >>> BACKGROUND_OFFSET
+         const fs = (metadata & FONT_STYLE_MASK) >>> FONT_STYLE_OFFSET
+-        /** @type {Root|Element} */
+-        let scope = tree
++        /** @type {Element} */
++        let scope = line
+         scope = delveIfClassName(scope, fontStyleToClass(fs))
+         scope = delveIfClassName(scope, colorToClass(colors[bg]))
+         scope = delveIfClassName(scope, colorToClass(colors[fg]))
+@@ -76,9 +85,9 @@ export function parse(value, grammar, colors) {
+ }
+ 
+ /**
+- * @param {Root|Element} scope
++ * @param {Element} scope
+  * @param {string|undefined} className
+- * @returns {Root|Element}
++ * @returns {Element}
+  */
+ function delveIfClassName(scope, className) {
+   if (!className) return scope

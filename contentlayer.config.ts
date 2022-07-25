@@ -446,6 +446,7 @@ export default makeSource({
               }
             : undefined,
         ],
+        // TODO: Consider using `rehype-infer-reading-time-meta` instead.
         [
           toNlcst as Plugin,
           unified()
@@ -489,7 +490,16 @@ export default makeSource({
           withSyntaxHighlighting,
           {
             grammars: [...common, sparql, turtle],
-
+            onVisitCodeBlock(node, meta, text) {
+              /**
+               * @see https://github.com/mdx-js/mdx/blob/main/website/mdx-config.js#L192-L290
+               */
+              node.children.push({
+                type: 'mdxJsxFlowElement',
+                name: 'CopyToClipboardButton',
+                attributes: [{ type: 'mdxJsxAttribute', name: 'value', value: text }],
+              })
+            },
           },
         ],
       ],

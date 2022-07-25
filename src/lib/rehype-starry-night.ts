@@ -6,6 +6,7 @@ import type { Grammar } from '@wooorm/starry-night'
 import { common, createStarryNight } from '@wooorm/starry-night'
 import type * as Hast from 'hast'
 import { toString } from 'hast-util-to-string'
+import { h } from 'hastscript'
 import * as json5 from 'json5'
 import parseNumericRange from 'parse-numeric-range'
 import type { Plugin } from 'unified'
@@ -39,7 +40,7 @@ interface Options {
    * Parse code block meta, uses `json5` by default.
    */
   parseMeta?: (node: Hast.Element) => ParsedCodeBlockMeta | undefined
-  onVisitCodeBlock?: (node: Hast.Element, meta: ParsedCodeBlockMeta) => void
+  onVisitCodeBlock?: (node: Hast.Element, meta: ParsedCodeBlockMeta, code: string) => void
   onVisitLine?: (node: Hast.Element, meta: ParsedCodeBlockMeta) => void
   onVisitHighlightedLine?: (node: Hast.Element, meta: ParsedCodeBlockMeta) => void
 }
@@ -60,19 +61,15 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
   const starryNightPromise = createStarryNight(grammars)
   const prefix = 'language-'
 
-  return async function (tree) {
+  return async function transformer(tree) {
     const starryNight = await starryNightPromise
 
     visit(tree, 'element', function (node, index, parent) {
-      if (!parent || index === null || node.tagName !== 'pre') {
-        return
-      }
+      if (parent == null || index == null || node.tagName !== 'pre') return
 
       const head = node.children[0]
 
-      if (!head || head.type !== 'element' || head.tagName !== 'code' || !head.properties) {
-        return
-      }
+      if (!head || head.type !== 'element' || head.tagName !== 'code' || !head.properties) return
 
       const classes = head.properties['className']
 
@@ -88,7 +85,8 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
 
       if (scope == null) return
 
-      const fragment = starryNight.highlight(toString(head), scope)
+      const code = toString(head)
+      const fragment = starryNight.highlight(code, scope)
       const children = fragment.children as Array<Hast.ElementContent>
       const grammar = scope.replace(/^source\./, '').replace(/\./g, '-')
       const meta = parseMeta(node) ?? {}
@@ -113,18 +111,16 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
         onVisitHighlightedLine?.(line, meta)
       })
 
-      const properties = {
-        className: ['highlight', 'highlight-' + grammar],
-        dataLanguage: grammar,
-        dataTitle: title,
-      }
-      const codeblock: Hast.Element = {
-        type: 'element',
-        tagName: 'div',
-        properties,
-        children: [{ type: 'element', tagName: 'pre', properties: {}, children }],
-      }
-      onVisitCodeBlock?.(codeblock, meta)
+      const codeblock: Hast.Element = h(
+        'div',
+        {
+          className: ['highlight', 'highlight-' + grammar],
+          dataLanguage: grammar,
+          dataTitle: title,
+        },
+        h('pre', {}, h('code', {}, children)),
+      )
+      onVisitCodeBlock?.(codeblock, meta, code)
 
       parent.children.splice(index, 1, codeblock)
     })
