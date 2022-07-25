@@ -60,6 +60,10 @@ export const dictionary: Dictionary = {
     'related-posts': 'Ähnliche Posts',
     'share-on-twitter': 'Auf Twitter teilen',
     'show-fullsize-image': 'Bild in voller Größe anzeigen',
+    code: {
+      'copy-to-clipboard': 'Kopieren',
+      'copied-to-clipboard': 'Kopiert!',
+    },
     quiz: {
       previous: 'Vorherige',
       next: 'Nächste',

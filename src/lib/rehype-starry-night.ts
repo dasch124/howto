@@ -7,14 +7,14 @@ import { common, createStarryNight } from '@wooorm/starry-night'
 import type * as Hast from 'hast'
 import { toString } from 'hast-util-to-string'
 import { h } from 'hastscript'
-import * as json5 from 'json5'
+import json5 from 'json5'
 import parseNumericRange from 'parse-numeric-range'
 import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 
-interface ParsedCodeBlockMeta {
-  title?: string
+interface ParsedCodeBlockMeta extends Record<string, unknown> {
   highlight?: string
+  title?: string
 }
 
 function parseMetaAsJson5(node: Hast.Element): ParsedCodeBlockMeta | undefined {
@@ -23,6 +23,7 @@ function parseMetaAsJson5(node: Hast.Element): ParsedCodeBlockMeta | undefined {
   if (meta.length === 0) return undefined
 
   try {
+    // eslint-disable-next-line import/no-named-as-default-member
     return json5.parse(meta)
   } catch {
     return undefined
@@ -89,20 +90,22 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
       const fragment = starryNight.highlight(code, scope)
       const children = fragment.children as Array<Hast.ElementContent>
       const grammar = scope.replace(/^source\./, '').replace(/\./g, '-')
-      const meta = parseMeta(node) ?? {}
+      const meta = parseMeta(head) ?? {}
       const title = meta.title
       const highlighted = meta.highlight != null ? parseNumericRange(meta.highlight) : []
 
-      children.forEach((line) => {
-        if (line.type !== 'element') return
+      const lines = children.filter((child): child is Hast.Element => {
+        return child.type === 'element'
+      })
+
+      lines.forEach((line) => {
         onVisitLine?.(line, meta)
       })
 
       highlighted.forEach((lineNumber) => {
-        if (lineNumber < 1 || lineNumber > children.length) return
+        if (lineNumber < 1 || lineNumber > lines.length) return
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const line = children.at(lineNumber - 1)!
-        if (line.type !== 'element') return
+        const line = lines.at(lineNumber - 1)!
         line.properties = line.properties ?? {}
         if (!Array.isArray(line.properties['className'])) {
           line.properties['className'] = []
@@ -120,7 +123,12 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
         },
         h('pre', {}, h('code', {}, children)),
       )
-      onVisitCodeBlock?.(codeblock, meta, code)
+      onVisitCodeBlock?.(
+        codeblock,
+        meta,
+        // TODO: should this use `hast-util-to-text` instead?
+        code,
+      )
 
       parent.children.splice(index, 1, codeblock)
     })

@@ -17,10 +17,24 @@ export function CopyToClipboardButton(props: CopyToClipboardButtonProps): JSX.El
     copy(value)
   }
 
-  const label = t(['common', 'post', isCopied ? 'copied' : 'copy'])
+  const label = t([
+    'common',
+    'post',
+    'code',
+    isCopied ? 'copied-to-clipboard' : 'copy-to-clipboard',
+  ])
 
   return (
-    <button className={cx()} onClick={onCopy} type="button">
+    <button
+      className={cx(
+        'absolute bottom-10 right-4 rounded border px-2 py-1 text-xs transition hover:text-muted-background',
+        isCopied
+          ? 'border-accent-secondary-background text-accent-secondary-text hover:bg-accent-secondary-background'
+          : 'border-accent-primary-background text-accent-primary-text hover:bg-accent-primary-background',
+      )}
+      onClick={onCopy}
+      type="button"
+    >
       {label}
     </button>
   )

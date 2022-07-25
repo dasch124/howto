@@ -29,4 +29,15 @@
   --color-prettylights-syntax-brackethighlighter-angle: hsl(212deg 9% 58%);
   --color-prettylights-syntax-sublimelinter-gutter-mark: hsl(214deg 10% 31%);
   --color-prettylights-syntax-constant-other-reference-link: hsl(207deg 100% 82%);
+
+  /** Added by patched `starry-night`. */
+  & :global(.pl-line) {
+    /* noop */
+  }
+
+  /** Added by patched `starry-night` and `rehype-starry-night.ts`. */
+  & :global(.pl-line.pl-highlighted) {
+    --color-pretty-lights-line-highlighted-bg: ;
+    --color-pretty-lights-line-highlighted-text: ;
+  }
 }

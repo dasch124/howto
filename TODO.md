@@ -79,3 +79,7 @@
 # vscode extensions
 
 - unifiedjs.vscode-mdx
+
+# extract
+
+- consider using `hast-util-excerpt` or my own excerpt util to create abstracts?

@@ -48,6 +48,10 @@ export interface Dictionary {
     'related-posts': string
     'share-on-twitter': string
     'show-fullsize-image': string
+    code: {
+      'copy-to-clipboard': string
+      'copied-to-clipboard': string
+    }
     quiz: {
       previous: string
       next: string

@@ -490,15 +490,15 @@ export default makeSource({
           withSyntaxHighlighting,
           {
             grammars: [...common, sparql, turtle],
-            onVisitCodeBlock(node, meta, text) {
-              /**
-               * @see https://github.com/mdx-js/mdx/blob/main/website/mdx-config.js#L192-L290
-               */
-              node.children.push({
-                type: 'mdxJsxFlowElement',
-                name: 'CopyToClipboardButton',
-                attributes: [{ type: 'mdxJsxAttribute', name: 'value', value: text }],
-              })
+            onVisitCodeBlock(node: Hast.Element, meta: { copy?: boolean }, text: string) {
+              if (meta.copy === true) {
+                node.children.push({
+                  type: 'mdxJsxFlowElement',
+                  name: 'CopyToClipboardButton',
+                  attributes: [{ type: 'mdxJsxAttribute', name: 'value', value: text }],
+                  children: [],
+                })
+              }
             },
           },
         ],
