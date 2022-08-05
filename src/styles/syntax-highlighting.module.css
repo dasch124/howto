@@ -35,8 +35,12 @@
     /* noop */
   }
 
+  & :global(.pl-line[data-line-number]) {
+    /* noop */
+  }
+
   /** Added by patched `starry-night` and `rehype-starry-night.ts`. */
-  & :global(.pl-line.pl-highlighted) {
+  & :global(.pl-line[data-highlight]) {
     --color-pretty-lights-line-highlighted-bg: ;
     --color-pretty-lights-line-highlighted-text: ;
   }

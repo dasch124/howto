@@ -491,6 +491,7 @@ export default makeSource({
           {
             grammars: [...common, sparql, turtle],
             onVisitCodeBlock(node: Hast.Element, meta: { copy?: boolean }, text: string) {
+              // TODO: wrap the whole code block into `CodeBlock` component
               if (meta.copy === true) {
                 node.children.push({
                   type: 'mdxJsxFlowElement',

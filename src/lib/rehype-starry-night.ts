@@ -107,10 +107,7 @@ const withSyntaxHighlighting: Plugin<[Options?], Hast.Root> = function withSynta
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const line = lines.at(lineNumber - 1)!
         line.properties = line.properties ?? {}
-        if (!Array.isArray(line.properties['className'])) {
-          line.properties['className'] = []
-        }
-        line.properties['className'].push('pl-highlighted')
+        line.properties['dataHighlight'] = ''
         onVisitHighlightedLine?.(line, meta)
       })
 
