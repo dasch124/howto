@@ -83,3 +83,8 @@
 # extract
 
 - consider using `hast-util-excerpt` or my own excerpt util to create abstracts?
+
+# eslint-plugin-mdx
+
+- https://www.npmjs.com/package/eslint-plugin-mdx#usage
+- https://github.com/mdx-js/vscode-mdx#integration-with-vs-code-eslint

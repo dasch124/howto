@@ -7,6 +7,7 @@
   "editor.formatOnSave": true,
   "editor.rulers": [100],
   "eslint.enable": true,
+  "eslint.runtime": "node",
   "eslint.validate": ["javascript", "typescript", "typescriptreact"],
   "explorer.excludeGitIgnore": true,
   "jest.autoRun": {
